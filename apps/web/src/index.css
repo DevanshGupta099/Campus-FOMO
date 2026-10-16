@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink-950: #050B1F;
+  --ink-800: #0B1F4D;
+  --royal-500: #1E4FD8;
+  --royal-300: #6E93FF;
+  --gold-400: #F2B705;
+  --ember-500: #FF5A3C;
+  --mint-400: #3EE6B0;
+  --paper-50: #F6F8FF;
+  --font-display: 'Unbounded', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background-color: var(--ink-950);
+  color: var(--paper-50);
+}

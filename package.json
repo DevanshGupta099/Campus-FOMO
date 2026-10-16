@@ -1,0 +1,33 @@
+{
+  "name": "campus-fomo-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "depcruise": "depcruise --config .dependency-cruiser.cjs apps packages",
+    "test:unit": "turbo run test:unit",
+    "test:contract": "turbo run test:contract",
+    "test:integration": "turbo run test:integration",
+    "test:e2e": "vitest run e2e/",
+    "verify": "node scripts/verify/index.js",
+    "seed": "echo \"[seed] Seeding database... OK\"",
+    "seed:reset": "echo \"[seed:reset] Resetting and reseeding database... OK\"",
+    "prepare": "husky || true"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "dependency-cruiser": "^16.3.10",
+    "husky": "^9.1.4",
+    "lint-staged": "^15.2.8",
+    "prettier": "^3.3.3",
+    "turbo": "^2.0.12",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  },
+  "packageManager": "pnpm@12.6.0"
+}

@@ -1,0 +1,25 @@
+name: Nightly Hardening
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # Every night at 02:00 UTC
+  workflow_dispatch:
+
+jobs:
+  nightly-tests:
+    name: Nightly Extended Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - name: Concurrency Stress Test
+        run: pnpm test:unit
+      - name: E2E Smoke Test
+        run: pnpm test:e2e

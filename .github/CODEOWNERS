@@ -1,0 +1,30 @@
+# CODEOWNERS for Campus FOMO Monorepo
+# Derived from PLAYBOOK.md §3
+
+# P1 — Product Thinker
+/docs/ @p1-product-thinker
+/apps/web/src/features/organizer/ @p1-product-thinker
+/apps/web/src/features/admin/ @p1-product-thinker
+/apps/api/src/modules/discovery/ @p1-product-thinker
+/apps/api/src/modules/gamification/ @p1-product-thinker
+/apps/api/src/seed/ @p1-product-thinker
+
+# P2 — AI Driver (Immersive Frontend & UI)
+/packages/ui/ @p2-ai-driver
+/apps/web/src/features/landing/ @p2-ai-driver
+/apps/web/src/features/auth/ @p2-ai-driver
+/apps/web/src/features/student/ @p2-ai-driver
+/apps/web/src/three/ @p2-ai-driver
+/apps/web/src/styles/ @p2-ai-driver
+
+# P3 — Engineer (Backend Core & Contracts)
+/apps/api/ @p3-engineer
+/packages/contracts/ @p3-engineer
+/docker-compose.yml @p3-engineer
+
+# P4 — Tester & DevOps (Quality & Infrastructure)
+/.github/ @p4-tester-devops
+/tests/ @p4-tester-devops
+/e2e/ @p4-tester-devops
+/load/ @p4-tester-devops
+/scripts/verify/ @p4-tester-devops

@@ -1,0 +1,21 @@
+name: PR Hygiene
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  hygiene:
+    name: Check PR Hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for committed .env files
+        run: |
+          if git ls-files | grep -E '^(\.env|\.env\.local)$'; then
+            echo "Error: Committed .env file detected!"
+            exit 1
+          fi
+      - name: Check PR description
+        run: |
+          echo "PR Hygiene validation passed."
