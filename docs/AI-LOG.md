@@ -304,3 +304,33 @@
 - **Follow-ups**: Start backend and frontend servers and output clickable URLs for the user.
 
 ---
+
+### [2026-10-31 11:38 IST] FIX-DUPLICATE-DECLARATIONS — Eliminate Babel/TS Duplicate Identifier Errors
+
+- **Prompt**: Fix Vite react-babel parser error `Identifier 'sortBy' has already been declared (30:9)` in `DiscoverScreen.tsx`.
+- **Hat**: Frontend Debugger & Build Lead
+- **What I did**:
+  - Identified duplicate declaration of `sortBy` state hook in `frontend/src/screens/DiscoverScreen.tsx` on lines 29 and 30. Removed the redundant declaration.
+  - Inspected codebase for similar duplicate declarations and identified a duplicated `hasClash` block-scoped variable in `frontend/src/screens/EventHeadScreen.tsx` on line 61. Removed the duplicate block.
+  - Verified frontend typechecking with `tsc --noEmit` and production build with `vite build`.
+  - Verified unit test suite execution.
+- **Files changed**:
+  - `frontend/src/screens/DiscoverScreen.tsx` — Removed duplicate `sortBy` declaration.
+  - `frontend/src/screens/EventHeadScreen.tsx` — Removed duplicate `hasClash` declaration.
+- **Commands run + results**:
+  - `pnpm --filter campus-fomo-frontend typecheck` → PASS (0 errors)
+  - `pnpm --filter campus-fomo-frontend test:unit` → PASS (1 test)
+  - `pnpm --filter campus-fomo-frontend build` → PASS (Built cleanly in 3.23s)
+  - `pnpm --filter campus-fomo-backend test:unit` → PASS (37 tests)
+  - `node scripts/check-ai-log.mjs` → PASS
+  - `pnpm verify` → PASS (All 8 pipeline checks green)
+- **Decisions & assumptions**:
+  - Keep single source of truth for sorting state and venue clash detection.
+- **Tests**:
+  - `frontend/src/App.test.tsx` → PASS
+  - `backend/src/domain/domain.test.ts` → PASS
+- **[AI-WRONG] mistakes found**:
+  - `[AI-WRONG]` Accidental duplicate declaration of `sortBy` state in `DiscoverScreen.tsx` and `hasClash` in `EventHeadScreen.tsx` when merging sorting and clash simulator logic; resolved by consolidating into single canonical declarations.
+- **Follow-ups**: Ensure Vite dev server hot reload picks up the clean file.
+
+---

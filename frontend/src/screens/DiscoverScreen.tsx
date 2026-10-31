@@ -275,6 +275,23 @@ export function DiscoverScreen({
               <option value="free">Fee (Free First)</option>
             </select>
           </div>
+
+          <div className="flex items-center gap-1.5 ml-auto">
+            <span className="text-[11px] text-paper-50/50 font-mono">
+              SORT:
+            </span>
+            <select
+              aria-label="Sort events lineup"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-ink-950 border border-royal-500/30 text-paper-50 text-xs rounded-xl px-2.5 py-1.5 font-mono focus:outline-none focus:border-royal-400"
+            >
+              <option value="default">Lineup</option>
+              <option value="fomo">Seats Remaining (FOMO)</option>
+              <option value="soonest">Event Date (Soonest)</option>
+              <option value="free">Fee (Free First)</option>
+            </select>
+          </div>
         </div>
       </div>
 
