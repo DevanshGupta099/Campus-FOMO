@@ -3,6 +3,20 @@ import { registrationService } from "./registration.service.js";
 import { requirePermission } from "../../auth/middleware.js";
 
 export const registrationRoutes: FastifyPluginAsync = async (app) => {
+  // GET /api/v1/registrations/me
+  app.get(
+    "/registrations/me",
+    {
+      config: { auth: ["registration:read:own"] },
+      preHandler: [requirePermission("registration:read:own")],
+    },
+    async (request, reply) => {
+      const user = request.user!;
+      const list = registrationService.listUserRegistrations(user.sub);
+      return reply.status(200).send(list);
+    },
+  );
+
   // POST /api/v1/events/:id/register
   app.post(
     "/events/:id/register",

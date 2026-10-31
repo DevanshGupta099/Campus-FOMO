@@ -2,17 +2,25 @@ import { describe, it, expect } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { App } from "./App.js";
 
-describe("Web App Contract Integration", () => {
-  it("renders application headline and verifies pipeline health contract in mock mode", async () => {
+describe("Web App Contract Integration & Dynamic Navigation", () => {
+  it("renders application headline, navigation bar, and persona selector in mock mode", async () => {
     render(<App />);
 
-    expect(screen.getByText(/CAMPUS/i)).toBeDefined();
-    expect(screen.getByText(/FOMO/i)).toBeDefined();
+    expect(screen.getAllByText(/CAMPUS/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/FOMO/i).length).toBeGreaterThan(0);
 
-    // Health contract resolves via client in mock mode
+    // Renders the persona switcher
+    expect(screen.getByLabelText(/Switch Persona/i)).toBeDefined();
+
+    // Waits for dynamic navigation and hero banner to resolve
     await waitFor(() => {
-      expect(screen.getByText("GET /healthz")).toBeDefined();
-      expect(screen.getByText("ok")).toBeDefined();
+      expect(screen.getByText(/The Campus After Dark/i)).toBeDefined();
+      expect(screen.getByText(/Discover Events/i)).toBeDefined();
+    });
+
+    // Verifies footer health check
+    await waitFor(() => {
+      expect(screen.getByText(/API Health:/i)).toBeDefined();
     });
   });
 });

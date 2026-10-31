@@ -58,6 +58,123 @@ export class EventsService {
       version: 1,
       createdAt: new Date().toISOString(),
     });
+
+    this.events.set("evt-tech-workshop", {
+      id: "evt-tech-workshop",
+      title: "Hands-on AI & 3D WebGL Workshop",
+      description:
+        "Master modern browser graphics with Three.js, shaders, and real-time canvas architectures.",
+      category: "Workshop",
+      status: "PUBLISHED",
+      venueId: "ven-lab-2",
+      venueName: "Block 2 Advanced Computing Lab",
+      startsAt: new Date(Date.now() + 172800000).toISOString(),
+      endsAt: new Date(Date.now() + 187200000).toISOString(),
+      capacity: 35,
+      confirmedCount: 15,
+      waitlistCap: 10,
+      waitlistCount: 0,
+      isExternalOpen: true,
+      fee: 0,
+      organizerSub: "01927500-0003-7000-8000-000000000003",
+      department: "Computer Science",
+      version: 1,
+      createdAt: new Date().toISOString(),
+    });
+
+    this.events.set("evt-cultural-dance", {
+      id: "evt-cultural-dance",
+      title: "Dhwani 2026: Campus Battle of the Bands & Dance Fest",
+      description:
+        "The grand annual cultural explosion featuring top collegiate musicians and dance crews.",
+      category: "Cultural",
+      status: "PUBLISHED",
+      venueId: "ven-amphi",
+      venueName: "Campus Open-Air Amphitheatre",
+      startsAt: new Date(Date.now() + 259200000).toISOString(),
+      endsAt: new Date(Date.now() + 288000000).toISOString(),
+      capacity: 150,
+      confirmedCount: 148, // 2 seats left!
+      waitlistCap: 20,
+      waitlistCount: 0,
+      isExternalOpen: true,
+      fee: 100,
+      organizerSub: "01927500-0003-7000-8000-000000000003",
+      department: "Cultural Affairs",
+      version: 1,
+      createdAt: new Date().toISOString(),
+    });
+
+    this.events.set("evt-sports-futsal", {
+      id: "evt-sports-futsal",
+      title: "Night Futsal Super League",
+      description:
+        "Fast-paced 5v5 floodlit night football championship across university departments.",
+      category: "Sports",
+      status: "PUBLISHED",
+      venueId: "ven-sports",
+      venueName: "Sports Complex Floodlit Turf",
+      startsAt: new Date(Date.now() + 345600000).toISOString(),
+      endsAt: new Date(Date.now() + 360000000).toISOString(),
+      capacity: 60,
+      confirmedCount: 60, // Full!
+      waitlistCap: 10,
+      waitlistCount: 4, // Waitlist active
+      isExternalOpen: false,
+      fee: 50,
+      organizerSub: "01927500-0003-7000-8000-000000000003",
+      department: "Sports Department",
+      version: 1,
+      createdAt: new Date().toISOString(),
+    });
+
+    this.events.set("evt-pending-faculty", {
+      id: "evt-pending-faculty",
+      title: "CyberSecurity CTF Challenge 2026",
+      description:
+        "Defend campus servers against simulated red-team attacks in a 12-hour Capture-The-Flag sprint.",
+      category: "Technical",
+      status: "PENDING_FACULTY",
+      venueId: "ven-audi-2",
+      venueName: "Audi Block 2",
+      startsAt: new Date(Date.now() + 432000000).toISOString(),
+      endsAt: new Date(Date.now() + 453600000).toISOString(),
+      capacity: 40,
+      confirmedCount: 0,
+      waitlistCap: 10,
+      waitlistCount: 0,
+      isExternalOpen: true,
+      fee: 0,
+      organizerSub: "01927500-0003-7000-8000-000000000003",
+      department: "Computer Science",
+      budgetRequested: 15000,
+      version: 1,
+      createdAt: new Date().toISOString(),
+    });
+
+    this.events.set("evt-pending-dean", {
+      id: "evt-pending-dean",
+      title: "CHRIST National Model United Nations (MUN)",
+      description:
+        "Simulating UN committees on global AI governance, climate resilience, and cyber international law.",
+      category: "Competition",
+      status: "PENDING_DEAN",
+      venueId: "ven-auditorium",
+      venueName: "Central Campus Auditorium",
+      startsAt: new Date(Date.now() + 518400000).toISOString(),
+      endsAt: new Date(Date.now() + 547200000).toISOString(),
+      capacity: 80,
+      confirmedCount: 0,
+      waitlistCap: 15,
+      waitlistCount: 0,
+      isExternalOpen: true,
+      fee: 250,
+      organizerSub: "01927500-0003-7000-8000-000000000003",
+      department: "Computer Science",
+      budgetRequested: 35000,
+      version: 1,
+      createdAt: new Date().toISOString(),
+    });
   }
 
   getEvent(id: string): EventRecord | undefined {

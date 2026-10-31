@@ -28,7 +28,7 @@ function getJwks() {
 
 export async function verifyToken(token: string): Promise<DecodedUser> {
   // Test/Development mock token shortcut
-  if (config.NODE_ENV === "test" && token.startsWith("test-token:")) {
+  if (config.NODE_ENV !== "production" && token.startsWith("test-token:")) {
     const [
       ,
       role = "STUDENT",

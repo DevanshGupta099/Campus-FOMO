@@ -155,3 +155,42 @@
 - **Follow-ups**: Implement Step 5 domain models (events, atomic Last Seat registration, waitlist promotion, QR check-in, and commit-reveal lucky draw).
 
 ---
+
+### [2026-10-31 09:35 IST] UI-FULL-01 — Dynamic PBAC Navigation & 8-Persona Screens Implementation
+
+- **Prompt**: Read all skills and docs, fix GitHub workflow errors, build full frontend UI across all 8 personas with dynamic PBAC navigation.
+- **Hat**: Full-Stack Engineer & Release Lead
+- **What I did**: Fixed GitHub Actions CI and nightly workflows by adding missing npm scripts (`depcruise`, `test:contract`, `test:integration`, `test:e2e`), supporting both `master` and `dev` branches, and updating dependency cruiser paths. Built comprehensive dynamic UI in `frontend/src/` with `Navbar`, `DiscoverScreen`, `MyTicketsScreen`, `EventHeadScreen`, `ScannerScreen`, `ApprovalsScreen`, `LuckyDrawScreen`, `SponsorScreen`, `GalleryScreen`, and `AdminRbacScreen`. Added persona switcher supporting all 8 roles with simulated zero-trust tokens. Added endpoints in backend domain (`/registrations/me`, `/luckydraw/campaigns`, `/events/:id/volunteers`, `/events/:id/broadcast`, `/gallery`).
+- **Files changed**:
+  - `.github/workflows/ci.yml`, `package.json`, `.dependency-cruiser.cjs` — CI and GitHub fixes.
+  - `backend/src/domain/events/events.routes.ts`, `backend/src/domain/events/events.service.ts` — Volunteer, broadcast, gallery endpoints and seed events.
+  - `backend/src/domain/luckydraw/luckydraw.routes.ts`, `backend/src/domain/luckydraw/luckydraw.service.ts` — Lucky draw list and seed campaign.
+  - `backend/src/domain/registration/registration.routes.ts`, `backend/src/domain/registration/registration.service.ts` — `/registrations/me` user ticket endpoint.
+  - `backend/src/auth/jwt.ts` — Allowed test token shortcut in development mode.
+  - `frontend/src/auth/persona.ts` — 8 demo persona profiles and tokens.
+  - `frontend/src/components/Navbar.tsx` — Dynamic PBAC navigation and persona switcher.
+  - `frontend/src/screens/*` — All 8 persona screens.
+  - `frontend/src/api/client.ts`, `frontend/src/api/types.ts` — Typed client methods and models.
+  - `frontend/src/App.tsx`, `frontend/src/App.test.tsx` — Full application shell and integration test.
+- **Commands run + results**:
+  - `pnpm --filter campus-fomo-backend test:unit` → PASS (35 tests)
+  - `pnpm --filter campus-fomo-frontend test:unit` → PASS (1 test)
+  - `pnpm --filter campus-fomo-frontend build` → PASS (0 errors)
+  - `pnpm --filter campus-fomo-backend build` → PASS (0 errors)
+  - `pnpm generate:openapi` → PASS
+- **Decisions & assumptions**:
+  - Persona switcher updates Bearer token and triggers reactive dynamic `/me/navigation` fetch.
+  - QR scanner validates tokens in <500 ms with color-coded admission feedback.
+  - Commit-reveal lucky draw exposes public verification proof drawer.
+  - Sponsor showcase preserves strict student PII isolation.
+- **Tests**:
+  - `frontend/src/App.test.tsx` → PASS
+  - `backend/src/domain/domain.test.ts` → PASS
+  - `backend/src/access/pbac.test.ts` → PASS
+- **[AI-WRONG] mistakes found**:
+  - In `ScannerScreen.tsx`, unescaped `<500` in JSX was parsed as opening tag by esbuild; fixed to `(under 500 ms target)`.
+  - In `MyTicketsScreen.tsx`, unused `err` in `.catch((err) =>` triggered TypeScript error TS6133 under strict compiler options; fixed to `.catch(() =>`.
+  - In `App.test.tsx`, `getByText(/CAMPUS/i)` matched multiple elements; corrected to `getAllByText(/CAMPUS/i)`.
+- **Follow-ups**: Run `pnpm verify` to validate the full pipeline across all gates.
+
+---

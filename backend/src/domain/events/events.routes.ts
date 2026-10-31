@@ -175,4 +175,92 @@ export const eventRoutes: FastifyPluginAsync = async (app) => {
       return reply.status(200).send(event);
     },
   );
+
+  // POST /api/v1/events/:id/volunteers (Story Card EH-02)
+  app.post(
+    "/events/:id/volunteers",
+    {
+      config: { auth: ["volunteer:assign:own-event"] },
+      preHandler: [requirePermission("volunteer:assign:own-event")],
+    },
+    async (request, reply) => {
+      try {
+        const params = request.params as { id: string };
+        const body = request.body as { studentSub: string; roleTitle: string };
+        const user = request.user!;
+        const result = eventsService.assignVolunteer(
+          params.id,
+          body.studentSub,
+          body.roleTitle,
+          user.sub,
+        );
+        return reply.status(200).send(result);
+      } catch (err: any) {
+        return reply.status(400).send({
+          type: "about:blank",
+          title: "Assignment Failed",
+          status: 400,
+          detail: err.message,
+          code: "VOLUNTEER_ASSIGNMENT_FAILED",
+        });
+      }
+    },
+  );
+
+  // GET /api/v1/events/:id/volunteers
+  app.get(
+    "/events/:id/volunteers",
+    {
+      config: { auth: ["volunteer:assign:own-event", "event:update:own"] },
+      preHandler: [requirePermission("volunteer:assign:own-event")],
+    },
+    async (request, reply) => {
+      const params = request.params as { id: string };
+      const volunteers = eventsService.getVolunteers(params.id);
+      return reply.status(200).send(volunteers);
+    },
+  );
+
+  // POST /api/v1/events/:id/broadcast (Story Card EH-05)
+  app.post(
+    "/events/:id/broadcast",
+    {
+      config: { auth: ["event:update:own"] },
+      preHandler: [requirePermission("event:update:own")],
+    },
+    async (request, reply) => {
+      try {
+        const params = request.params as { id: string };
+        const body = request.body as { message: string };
+        const user = request.user!;
+        const result = eventsService.sendBroadcast(
+          params.id,
+          body.message,
+          user.sub,
+        );
+        return reply.status(200).send(result);
+      } catch (err: any) {
+        return reply.status(400).send({
+          type: "about:blank",
+          title: "Broadcast Failed",
+          status: 400,
+          detail: err.message,
+          code: "BROADCAST_FAILED",
+        });
+      }
+    },
+  );
+
+  // GET /api/v1/gallery (Story Card GU-02)
+  app.get(
+    "/gallery",
+    {
+      config: { auth: "public" },
+    },
+    async (request, reply) => {
+      const query = request.query as { category?: string };
+      const items = eventsService.getGallery(query.category);
+      return reply.status(200).send(items);
+    },
+  );
 };

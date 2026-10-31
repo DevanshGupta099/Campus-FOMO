@@ -3,6 +3,18 @@ import { luckyDrawService } from "./luckydraw.service.js";
 import { requirePermission } from "../../auth/middleware.js";
 
 export const luckyDrawRoutes: FastifyPluginAsync = async (app) => {
+  // GET /api/v1/luckydraw/campaigns (List campaigns)
+  app.get(
+    "/luckydraw/campaigns",
+    {
+      config: { auth: "public" },
+    },
+    async (_request, reply) => {
+      const list = luckyDrawService.listCampaigns();
+      return reply.status(200).send(list);
+    },
+  );
+
   // POST /api/v1/luckydraw/campaigns (Create draw)
   app.post(
     "/luckydraw/campaigns",

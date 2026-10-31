@@ -223,6 +223,12 @@ export class RegistrationService {
     return this.registrations.get(id);
   }
 
+  listUserRegistrations(userSub: string): RegistrationRecord[] {
+    return Array.from(this.registrations.values()).filter(
+      (r) => r.userSub === userSub,
+    );
+  }
+
   listAttendees(eventId: string, maskPII = true) {
     const list = Array.from(this.registrations.values()).filter(
       (r) => r.eventId === eventId,

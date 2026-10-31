@@ -93,4 +93,53 @@ export interface LuckyDrawCampaign {
   winnerName?: string;
   winnerDept?: string;
   claimDeadline?: string;
+  totalEntries?: number;
+}
+
+export interface SponsorShowcase {
+  brand: string;
+  tagline: string;
+  location: string;
+  hours: string;
+  studentPerk: string;
+  menuHighlights: Array<{ name: string; price: number; studentPrice: number }>;
+  activeCampaigns: Array<{ id: string; title: string; prize: string }>;
+}
+
+export interface SponsorAnalytics {
+  sponsorName: string;
+  totalImpressions: number;
+  bannerClickThroughs: number;
+  voucherClaims: number;
+  privacyNote: string;
+}
+
+export interface GalleryItem {
+  id: string;
+  title: string;
+  imageUrl: string;
+  thumbnailUrl: string;
+  category: string;
+  likes: number;
+}
+
+export interface DrawVerification {
+  campaignId: string;
+  seedHash: string;
+  seedRevealed: string;
+  isSeedValid: boolean;
+  totalEntries: number;
+  winnerIndex: number;
+  isWinnerIndexExact: boolean;
+  winnerFirstname?: string;
+  winnerDepartment?: string;
+  verificationFormula: string;
+}
+
+export interface ScanResult {
+  status: "VERIFIED" | "ALREADY_CHECKED_IN" | "INVALID";
+  message: string;
+  attendeeName?: string;
+  department?: string;
+  admittedAt?: string;
 }

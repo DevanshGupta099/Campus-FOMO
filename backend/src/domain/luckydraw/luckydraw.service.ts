@@ -31,6 +31,22 @@ export class LuckyDrawService {
   private entries = new Map<string, LuckyEntry[]>(); // campaignId -> entries
   private usedSessions = new Set<string>();
 
+  constructor() {
+    // Seed initial promotional campaign for hackathon
+    this.createCampaign(
+      "evt-hackathon-100",
+      "Fest Hackathon Free Cold Brew Lucky Draw (Third Wave Coffee)",
+    );
+  }
+
+  listCampaigns(): LuckyCampaign[] {
+    return Array.from(this.campaigns.values());
+  }
+
+  getCampaign(id: string): LuckyCampaign | undefined {
+    return this.campaigns.get(id);
+  }
+
   // Lock primitive for strict sequential atomicity during concurrency tests
   private lockPromise: Promise<void> = Promise.resolve();
 
