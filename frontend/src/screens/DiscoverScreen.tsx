@@ -3,6 +3,7 @@ import type { EventItem } from "../api/types.js";
 import type { CampusFomoClient } from "../api/client.js";
 import type { PersonaConfig } from "../auth/persona.js";
 import { CampusNightCanvas } from "../components/CampusNightCanvas.js";
+import { sound } from "../utils/audio.js";
 
 interface DiscoverScreenProps {
   events: EventItem[];
@@ -25,6 +26,9 @@ export function DiscoverScreen({
     activePersona.role === "GUEST",
   );
   const [seatsOnly, setSeatsOnly] = useState(false);
+  const [sortBy, setSortBy] = useState<"default" | "fomo" | "soonest" | "free">(
+    "default",
+  );
   const [registeringEvent, setRegisteringEvent] = useState<EventItem | null>(
     null,
   );
@@ -68,6 +72,21 @@ export function DiscoverScreen({
     return true;
   });
 
+  const sortedEvents = [...filteredEvents].sort((a, b) => {
+    if (sortBy === "fomo") {
+      const remA = a.capacity - a.confirmedCount;
+      const remB = b.capacity - b.confirmedCount;
+      return remA - remB;
+    }
+    if (sortBy === "soonest") {
+      return new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime();
+    }
+    if (sortBy === "free") {
+      return a.fee - b.fee;
+    }
+    return 0;
+  });
+
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!registeringEvent) return;
@@ -86,10 +105,12 @@ export function DiscoverScreen({
       );
 
       if (res.isWaitlisted) {
+        sound.playAlert();
         setRegisterStatus(
           `Joined Waitlist! Position: #${res.registration.waitlistPosition}. You will be auto-promoted when a seat frees up.`,
         );
       } else {
+        sound.playSuccess();
         setRegisterStatus("Confirmed! Your admission pass has been issued.");
       }
       onRefresh();
@@ -237,12 +258,29 @@ export function DiscoverScreen({
             />
             <span>Available Seats Only</span>
           </label>
+
+          <div className="flex items-center gap-1.5 ml-auto">
+            <span className="text-[11px] text-paper-50/50 font-mono">
+              SORT:
+            </span>
+            <select
+              aria-label="Sort events lineup"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-ink-950 border border-royal-500/30 text-paper-50 text-xs rounded-xl px-2.5 py-1.5 font-mono focus:outline-none focus:border-royal-400"
+            >
+              <option value="default">Lineup</option>
+              <option value="fomo">Seats Remaining (FOMO)</option>
+              <option value="soonest">Event Date (Soonest)</option>
+              <option value="free">Fee (Free First)</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Event Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
-        {filteredEvents.map((event) => {
+        {sortedEvents.map((event) => {
           const seatsLeft = event.capacity - event.confirmedCount;
           const isFull = seatsLeft <= 0;
           const isLastSeat = seatsLeft === 1;

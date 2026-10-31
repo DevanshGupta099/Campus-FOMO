@@ -1,5 +1,7 @@
 import { createHmac } from "node:crypto";
 import { registrationService } from "../registration/registration.service.js";
+import { eventsService } from "../events/events.service.js";
+import { streamHub } from "../stream/stream.routes.js";
 
 export interface CheckinResult {
   status: "ADMITTED" | "ALREADY_CHECKED_IN" | "INVALID_TICKET";
@@ -123,6 +125,15 @@ export class CheckinService {
     this.admittedCheckins.set(verification.registrationId, {
       scannedBy: scannerSub,
       scannedAt,
+    });
+
+    eventsService.awardXp(reg.userSub, 100, "Attended event via door check-in");
+
+    streamHub.broadcast("checkin.verified", {
+      registrationId: reg.id,
+      eventId: reg.eventId,
+      userName: reg.userName,
+      checkedInCount: this.admittedCheckins.size,
     });
 
     return {

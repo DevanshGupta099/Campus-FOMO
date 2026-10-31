@@ -1,5 +1,6 @@
 import { createHmac, randomBytes } from "node:crypto";
 import { eventsService } from "../events/events.service.js";
+import { streamHub } from "../stream/stream.routes.js";
 
 export interface RegistrationRecord {
   id: string;
@@ -114,6 +115,14 @@ export class RegistrationService {
         this.registrations.set(id, reg);
         if (params.idempotencyKey)
           this.idempotencyStore.set(params.idempotencyKey, reg);
+
+        streamHub.broadcast("seat.updated", {
+          eventId: event.id,
+          confirmedCount: event.confirmedCount,
+          capacity: event.capacity,
+          remaining: event.capacity - event.confirmedCount,
+        });
+
         return { registration: reg, isWaitlisted: false };
       }
 
@@ -139,6 +148,13 @@ export class RegistrationService {
         this.registrations.set(id, reg);
         if (params.idempotencyKey)
           this.idempotencyStore.set(params.idempotencyKey, reg);
+
+        streamHub.broadcast("waitlist.updated", {
+          eventId: event.id,
+          waitlistCount: event.waitlistCount,
+          waitlistCap: event.waitlistCap,
+        });
+
         return { registration: reg, isWaitlisted: true };
       }
 
@@ -211,6 +227,21 @@ export class RegistrationService {
         for (let i = 0; i < waitlisted.length; i++) {
           waitlisted[i].waitlistPosition = i + 1;
         }
+      }
+
+      streamHub.broadcast("seat.updated", {
+        eventId: event.id,
+        confirmedCount: event.confirmedCount,
+        capacity: event.capacity,
+        remaining: event.capacity - event.confirmedCount,
+      });
+
+      if (promoted) {
+        streamHub.broadcast("waitlist.promoted", {
+          eventId: event.id,
+          promotedRegistrationId: promoted.id,
+          userSub: promoted.userSub,
+        });
       }
 
       return { cancelled: reg, promoted };

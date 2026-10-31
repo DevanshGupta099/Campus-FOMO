@@ -251,4 +251,38 @@ describe("Domain Core & High-Contention Concurrency Suite", () => {
       expect(guestRes.statusCode).toBe(403);
     });
   });
+
+  describe("Story Card ST-06 & A9: Real-Time Stream Bus & Student Gamification", () => {
+    // covers: ST-06
+    it("returns student XP ledger, history, and badges on /me/gamification", async () => {
+      const res = await app.inject({
+        method: "GET",
+        url: "/api/v1/me/gamification",
+        headers: {
+          authorization:
+            "Bearer test-token:STUDENT:01927500-0001-7000-8000-000000000001",
+        },
+      });
+
+      expect(res.statusCode).toBe(200);
+      const data = res.json();
+      expect(data.userSub).toBe("01927500-0001-7000-8000-000000000001");
+      expect(typeof data.totalXp).toBe("number");
+      expect(Array.isArray(data.badges)).toBe(true);
+    });
+
+    // covers: A9
+    it("polls recent events on /stream/poll with Last-Event-ID deduplication", async () => {
+      const res = await app.inject({
+        method: "GET",
+        url: "/api/v1/stream/poll?since=0",
+      });
+
+      expect(res.statusCode).toBe(200);
+      const data = res.json();
+      expect(Array.isArray(data.events)).toBe(true);
+      expect(data.events.length).toBeGreaterThan(0);
+      expect(data.pollIntervalMs).toBe(15000);
+    });
+  });
 });

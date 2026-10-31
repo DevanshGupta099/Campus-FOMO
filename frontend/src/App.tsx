@@ -7,6 +7,11 @@ import type {
 } from "./api/types.js";
 import { DEMO_PERSONAS, type PersonaConfig } from "./auth/persona.js";
 import { Navbar } from "./components/Navbar.js";
+import { GamificationModal } from "./components/GamificationModal.js";
+import {
+  BroadcastToast,
+  type ToastMessage,
+} from "./components/BroadcastToast.js";
 import { DiscoverScreen } from "./screens/DiscoverScreen.js";
 import { MyTicketsScreen } from "./screens/MyTicketsScreen.js";
 import { EventHeadScreen } from "./screens/EventHeadScreen.js";
@@ -19,11 +24,12 @@ import { AdminRbacScreen } from "./screens/AdminRbacScreen.js";
 
 let currentToken: string = DEMO_PERSONAS[0].token;
 
+const API_BASE_URL =
+  (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:3001/api/v1";
+
 const client = new CampusFomoClient({
-  baseUrl:
-    (import.meta as any).env?.VITE_API_BASE_URL ||
-    "http://localhost:3001/api/v1",
-  mode: ((import.meta as any).env?.VITE_API_MODE as "live" | "mock") || "mock",
+  baseUrl: API_BASE_URL,
+  mode: ((import.meta as any).env?.VITE_API_MODE as "live" | "mock") || "live",
   getAccessToken: () => currentToken,
   setAccessToken: (token) => {
     currentToken = token || "";
@@ -39,12 +45,18 @@ export function App() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [studentXp, setStudentXp] = useState(450);
+  const [isGamificationOpen, setIsGamificationOpen] = useState(false);
+  const [toast, setToast] = useState<ToastMessage | null>(null);
 
   // Sync token when persona changes
   const handleSelectPersona = (persona: PersonaConfig) => {
     setActivePersona(persona);
     currentToken = persona.token;
     client.setAccessToken(persona.token);
+    if (persona.role === "STUDENT") {
+      setStudentXp(450);
+    }
     refreshNavigation();
   };
 
@@ -117,6 +129,65 @@ export function App() {
     refreshEvents();
   }, [refreshNavigation, refreshEvents]);
 
+  // Real-Time Event Bus: SSE stream with auto-reconnect
+  useEffect(() => {
+    let eventSource: EventSource | null = null;
+
+    try {
+      if (
+        typeof window !== "undefined" &&
+        window.EventSource &&
+        !navigator.userAgent?.includes("jsdom")
+      ) {
+        const streamUrl = `${API_BASE_URL}/stream`;
+        eventSource = new EventSource(streamUrl);
+
+        eventSource.addEventListener("seat.updated", () => {
+          refreshEvents();
+        });
+
+        eventSource.addEventListener("announcement.broadcast", (e: any) => {
+          try {
+            const data = JSON.parse(e.data);
+            setToast({
+              id: `toast-${Date.now()}`,
+              title: data.eventTitle || "Campus Announcement",
+              message: data.message,
+              type: "alert",
+            });
+            refreshEvents();
+          } catch {
+            // Ignored
+          }
+        });
+
+        eventSource.addEventListener("luckydraw.completed", (e: any) => {
+          try {
+            const data = JSON.parse(e.data);
+            setToast({
+              id: `draw-${Date.now()}`,
+              title: "🎉 Lucky Draw Winner Selected!",
+              message: `Congratulations to ${data.winnerName} (${data.winnerDept})!`,
+              type: "success",
+            });
+          } catch {
+            // Ignored
+          }
+        });
+
+        eventSource.onerror = () => {
+          eventSource?.close();
+        };
+      }
+    } catch {
+      // Offline fallback
+    }
+
+    return () => {
+      eventSource?.close();
+    };
+  }, [refreshEvents]);
+
   // Route selector
   const renderScreen = () => {
     switch (currentPath) {
@@ -183,12 +254,16 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-ink-950 text-paper-50 flex flex-col font-sans">
+      <BroadcastToast toast={toast} onDismiss={() => setToast(null)} />
+
       <Navbar
         screens={screens}
         currentPath={currentPath}
         onNavigate={setCurrentPath}
         activePersona={activePersona}
         onSelectPersona={handleSelectPersona}
+        studentXp={studentXp}
+        onOpenGamification={() => setIsGamificationOpen(true)}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pb-24 md:pb-8">
@@ -202,6 +277,13 @@ export function App() {
           renderScreen()
         )}
       </main>
+
+      <GamificationModal
+        isOpen={isGamificationOpen}
+        onClose={() => setIsGamificationOpen(false)}
+        xp={studentXp}
+        userName={activePersona.name}
+      />
 
       {/* Footer & Zero-Trust PBAC System Info Bar */}
       <footer className="bg-ink-950 border-t border-royal-500/20 py-4 px-6 text-xs text-paper-50/60">

@@ -1,3 +1,5 @@
+import { streamHub } from "../stream/stream.routes.js";
+
 export interface EventRecord {
   id: string;
   title: string;
@@ -416,8 +418,9 @@ export class EventsService {
       throw new Error("Broadcast message cannot be empty");
     }
 
-    return {
+    const res = {
       eventId,
+      eventTitle: evt.title,
       senderSub,
       message,
       recipientCount,
@@ -425,6 +428,10 @@ export class EventsService {
       recipientsMasked: true,
       channels: ["EMAIL", "PUSH"],
     };
+
+    streamHub.broadcast("announcement.broadcast", res);
+
+    return res;
   }
 
   // Story Card GU-02: Public media gallery

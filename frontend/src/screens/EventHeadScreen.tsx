@@ -42,6 +42,21 @@ export function EventHeadScreen({
   const [broadcastText, setBroadcastText] = useState("");
   const [broadcastMsg, setBroadcastMsg] = useState<string | null>(null);
 
+  // Live clash detection simulator
+  const hasClash = events.some((evt) => {
+    if (evt.venueId !== venueId) return false;
+    const existingStart = new Date(evt.startsAt).getTime();
+    const existingEnd = new Date(evt.endsAt).getTime();
+    const proposalStart = new Date(startsAt).getTime();
+    const proposalEnd = new Date(endsAt).getTime();
+    return (
+      !isNaN(proposalStart) &&
+      !isNaN(proposalEnd) &&
+      Math.max(existingStart, proposalStart) <
+        Math.min(existingEnd, proposalEnd)
+    );
+  });
+
   const handleCreateProposal = async (e: React.FormEvent) => {
     e.preventDefault();
     setProposalMsg(null);
@@ -242,6 +257,22 @@ export function EventHeadScreen({
                   className="w-full bg-ink-950 border border-royal-500/30 rounded-xl p-2.5 text-paper-50 font-mono text-[11px]"
                 />
               </div>
+            </div>
+
+            {/* Real-time automated clash check */}
+            <div
+              className={`p-2.5 rounded-xl border flex items-center gap-2 text-[11px] font-mono ${
+                hasClash
+                  ? "bg-ember-500/15 border-ember-500/40 text-ember-300"
+                  : "bg-mint-400/10 border-mint-400/30 text-mint-400"
+              }`}
+            >
+              <span>{hasClash ? "⚠️" : "✓"}</span>
+              <span>
+                {hasClash
+                  ? "Venue Conflict: Another event overlaps with requested time slot"
+                  : "Venue Available: Automated collision check passed"}
+              </span>
             </div>
 
             {proposalMsg && (

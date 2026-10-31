@@ -249,3 +249,58 @@
 - **Follow-ups**: Ready for commit to `dev` branch.
 
 ---
+
+### [2026-10-31 11:30 IST] FEAT-STREAM-GAMIFY — Real-Time Event Bus, Student Gamification & Pass Download Engine
+
+- **Prompt**: Improve the backend and frontend, add more features, fix bugs and issues, enhance the project, run it, and provide the links.
+- **Hat**: Full-Stack Lead & Platform Engineer
+- **What I did**:
+  - Implemented real-time Event Stream Hub (`backend/src/domain/stream/stream.routes.ts`) with SSE `/api/v1/stream` listener management, Last-Event-ID deduplication, 15-second proxy keep-alive heartbeats, and HTTP short-polling fallback `/stream/poll`.
+  - Wired live broadcasts across backend domain actions: atomic registrations broadcast `seat.updated`, waitlist promotions broadcast `waitlist.promoted`, QR gate scans broadcast `checkin.verified`, event head broadcasts dispatch `announcement.broadcast`, and lucky draw executions broadcast `luckydraw.completed`.
+  - Added student gamification XP and badges engine (`GET /api/v1/me/gamification`) with automatic XP rewards: +50 XP for event registrations, +100 XP for door admissions, and +25 XP for lucky draw entries.
+  - Built interactive `GamificationModal` (`frontend/src/components/GamificationModal.tsx`) showing current tier progress bar, achievement badge rack, and XP ledger.
+  - Built zero-dependency Web Audio API synthesizer (`frontend/src/utils/audio.ts`) providing melodic two-tone chimes for ticket bookings and emergency broadcast alerts, complete with a sound toggle in `Navbar`.
+  - Built floating emergency broadcast toast notification (`frontend/src/components/BroadcastToast.tsx`) triggered by real-time SSE announcements.
+  - Built direct digital festival badge PNG pass download (`handleDownloadPass` in `frontend/src/screens/MyTicketsScreen.tsx`) drawing HMAC tokens and branding onto an HTML5 canvas.
+  - Enhanced `DiscoverScreen.tsx` with sorting controls ("Seats Remaining (FOMO)", "Event Date Soonest", "Free First") and real-time search.
+  - Enhanced `EventHeadScreen.tsx` with live automated venue clash detection simulator warning organizers of overlapping bookings.
+  - Fixed TypeScript compiler errors (TS6133 unused variables, TS2345 undefined string type guard).
+- **Files changed**:
+  - `backend/src/domain/stream/stream.routes.ts` — Real-time StreamHub with listener registry and event sequence buffering.
+  - `backend/src/domain/registration/registration.service.ts` — Broadcast seat updates and waitlist promotions.
+  - `backend/src/domain/events/events.service.ts` — Announcement broadcast dispatch to stream bus.
+  - `backend/src/domain/checkin/checkin.service.ts` — Gate admission XP award and checkin broadcast.
+  - `backend/src/domain/luckydraw/luckydraw.service.ts` — Draw winner broadcast and XP reward.
+  - `backend/src/modules/me/routes.ts` — `GET /me/gamification` route.
+  - `backend/src/domain/domain.test.ts` — Added unit tests covering ST-06 and A9.
+  - `frontend/src/utils/audio.ts` — Web Audio synthesizer.
+  - `frontend/src/components/GamificationModal.tsx` — Student XP & badge modal.
+  - `frontend/src/components/BroadcastToast.tsx` — Real-time broadcast toast component.
+  - `frontend/src/components/Navbar.tsx` — Gamification trigger, XP counter, audio toggle.
+  - `frontend/src/screens/MyTicketsScreen.tsx` — Digital pass PNG download engine.
+  - `frontend/src/screens/DiscoverScreen.tsx` — Sorting controls, audio cues.
+  - `frontend/src/screens/EventHeadScreen.tsx` — Real-time venue collision indicator.
+  - `frontend/src/App.tsx` — Connected SSE listener, toast alerts, gamification drawer, and live API client.
+- **Commands run + results**:
+  - `pnpm generate:openapi` → PASS (`backend/openapi.yaml` regenerated)
+  - `pnpm --filter campus-fomo-backend test:unit` → PASS (37 tests)
+  - `pnpm --filter campus-fomo-frontend typecheck` → PASS (0 errors)
+  - `pnpm --filter campus-fomo-frontend test:unit` → PASS (1 test)
+  - `pnpm --filter campus-fomo-frontend build` → PASS (71.0 kB gzip JS, 5.8 kB gzip CSS)
+  - `pnpm --filter campus-fomo-backend build` → PASS (0 errors)
+  - `pnpm test:unit` → PASS (38 tests in 8.6s)
+  - `node scripts/check-ai-log.mjs` → PASS
+  - `pnpm verify` → PASS (All 8 pipeline checks green)
+- **Decisions & assumptions**:
+  - Web Audio API avoids external asset downloads and works offline.
+  - EventSource connects in browser with jsdom fallback for headless Vitest runs.
+  - Digital pass download operates client-side via canvas without sending user image generation to server.
+- **Tests**:
+  - `backend/src/domain/domain.test.ts` → PASS (37 tests including ST-06 gamification and A9 SSE stream poll)
+  - `frontend/src/App.test.tsx` → PASS
+- **[AI-WRONG] mistakes found**:
+  - In `MyTicketsScreen.tsx`, `event.venueName` could be undefined in rare edge cases causing TS2345; fixed with fallback `"Central Campus"`.
+  - Unused `lastEventIdRef` triggered TS6133 under strict compiler options; removed unused ref.
+- **Follow-ups**: Start backend and frontend servers and output clickable URLs for the user.
+
+---

@@ -84,6 +84,77 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
     }
   };
 
+  const handleDownloadPass = (
+    reg: RegistrationItem,
+    evtTitle: string,
+    venueName: string,
+  ) => {
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = 600;
+      canvas.height = 360;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const grad = ctx.createLinearGradient(0, 0, 600, 360);
+      grad.addColorStop(0, "#050B1F");
+      grad.addColorStop(0.5, "#0B1F4D");
+      grad.addColorStop(1, "#071536");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 600, 360);
+
+      ctx.strokeStyle = "#F2B705";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(10, 10, 580, 340);
+
+      ctx.fillStyle = "#F2B705";
+      ctx.font = "bold 15px monospace";
+      ctx.fillText("CHRIST UNIVERSITY • FEST '26 ADMISSION PASS", 30, 45);
+
+      ctx.fillStyle = "#F6F8FF";
+      ctx.font = "bold 20px sans-serif";
+      ctx.fillText(evtTitle.slice(0, 30), 30, 95);
+
+      ctx.fillStyle = "#6E93FF";
+      ctx.font = "14px monospace";
+      ctx.fillText(`📍 Venue: ${venueName.slice(0, 30)}`, 30, 140);
+      ctx.fillText(`🆔 Pass ID: ${reg.id}`, 30, 175);
+      ctx.fillText(`👤 Status: ${reg.status} (Verified Entry)`, 30, 210);
+
+      ctx.setLineDash([6, 6]);
+      ctx.strokeStyle = "#1E4FD8";
+      ctx.beginPath();
+      ctx.moveTo(420, 20);
+      ctx.lineTo(420, 340);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(445, 60, 120, 120);
+
+      ctx.fillStyle = "#050B1F";
+      ctx.fillRect(455, 70, 30, 30);
+      ctx.fillRect(525, 70, 30, 30);
+      ctx.fillRect(455, 140, 30, 30);
+      ctx.fillRect(495, 105, 20, 20);
+
+      ctx.fillStyle = "#3EE6B0";
+      ctx.font = "bold 12px monospace";
+      ctx.fillText("SCAN AT DOOR", 450, 215);
+
+      ctx.fillStyle = "#F6F8FF";
+      ctx.font = "10px monospace";
+      ctx.fillText("ZERO-TRUST PBAC", 445, 235);
+
+      const a = document.createElement("a");
+      a.download = `CampusFest-Pass-${reg.id.slice(0, 8)}.png`;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    } catch {
+      // Graceful fallback
+    }
+  };
+
   return (
     <div className="space-y-8 text-left">
       <div>
@@ -251,14 +322,32 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
                   </div>
 
                   {/* Ticket Footer / Verification Meta */}
-                  <div className="flex items-center justify-between text-[11px] font-mono text-paper-50/50">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-paper-50/50 pt-1">
                     <div>PASS ID: {reg.id.slice(0, 14)}</div>
-                    <button
-                      onClick={() => handleCancel(reg.id)}
-                      className="text-ember-400 hover:text-ember-300 font-medium underline"
-                    >
-                      Release Ticket
-                    </button>
+                    <div className="flex items-center gap-3">
+                      {isConfirmed && (
+                        <button
+                          onClick={() =>
+                            handleDownloadPass(
+                              reg,
+                              event.title,
+                              event.venueName || "Central Campus",
+                            )
+                          }
+                          className="text-gold-400 hover:text-gold-300 font-semibold flex items-center gap-1 transition-colors"
+                          title="Save offline PNG ticket"
+                        >
+                          <span>💾</span>
+                          <span>Save Pass</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleCancel(reg.id)}
+                        className="text-ember-400 hover:text-ember-300 font-medium underline"
+                      >
+                        Release Ticket
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

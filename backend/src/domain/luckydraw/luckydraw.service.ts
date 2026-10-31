@@ -1,4 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
+import { streamHub } from "../stream/stream.routes.js";
+import { eventsService } from "../events/events.service.js";
 
 export interface LuckyCampaign {
   id: string;
@@ -140,6 +142,12 @@ export class LuckyDrawService {
       this.entries.set(params.campaignId, campaignEntries);
       campaign.totalEntries = campaignEntries.length;
 
+      eventsService.awardXp(
+        params.userSub,
+        25,
+        `Entered lucky draw: ${campaign.title}`,
+      );
+
       return {
         message: "Successfully entered lucky draw",
         campaignId: params.campaignId,
@@ -182,6 +190,19 @@ export class LuckyDrawService {
     campaign.winnerName = winner.userName;
     campaign.winnerDept = winner.department;
     campaign.claimDeadline = new Date(Date.now() + 86400000).toISOString(); // 24 hours
+
+    eventsService.awardXp(
+      winner.userSub,
+      200,
+      `Won lucky draw prize: ${campaign.title}`,
+    );
+
+    streamHub.broadcast("luckydraw.completed", {
+      campaignId: campaign.id,
+      title: campaign.title,
+      winnerName: campaign.winnerName,
+      winnerDept: campaign.winnerDept,
+    });
 
     return campaign;
   }

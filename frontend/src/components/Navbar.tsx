@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { NavigationScreen } from "../api/types.js";
 import { DEMO_PERSONAS, type PersonaConfig } from "../auth/persona.js";
+import { sound } from "../utils/audio.js";
 
 interface NavbarProps {
   screens: NavigationScreen[];
@@ -9,6 +10,7 @@ interface NavbarProps {
   activePersona: PersonaConfig;
   onSelectPersona: (persona: PersonaConfig) => void;
   studentXp?: number;
+  onOpenGamification?: () => void;
 }
 
 export function Navbar({
@@ -18,8 +20,18 @@ export function Navbar({
   activePersona,
   onSelectPersona,
   studentXp = 450,
+  onOpenGamification,
 }: NavbarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(sound.enabled);
+
+  const toggleSound = () => {
+    sound.enabled = !soundEnabled;
+    setSoundEnabled(!soundEnabled);
+    if (!soundEnabled) {
+      sound.playSuccess();
+    }
+  };
 
   return (
     <>
@@ -82,14 +94,27 @@ export function Navbar({
           <div className="flex items-center gap-2.5">
             {/* Gamification XP Badge (Student only) */}
             {activePersona.role === "STUDENT" && (
-              <div
-                title="Your Campus Participation XP"
-                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold-400/15 border border-gold-400/30 text-gold-400 text-xs font-mono font-bold shadow-sm"
+              <button
+                onClick={() => onOpenGamification?.()}
+                title="Your Campus Participation XP (Click to view badges)"
+                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold-400/15 hover:bg-gold-400/25 border border-gold-400/30 text-gold-400 text-xs font-mono font-bold shadow-sm transition-all cursor-pointer"
               >
                 <span>⭐</span>
                 <span>{studentXp} XP</span>
-              </div>
+              </button>
             )}
+
+            {/* Audio Toggle */}
+            <button
+              onClick={toggleSound}
+              aria-label={
+                soundEnabled ? "Mute Festival Audio" : "Enable Festival Audio"
+              }
+              title={soundEnabled ? "Audio: ON" : "Audio: MUTED"}
+              className="p-1.5 rounded-xl bg-ink-800/80 hover:bg-ink-800 border border-royal-500/30 text-paper-50/70 hover:text-gold-400 text-xs transition-colors"
+            >
+              {soundEnabled ? "🔊" : "🔇"}
+            </button>
 
             {/* Persona Switcher Trigger Pill */}
             <button
