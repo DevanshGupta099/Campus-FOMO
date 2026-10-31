@@ -11,14 +11,14 @@ module.exports = {
       },
     },
     {
-      name: 'web-cannot-import-api',
+      name: 'frontend-cannot-import-backend',
       severity: 'error',
-      comment: 'apps/web must not import internal code or types from apps/api; communicate via packages/contracts only.',
+      comment: 'frontend must not import internal code or types from backend; communicate via OpenAPI / typed client only.',
       from: {
-        path: '^apps/web',
+        path: '^frontend',
       },
       to: {
-        path: '^apps/api',
+        path: '^backend',
       },
     },
     {
@@ -26,11 +26,11 @@ module.exports = {
       severity: 'error',
       comment: 'Modules must only import from another module through its public index.ts interface.',
       from: {
-        path: '^apps/api/src/modules/([^/]+)/',
+        path: '^backend/src/modules/([^/]+)/',
       },
       to: {
-        path: '^apps/api/src/modules/([^/]+)/',
-        pathNot: ['^apps/api/src/modules/$1/', '^apps/api/src/modules/[^/]+/index\\.ts$'],
+        path: '^backend/src/modules/([^/]+)/',
+        pathNot: ['^backend/src/modules/$1/', '^backend/src/modules/[^/]+/index\\.ts$'],
       },
     },
   ],

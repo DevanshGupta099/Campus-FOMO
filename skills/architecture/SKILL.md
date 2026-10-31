@@ -1,16 +1,30 @@
 ---
 name: campus-fomo-architecture
-description: Use when creating or changing modules, folders, contracts, events or cross-module calls in Campus FOMO. Enforces loose coupling, contract-first, outbox events and ports/adapters.
+description: Use when creating or modifying modules, services, database schemas, contracts, or cross-system boundaries in Campus FOMO. Enforces zero-trust PBAC, APISIX gateway, Keycloak IAM, and contract generation.
 ---
 
-# Architecture skill
+# Architecture Skill (v2 Solo Developer)
 
-1. **Read first:** `docs/ARCHITECTURE.md`, `packages/contracts`.
-2. **New backend module checklist:** folder `modules/<name>/` with `index.ts` (only exported surface), `routes.ts`, `service.ts`, `repo.ts`, `schema.ts` (Drizzle), `events.ts`, tests. Register in `app.ts` via `registerModule()`. Add a dependency-cruiser rule so other modules can import only `modules/<name>/index.ts`.
-3. **Cross-module:** call the other module's public interface for queries; publish a domain event (via outbox) for reactions. Never join across another module's tables in your repo; use its interface or a read model.
-4. **External things = ports.** Define `interface SmsProvider { send(msg): Promise<SendResult>; health(): Health }` in the module, adapters in `adapters/`. Choose adapter by config. A fake adapter must exist for tests.
-5. **Contract change procedure:** edit `packages/contracts` → regenerate OpenAPI → update backend handler → update MSW mock → update web hooks → bump contract test. All in one PR labelled `contract-change`.
-6. **Events:** name `domain.noun.verb` (`registration.confirmed`, `registration.waitlist_promoted`, `event.approved`). Payload versioned (`v: 1`). Consumers idempotent (use event id).
-7. **Config:** one `config.ts` with Zod-validated env; no `process.env` elsewhere.
-8. **Smells to refuse:** shared mutable singletons, god services, "utils" dumping ground, business logic in routes or React components, importing `apps/api` types into `apps/web` (use contracts).
-9. **Done when:** `pnpm depcruise` passes, no circular deps, every module has a README of 5 lines (purpose, public API, events in/out).
+## When to Use
+
+Use when adding or modifying backend domain modules, routes, contracts, database models, or external infrastructure adapters.
+
+## Rules
+
+1. **Contract Source of Truth:** Backend Zod schemas in `backend/src/contracts/schemas/` generate `backend/openapi.yaml`. The frontend generates its typed client directly from this specification. No shared code or cross-package imports.
+2. **Zero-Trust Perimeter:** Ingress traffic passes through Apache APISIX (port 9080) for rate limiting, CORS, and OpenID Connect validation. The Fastify backend (port 3001) re-validates tokens via Keycloak JWKS and enforces granular PBAC permissions.
+3. **Database-Level Atomicity:** Seat counting, waitlist promotion, and lucky draw selections must be atomic at the database level (`confirmed_count <= capacity`, `FOR UPDATE SKIP LOCKED`). Never check-then-act in application memory.
+4. **Isolated Modules:** Backend modules expose a clean service interface. Direct joins into another module's internal tables are forbidden.
+5. **Config Validation:** Environment variables are strictly validated via Zod at startup in `config.ts`; `process.env` is never accessed directly in application code.
+
+## Checklist
+
+- [ ] Zod schema defined in `backend/src/contracts/schemas/`.
+- [ ] Run `pnpm generate:openapi` to regenerate `backend/openapi.yaml`.
+- [ ] Frontend typed client updated in `frontend/src/api/`.
+- [ ] Database schema registered in `backend/src/domain/db/schema.ts`.
+- [ ] Route declares explicit `config: { auth: [...] }`.
+
+## Verification
+
+Run `pnpm verify` to execute typechecks, contract validations, and unit tests across frontend and backend.

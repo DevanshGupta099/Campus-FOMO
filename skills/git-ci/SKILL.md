@@ -1,38 +1,45 @@
 ---
 name: campus-fomo-git-ci
-description: Use for Git workflow, GitHub Actions, branch protection config, hooks, PR templates, CODEOWNERS and release tagging in Campus FOMO.
+description: Use for Git workflow, branch management, CI pipelines, pre-push hooks, and AI-LOG compliance in Campus FOMO.
 ---
 
-# Git and CI skill
+# Git and CI Skill (v2 Solo Developer)
+
+## When to Use
+
+Use when managing branches, setting up pre-commit or pre-push hooks, modifying GitHub Actions workflows, or validating CI pipelines.
 
 ## Branches
 
-`master` (protected) ← PRs from `feat/product-experience`, `feat/immersive-frontend`, `feat/backend-core`, `feat/quality-devops`. Hotfix: `fix/<short>` from master, PR back.
+- `master` (protected, release milestones only).
+- `dev` (active daily development branch for solo developer Devansh).
+- Feature branches `feat/*` are merged into `dev`. Obsolete 4-person role branches are deprecated.
 
-## Hooks (Husky, fast only)
+## Hooks & Local Verification
 
-pre-commit: lint-staged (eslint --fix, prettier), gitleaks protect on staged; commit-msg: commitlint (Conventional Commits); pre-push: `pnpm typecheck && pnpm test:unit:changed`.
+- `pre-commit`: lint-staged (eslint, prettier).
+- `commit-msg`: commitlint (Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:`, `test:`).
+- `pre-push`: `scripts/check-ai-log.mjs` verifying that `docs/AI-LOG.md` has an append-only entry whenever application code is modified.
 
-## `pnpm verify` (same as CI minus services)
+## Verification Pipeline (`pnpm verify`)
 
-`lint → typecheck → depcruise → unit → contract → build → size-limit`.
+Executes sequentially:
 
-## GitHub Actions (`.github/workflows/`)
+1. `check-ai-log.mjs` — AI log append-only compliance check.
+2. `Backend Typecheck` (`tsc --noEmit`).
+3. `Frontend Typecheck` (`tsc --noEmit`).
+4. `Backend Unit & Contract Tests` (Vitest).
+5. `Frontend Unit Tests` (Vitest).
+6. `OpenAPI Specification Generation` (`tsx scripts/generate-openapi.ts`).
+7. `Backend Build` (`tsc`).
+8. `Frontend Build` (`vite build`).
 
-- `ci.yml` on PR and push: jobs run in parallel with Turborepo cache: `static` (lint, tsc, depcruise, commitlint PR title) · `unit` (Vitest + coverage thresholds) · `integration` (services: postgres, redis; Testcontainers or service containers) · `contract` (OpenAPI regenerate-and-diff, Schemathesis) · `e2e-smoke` (Playwright, 3 shards) · `a11y` · `lighthouse` (budgets) · `security` (gitleaks, OSV-Scanner, CodeQL) · `build` (web + api Docker build). Final job `ci-gate` needs all, is the **single required check**.
-- `nightly.yml`: full e2e, k6 load, chaos, ZAP baseline, mutation (weekly), dependency review.
-- `release.yml` on tag `v*`: build, test, publish artifacts/Docker image, create GitHub Release notes from Conventional Commits.
-- `pr-hygiene.yml`: labels by path, size warning (> 800 lines), "contract-change" and "migration" detectors requiring extra reviewers, forbids committed `.env`, `.only`, `console.log`, `TODO`.
-- Concurrency groups cancel superseded runs; pin actions by SHA; least-privilege `permissions:`; no secrets on forks.
+## GitHub Actions (`.github/workflows/ci.yml`)
 
-## Repo files
+- Single required check: `ci-gate`.
+- Path filtering triggers jobs only for touched projects (`frontend/**`, `backend/**`, `infra/**`).
+- Secrets scan and license audit executed automatically.
 
-`CODEOWNERS` (paths from PLAYBOOK §3), `.github/pull_request_template.md` (checklist: tests, contract, migration, screenshots, docs/STATUS), `dependabot.yml` (weekly, grouped), `SECURITY.md`, `.editorconfig`, `.nvmrc`, `.env.example`, `docker-compose.yml` (postgres, redis, mailpit for dev email), `Makefile`/pnpm scripts: `dev`, `seed`, `seed:reset`, `verify`, `test:*`, `load:*`.
+## Verification
 
-## Branch protection (applied by a human; print exact settings)
-
-Require PR; 1 approving review; dismiss stale approvals; require `ci-gate`; require branches up to date; require conversation resolution; no force-push; no deletion; include admins.
-
-## Migrations in CI
-
-Spin up empty DB → apply all migrations → run `drizzle-kit check` (no drift) → apply seed → run seed-verification test.
+Run `pnpm verify` locally before pushing to `dev` or opening a pull request to `master`.

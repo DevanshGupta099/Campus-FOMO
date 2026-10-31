@@ -1,0 +1,602 @@
+{
+  "realm": "campus-fomo",
+  "displayName": "Campus FOMO — CHRIST University",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "rememberMe": true,
+  "verifyEmail": false,
+  "resetPasswordAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 5,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "revokeRefreshToken": true,
+  "refreshTokenMaxReuse": 0,
+  "defaultRole": {
+    "name": "default-roles-campus-fomo",
+    "description": "Default role composite for new self-registered users"
+  },
+  "roles": {
+    "realm": [
+      {
+        "name": "default-roles-campus-fomo",
+        "composite": true,
+        "composites": {
+          "realm": ["GUEST"]
+        }
+      },
+      {
+        "name": "GUEST",
+        "description": "External guest with public discovery and registration permissions",
+        "composite": true,
+        "composites": {
+          "client": {
+            "campus-api": [
+              "event:read:public",
+              "gallery:read",
+              "registration:create",
+              "registration:read:own",
+              "notification:read:own"
+            ]
+          }
+        }
+      },
+      {
+        "name": "STUDENT",
+        "description": "Verified CHRIST student with campus discovery, registrations and gamification",
+        "composite": true,
+        "composites": {
+          "client": {
+            "campus-api": [
+              "event:read:public",
+              "gallery:read",
+              "registration:create",
+              "registration:cancel:own",
+              "registration:read:own",
+              "luckydraw:enter",
+              "notification:read:own",
+              "gamification:read:own"
+            ]
+          }
+        }
+      },
+      {
+        "name": "EVENT_HEAD",
+        "description": "Student event head managing proposal, volunteer delegation, check-in, broadcast",
+        "composite": true,
+        "composites": {
+          "client": {
+            "campus-api": [
+              "event:read:public",
+              "event:create",
+              "event:update:own",
+              "event:submit:own",
+              "event:cancel:own",
+              "proposal:read:own",
+              "venue:request",
+              "resource:request",
+              "registration:manage:own-event",
+              "registration:export:own-event",
+              "volunteer:assign:own-event",
+              "broadcast:send:own-event",
+              "checkin:scan:own-event",
+              "checkin:manage:own-event",
+              "budget:read:own-event",
+              "budget:submit-receipt:own-event",
+              "report:submit:own-event",
+              "analytics:view:own-event",
+              "luckydraw:run",
+              "notification:read:own"
+            ]
+          }
+        }
+      },
+      {
+        "name": "VOLUNTEER",
+        "description": "Event volunteer with fast QR door scanner permissions",
+        "composite": true,
+        "composites": {
+          "client": {
+            "campus-api": [
+              "event:read:public",
+              "checkin:scan:own-event",
+              "notification:read:own"
+            ]
+          }
+        }
+      },
+      {
+        "name": "FACULTY",
+        "description": "Department Faculty Coordinator with approval and endorsement authority",
+        "composite": true,
+        "composites": {
+          "client": {
+            "campus-api": [
+              "event:read:public",
+              "event:read:any",
+              "event:approve:dept",
+              "event:reject",
+              "proposal:read:dept",
+              "analytics:view:own-event",
+              "notification:read:own"
+            ]
+          }
+        }
+      },
+      {
+        "name": "DEAN",
+        "description": "Dean of Students with campus-wide budget approval and executive analytics",
+        "composite": true,
+        "composites": {
+          "client": {
+            "campus-api": [
+              "event:read:public",
+              "event:read:any",
+              "event:approve:budget",
+              "event:reject",
+              "budget:approve",
+              "proposal:read:any",
+              "venue:manage",
+              "analytics:view:campus",
+              "audit:read",
+              "notification:read:own"
+            ]
+          }
+        }
+      },
+      {
+        "name": "SPONSOR",
+        "description": "Commercial partner managing dedicated cafe showcase and campaigns",
+        "composite": true,
+        "composites": {
+          "client": {
+            "campus-api": [
+              "event:read:public",
+              "sponsor:profile:manage:own",
+              "sponsor:campaign:manage:own",
+              "sponsor:analytics:view:own",
+              "luckydraw:audit"
+            ]
+          }
+        }
+      },
+      {
+        "name": "ADMIN",
+        "description": "Central IT Administrator with full PBAC and governance control",
+        "composite": true,
+        "composites": {
+          "client": {
+            "campus-api": [
+              "event:read:public",
+              "event:read:any",
+              "event:create",
+              "event:update:own",
+              "event:submit:own",
+              "event:cancel:own",
+              "event:cancel:any",
+              "event:approve:dept",
+              "event:approve:budget",
+              "event:reject",
+              "proposal:read:own",
+              "proposal:read:dept",
+              "proposal:read:any",
+              "venue:request",
+              "venue:manage",
+              "resource:request",
+              "registration:create",
+              "registration:cancel:own",
+              "registration:read:own",
+              "registration:manage:own-event",
+              "registration:export:own-event",
+              "checkin:scan:own-event",
+              "checkin:manage:own-event",
+              "volunteer:assign:own-event",
+              "broadcast:send:own-event",
+              "budget:read:own-event",
+              "budget:submit-receipt:own-event",
+              "budget:approve",
+              "report:submit:own-event",
+              "analytics:view:own-event",
+              "analytics:view:campus",
+              "gallery:read",
+              "gallery:manage",
+              "sponsor:profile:manage:own",
+              "sponsor:campaign:manage:own",
+              "sponsor:analytics:view:own",
+              "luckydraw:enter",
+              "luckydraw:run",
+              "luckydraw:audit",
+              "notification:read:own",
+              "gamification:read:own",
+              "rbac:manage",
+              "user:manage",
+              "audit:read",
+              "ops:view"
+            ]
+          }
+        }
+      }
+    ],
+    "client": {
+      "campus-api": [
+        { "name": "event:read:public", "description": "Read published events" },
+        {
+          "name": "event:read:any",
+          "description": "Read all events including unapproved drafts"
+        },
+        { "name": "event:create", "description": "Create event draft" },
+        { "name": "event:update:own", "description": "Update own event draft" },
+        {
+          "name": "event:submit:own",
+          "description": "Submit own event proposal"
+        },
+        { "name": "event:cancel:own", "description": "Cancel own event" },
+        {
+          "name": "event:cancel:any",
+          "description": "Emergency cancel any event"
+        },
+        {
+          "name": "event:approve:dept",
+          "description": "Stage-1 Department Faculty approval"
+        },
+        {
+          "name": "event:approve:budget",
+          "description": "Stage-2 Dean budget clearance"
+        },
+        {
+          "name": "event:reject",
+          "description": "Reject proposal with reason"
+        },
+        {
+          "name": "proposal:read:own",
+          "description": "Read own event proposal"
+        },
+        {
+          "name": "proposal:read:dept",
+          "description": "Read departmental proposals"
+        },
+        {
+          "name": "proposal:read:any",
+          "description": "Read campus-wide proposals"
+        },
+        { "name": "venue:request", "description": "Request campus location" },
+        {
+          "name": "venue:manage",
+          "description": "Manage venue master and allocations"
+        },
+        {
+          "name": "resource:request",
+          "description": "Request campus resources (AV, lab, Wi-Fi)"
+        },
+        { "name": "registration:create", "description": "Register for event" },
+        {
+          "name": "registration:cancel:own",
+          "description": "Cancel own registration"
+        },
+        {
+          "name": "registration:read:own",
+          "description": "Read own ticket and registrations"
+        },
+        {
+          "name": "registration:manage:own-event",
+          "description": "Manage registrations for own event"
+        },
+        {
+          "name": "registration:export:own-event",
+          "description": "Export participant roster with audit"
+        },
+        {
+          "name": "checkin:scan:own-event",
+          "description": "Scan attendee QR code at door"
+        },
+        {
+          "name": "checkin:manage:own-event",
+          "description": "Manage check-in roster"
+        },
+        {
+          "name": "volunteer:assign:own-event",
+          "description": "Assign volunteer scanner role"
+        },
+        {
+          "name": "broadcast:send:own-event",
+          "description": "Send urgent broadcast to participants"
+        },
+        {
+          "name": "budget:read:own-event",
+          "description": "Read own event expenditure"
+        },
+        {
+          "name": "budget:submit-receipt:own-event",
+          "description": "Submit expense receipt"
+        },
+        {
+          "name": "budget:approve",
+          "description": "Approve event budget expenditure"
+        },
+        {
+          "name": "report:submit:own-event",
+          "description": "Submit post-event closure report"
+        },
+        {
+          "name": "analytics:view:own-event",
+          "description": "View own event turnout analytics"
+        },
+        {
+          "name": "analytics:view:campus",
+          "description": "View campus-wide participation analytics"
+        },
+        { "name": "gallery:read", "description": "View media gallery" },
+        {
+          "name": "gallery:manage",
+          "description": "Curate and upload media items"
+        },
+        {
+          "name": "sponsor:profile:manage:own",
+          "description": "Manage sponsor showcase page"
+        },
+        {
+          "name": "sponsor:campaign:manage:own",
+          "description": "Manage sponsor ad campaigns"
+        },
+        {
+          "name": "sponsor:analytics:view:own",
+          "description": "View aggregate impression metrics"
+        },
+        {
+          "name": "luckydraw:enter",
+          "description": "Enter lucky draw campaign"
+        },
+        {
+          "name": "luckydraw:run",
+          "description": "Execute commit-reveal lucky draw"
+        },
+        {
+          "name": "luckydraw:audit",
+          "description": "Audit draw randomness and verification"
+        },
+        {
+          "name": "notification:read:own",
+          "description": "Read own in-app notifications"
+        },
+        {
+          "name": "gamification:read:own",
+          "description": "Read own XP ledger and badges"
+        },
+        {
+          "name": "rbac:manage",
+          "description": "Manage permissions, roles and screen grants"
+        },
+        {
+          "name": "user:manage",
+          "description": "Deactivate users or reset sessions"
+        },
+        { "name": "audit:read", "description": "Read system audit logs" },
+        {
+          "name": "ops:view",
+          "description": "View infrastructure operational metrics"
+        }
+      ]
+    }
+  },
+  "clients": [
+    {
+      "clientId": "campus-web",
+      "name": "Campus FOMO Web Application",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "rootUrl": "http://localhost:5173",
+      "baseUrl": "http://localhost:5173",
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://localhost:9080/*",
+        "http://127.0.0.1:5173/*"
+      ],
+      "webOrigins": ["*"],
+      "fullScopeAllowed": true
+    },
+    {
+      "clientId": "campus-api",
+      "name": "Campus FOMO Backend Resource Server",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "campus-api-secret-99",
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocolMappers": [
+        {
+          "name": "user-department",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "department",
+            "claim.name": "department",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "client-roles-to-permissions",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "client.id": "campus-api",
+            "claim.name": "permissions",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "multivalued": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "access-studio",
+      "name": "Access Studio Automation Service Account",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "access-studio-secret-99",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "fullScopeAllowed": true
+    }
+  ],
+  "users": [
+    {
+      "id": "01927500-0001-7000-8000-000000000001",
+      "username": "asha@christuniversity.in",
+      "email": "asha@christuniversity.in",
+      "firstName": "Asha",
+      "lastName": "Kumar",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Password123!", "temporary": false }
+      ],
+      "attributes": {
+        "department": ["Computer Science"],
+        "student_id": ["2611001"]
+      },
+      "realmRoles": ["STUDENT"]
+    },
+    {
+      "id": "01927500-0002-7000-8000-000000000002",
+      "username": "guest@external.edu",
+      "email": "guest@external.edu",
+      "firstName": "Vikram",
+      "lastName": "Sharma",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Password123!", "temporary": false }
+      ],
+      "attributes": {
+        "institution": ["St. Joseph's College"]
+      },
+      "realmRoles": ["GUEST"]
+    },
+    {
+      "id": "01927500-0003-7000-8000-000000000003",
+      "username": "karan@christuniversity.in",
+      "email": "karan@christuniversity.in",
+      "firstName": "Karan",
+      "lastName": "Verma",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Password123!", "temporary": false }
+      ],
+      "attributes": {
+        "department": ["Computer Science"],
+        "student_id": ["2611003"]
+      },
+      "realmRoles": ["EVENT_HEAD"]
+    },
+    {
+      "id": "01927500-0004-7000-8000-000000000004",
+      "username": "volunteer@christuniversity.in",
+      "email": "volunteer@christuniversity.in",
+      "firstName": "Rahul",
+      "lastName": "Singh",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Password123!", "temporary": false }
+      ],
+      "attributes": {
+        "department": ["Computer Science"],
+        "student_id": ["2611004"]
+      },
+      "realmRoles": ["VOLUNTEER"]
+    },
+    {
+      "id": "01927500-0005-7000-8000-000000000005",
+      "username": "dr.nair@christuniversity.in",
+      "email": "dr.nair@christuniversity.in",
+      "firstName": "Dr. Lakshmi",
+      "lastName": "Nair",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Password123!", "temporary": false }
+      ],
+      "attributes": {
+        "department": ["Computer Science"],
+        "faculty_id": ["F-1082"]
+      },
+      "realmRoles": ["FACULTY"]
+    },
+    {
+      "id": "01927500-0006-7000-8000-000000000006",
+      "username": "dean@christuniversity.in",
+      "email": "dean@christuniversity.in",
+      "firstName": "Father Joseph",
+      "lastName": "Varghese",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Password123!", "temporary": false }
+      ],
+      "attributes": {
+        "department": ["Deanery of Student Affairs"],
+        "faculty_id": ["ADMIN-001"]
+      },
+      "realmRoles": ["DEAN"]
+    },
+    {
+      "id": "01927500-0007-7000-8000-000000000007",
+      "username": "sponsor@thirdwavecoffee.in",
+      "email": "sponsor@thirdwavecoffee.in",
+      "firstName": "Priya",
+      "lastName": "Mehta",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Password123!", "temporary": false }
+      ],
+      "attributes": {
+        "company": ["Third Wave Coffee Campus Lounge"]
+      },
+      "realmRoles": ["SPONSOR"]
+    },
+    {
+      "id": "01927500-0008-7000-8000-000000000008",
+      "username": "admin@christuniversity.in",
+      "email": "admin@christuniversity.in",
+      "firstName": "System",
+      "lastName": "Administrator",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Password123!", "temporary": false }
+      ],
+      "attributes": {
+        "department": ["Centre for Digital Innovation"]
+      },
+      "realmRoles": ["ADMIN"]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "name": "campus-fomo-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/server.js",
+  "types": "./dist/server.d.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "generate:openapi": "tsx scripts/generate-openapi.ts",
+    "access:sync": "tsx scripts/access-sync.ts",
+    "seed": "tsx src/seed/index.ts",
+    "seed:reset": "tsx src/seed/index.ts --reset",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:integration": "vitest run"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "@fastify/helmet": "^11.1.1",
+    "@fastify/rate-limit": "^9.1.0",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.33.0",
+    "fastify": "^4.28.1",
+    "fastify-plugin": "^4.5.1",
+    "ioredis": "^5.4.1",
+    "jose": "^5.9.3",
+    "postgres": "^3.4.4",
+    "yaml": "^2.4.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "drizzle-kit": "^0.24.2",
+    "tsx": "^4.16.5",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}

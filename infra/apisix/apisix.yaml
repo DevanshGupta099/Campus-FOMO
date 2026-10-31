@@ -1,0 +1,73 @@
+routes:
+  # Route 1: Public Health and Discovery Endpoints (Rate Limited, No Token Required)
+  - id: public-routes
+    uri: /api/v1/public/*
+    methods: ["GET", "OPTIONS"]
+    upstream:
+      type: roundrobin
+      nodes:
+        "host.docker.internal:3001": 1
+    plugins:
+      limit-req:
+        rate: 20
+        burst: 10
+        key_type: var
+        key: remote_addr
+        rejected_code: 429
+      cors:
+        allow_origins: "*"
+        allow_methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS"
+        allow_headers: "*"
+      request-id:
+        include_in_response: true
+
+  # Route 2: SSE Real-Time Stream (Unbuffered, Long Timeout, Protected)
+  - id: sse-stream
+    uri: /api/v1/stream
+    methods: ["GET", "OPTIONS"]
+    upstream:
+      type: roundrobin
+      timeout:
+        connect: 10
+        send: 300
+        read: 300
+      nodes:
+        "host.docker.internal:3001": 1
+    plugins:
+      openid-connect:
+        client_id: "campus-api"
+        client_secret: "campus-api-secret-99"
+        discovery: "http://keycloak:8080/realms/campus-fomo/.well-known/openid-configuration"
+        bearer_only: true
+        realm: "campus-fomo"
+      cors:
+        allow_origins: "*"
+        allow_methods: "GET,OPTIONS"
+        allow_headers: "*"
+      request-id:
+        include_in_response: true
+
+  # Route 3: Standard Protected API Routes (OpenID Connect Bearer-Only Validation)
+  - id: protected-api
+    uri: /api/v1/*
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+    upstream:
+      type: roundrobin
+      nodes:
+        "host.docker.internal:3001": 1
+    plugins:
+      openid-connect:
+        client_id: "campus-api"
+        client_secret: "campus-api-secret-99"
+        discovery: "http://keycloak:8080/realms/campus-fomo/.well-known/openid-configuration"
+        bearer_only: true
+        realm: "campus-fomo"
+      cors:
+        allow_origins: "*"
+        allow_methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS"
+        allow_headers: "*"
+      request-id:
+        include_in_response: true
+
+# Global End of Standalone APISIX Config
+#END

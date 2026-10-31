@@ -1,40 +1,40 @@
-# GEMINI.md — Standing instructions for every Campus FOMO session
+# Campus FOMO — Agent Rules (v2, solo developer)
 
-Paste this whole file into AI Studio **System Instructions**. Skills live in `skills/*/SKILL.md`; the prompt tells you which to read.
+Install as an Antigravity workspace rule (Prompt R1 does this and replaces GEMINI.md). Applies to EVERY task.
 
-## Project
+## Context
 
-Campus FOMO: campus event discovery + registration platform for CHRIST University students. Monorepo: `apps/web`, `apps/api`, `packages/contracts`, `packages/ui`, `tests`, `e2e`, `load`. Read `PLAYBOOK.md`, `docs/ARCHITECTURE.md`, `docs/STATUS.md` when asked.
+Solo developer: Devansh. Branches: `master` (protected, releases only) and `dev` (daily work). Repo layout: `frontend/`, `backend/`, `infra/`, `docs/`, `.github/`, `.agent/`. Identity = Keycloak. Gateway = Apache APISIX. Authorization = permission-based (PBAC) on top of roles (RBAC). Handbook (`docs/reference/CampusFest_Student_Handbook.pdf`) is binding.
 
-## The 10 rules (violating one = redo the answer)
+## Rules
 
-1. **Think first.** Start every answer with "Assumptions" (bullets). If any assumption could change the design, ask up to 3 questions and stop. Otherwise proceed.
-2. **Contracts first.** API shapes come from `packages/contracts` (Zod). Never invent fields. Change the contract first, then both sides.
-3. **Loose coupling.** Backend = modules with a public `index.ts` interface; modules talk through interfaces/events, never reach into each other's tables or internals. Frontend = feature folders; 3D never imports from data layer.
-4. **Atomicity in the database.** Seat counting, waitlist promotion, XP awards and OTP counters are atomic (SQL transaction/constraint or Redis Lua). Never check-then-act in application code.
-5. **No secrets or personal data in logs.** OTPs, tokens, passwords, phone numbers (mask to last 2 digits) never appear in logs, errors, analytics or test snapshots.
-6. **Small diffs.** Change as little as possible. Do not rewrite files you were not asked to touch. List every file changed.
-7. **No placeholders.** No `TODO`, `lorem ipsum`, fake data in components, stubbed functions, hotlinked images, or "implement later". If something is out of scope, say so under Known Gaps.
-8. **Every change ships with tests** (unit at minimum; integration/e2e where the prompt says) and passes `pnpm verify`.
-9. **Performance budgets are requirements**: API p95 < 200 ms (reads) / < 400 ms (writes) at 500 rps on the target stack; web LCP < 2.5 s on mid-tier mobile; 3D holds 60 fps on tier-2 hardware, degrades gracefully, never blocks first paint.
-10. **Honesty.** If you are unsure a library API exists or a free-tier limit is current, say so and check the docs in your answer instead of guessing. Do not claim "all criteria met" without listing each.
+1. **Think first.** Begin with "Assumptions" (bullets). If an assumption could change the design, ask up to 3 questions and stop.
+2. **Log everything.** Before ending any task, append ONE entry to `docs/AI-LOG.md` (format in that file). Never edit or delete old entries. Include failures and AI mistakes (tag `[AI-WRONG]`). A task without a log entry is not finished.
+3. **Handbook first.** Requirements follow Story Card format with numbers. Every Must story → acceptance criteria → test with `// covers: <ID>`. Update `docs/HANDBOOK-COMPLIANCE.md` when a stage deliverable changes.
+4. **Permissions, not roles, in code.** Backend routes and frontend screens check permissions (`event:approve:dept`), never role names. Roles exist only as bundles of permissions inside Keycloak.
+5. **Zero trust.** The gateway validates tokens, the backend validates them again and enforces permissions plus ownership/scope. The UI hiding a button is UX, never security.
+6. **Backend is the contract source.** Zod schemas → generated `backend/openapi.yaml` → frontend generates its typed client from it. Frontend never imports backend code. No invented fields.
+7. **Atomicity in the database** for seats, waitlist, draws, XP. Never check-then-act in app code.
+8. **No secrets or personal data in logs, errors, tests, or AI-LOG.** Phones masked, no tokens, no passwords, no real personal data in seed.
+9. **Small diffs, no placeholders.** Change as little as possible; list files and functions changed; no TODO/lorem/hotlinked assets.
+10. **Tests with every change**; run the full verify before saying done. Report real command output, never "should pass".
+11. **Dangerous actions need my approval:** deleting branches/data/volumes, force-push, dropping DB, changing Keycloak realm in a running environment, installing a package you haven't verified exists on npm/PyPI (check exact name, maintainer, repo).
+12. **Prove it.** At the end of each phase, quiz me with 3 questions about code you wrote (handbook house rule 2).
+13. **Honesty.** If unsure an API/field exists in the pinned version (Keycloak, APISIX, libraries), look at its docs first and say what you verified.
 
-## Output Contract (end EVERY answer with this exact block)
+## Output Contract (end every answer with this)
 
 ```
 ## Output Contract
-Files changed: <path — one-line reason>
-Commands to run: <exact commands, in order>
+Files changed: <path — reason>
+Commands run + result: <exact command → pass/fail summary>
 Acceptance criteria: <ID — MET / NOT MET (why)>
 Tests added: <path — what it proves>
-Known gaps: <honest list, or "none">
-AI-got-it-wrong candidates: <things a reviewer should double-check>
-STATUS.md update: <3 lines to append>
+Known gaps: <honest list>
+AI-WRONG candidates: <things I should double-check>
+AI-LOG entry: <path#entry-id written>
 ```
 
 ## Conventions
 
-- TypeScript strict. ESLint + Prettier. Conventional Commits. Branch names fixed in PLAYBOOK.
-- Errors use RFC 7807 problem+json with stable `code`. IDs are UUIDv7. Times are UTC ISO-8601; display in Asia/Kolkata.
-- Env via a validated config module; never read `process.env` elsewhere. `.env.example` always updated.
-- Accessibility: every interactive element keyboard-reachable; `prefers-reduced-motion` honoured; every 3D hero has a non-WebGL fallback.
+TypeScript strict. Conventional Commits. UTC in storage, Asia/Kolkata in UI. RFC 7807 errors with stable `code`. Config validated at boot. WCAG 2.2 AA, `prefers-reduced-motion`, every 3D piece has a non-WebGL fallback. Mobile-first responsive (360 px up).

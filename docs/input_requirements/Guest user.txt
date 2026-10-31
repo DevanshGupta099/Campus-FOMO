@@ -1,0 +1,30 @@
+Guest user
+1. View upcoming events
+As a guest, I want to view all upcoming campus events that are open to external participants so that I can discover events I am interested in.
+
+2. View the event gallery
+As a guest, I want to view photos and videos from previous campus events so that I can learn about the college's activities and events.
+
+3. Register for eligible events
+As a guest, I want to register for events that allow participation from external students, other colleges, or the general public so that I can participate in suitable events.
+
+4. View event details
+As a guest, I want to view event descriptions, dates, timings, venues, participation fees, eligibility criteria, and registration deadlines so that I can decide whether to attend.
+
+5. Search and filter events
+As a guest, I want to search for events and filter them by category, date, or event type so that I can quickly find relevant events.
+
+6. Receive registration confirmation
+As a guest, I want to receive a confirmation message or email after successfully registering for an event so that I know my registration is complete.
+
+7. View registration details
+As a guest, I want to view my registration confirmation and event details so that I can refer to them before attending the event.
+
+8. View event announcements and updates
+As a guest, I want to view updates about registered events, including changes to timings, venues, or cancellations, so that I stay informed.
+
+9. Provide registration information
+As a guest, I want to enter my name, email address, institution, and other required details during registration so that the organizers can identify and contact me.
+
+10. Check event availability
+As a guest, I want to see whether an event has available seats or whether registration is closed so that I know if I can still register.
