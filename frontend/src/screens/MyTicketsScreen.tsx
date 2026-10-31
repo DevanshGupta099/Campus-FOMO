@@ -64,7 +64,7 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
   const handleCancel = async (regId: string) => {
     if (
       !window.confirm(
-        "Are you sure you want to cancel this ticket? The next student on the waitlist will be immediately promoted.",
+        "Are you sure you want to release this ticket? The next student on the waitlist will be immediately promoted.",
       )
     ) {
       return;
@@ -97,32 +97,32 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
       if (!ctx) return;
 
       const grad = ctx.createLinearGradient(0, 0, 600, 360);
-      grad.addColorStop(0, "#050B1F");
-      grad.addColorStop(0.5, "#0B1F4D");
-      grad.addColorStop(1, "#071536");
+      grad.addColorStop(0, "#080808");
+      grad.addColorStop(0.5, "#160b2b");
+      grad.addColorStop(1, "#0d0d0d");
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 600, 360);
 
-      ctx.strokeStyle = "#F2B705";
-      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#7c3aed";
+      ctx.lineWidth = 3;
       ctx.strokeRect(10, 10, 580, 340);
 
-      ctx.fillStyle = "#F2B705";
+      ctx.fillStyle = "#a78bfa";
       ctx.font = "bold 15px monospace";
       ctx.fillText("CHRIST UNIVERSITY • FEST '26 ADMISSION PASS", 30, 45);
 
-      ctx.fillStyle = "#F6F8FF";
+      ctx.fillStyle = "#fafafa";
       ctx.font = "bold 20px sans-serif";
       ctx.fillText(evtTitle.slice(0, 30), 30, 95);
 
-      ctx.fillStyle = "#6E93FF";
+      ctx.fillStyle = "#a78bfa";
       ctx.font = "14px monospace";
       ctx.fillText(`📍 Venue: ${venueName.slice(0, 30)}`, 30, 140);
       ctx.fillText(`🆔 Pass ID: ${reg.id}`, 30, 175);
       ctx.fillText(`👤 Status: ${reg.status} (Verified Entry)`, 30, 210);
 
       ctx.setLineDash([6, 6]);
-      ctx.strokeStyle = "#1E4FD8";
+      ctx.strokeStyle = "#4c1d95";
       ctx.beginPath();
       ctx.moveTo(420, 20);
       ctx.lineTo(420, 340);
@@ -132,17 +132,17 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(445, 60, 120, 120);
 
-      ctx.fillStyle = "#050B1F";
+      ctx.fillStyle = "#080808";
       ctx.fillRect(455, 70, 30, 30);
       ctx.fillRect(525, 70, 30, 30);
       ctx.fillRect(455, 140, 30, 30);
       ctx.fillRect(495, 105, 20, 20);
 
-      ctx.fillStyle = "#3EE6B0";
+      ctx.fillStyle = "#10b981";
       ctx.font = "bold 12px monospace";
       ctx.fillText("SCAN AT DOOR", 450, 215);
 
-      ctx.fillStyle = "#F6F8FF";
+      ctx.fillStyle = "#a78bfa";
       ctx.font = "10px monospace";
       ctx.fillText("ZERO-TRUST PBAC", 445, 235);
 
@@ -156,32 +156,37 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
   };
 
   return (
-    <div className="space-y-8 text-left">
+    <div className="space-y-8 text-left animate-fadeIn">
       <div>
-        <h2 className="text-3xl font-extrabold text-paper-50 font-display">
+        <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-violet-500/15 text-violet-300 text-xs font-mono font-semibold mb-2">
+          <span>🎟️</span>
+          <span>CAMPUS FESTIVAL PASS WALLET</span>
+        </div>
+        <h2 className="text-3xl font-bold text-white tracking-tight">
           My Passes & Gate Tickets
         </h2>
-        <p className="text-xs text-royal-300 font-body">
+        <p className="text-xs text-white/60 mt-1 max-w-xl">
           Cryptographically signed digital passes. Anti-replay rotating tokens
-          refresh every 30 seconds to prevent unauthorized transfers.
+          refresh every 30 seconds to prevent unauthorized transfers and gate
+          scalping.
         </p>
       </div>
 
       {message && (
-        <div className="p-3.5 bg-mint-400/20 text-mint-300 border border-mint-400/40 rounded-2xl text-xs font-mono">
+        <div className="p-3.5 bg-mint-500/15 text-mint-300 border border-mint-500/30 rounded-2xl text-xs font-mono">
           {message}
         </div>
       )}
 
       {loading ? (
-        <p className="text-paper-50/60 text-xs">Loading passes...</p>
+        <p className="text-white/60 text-xs">Loading passes...</p>
       ) : registrations.length === 0 ? (
-        <div className="bg-ink-800/40 border border-royal-500/20 rounded-3xl p-12 text-center space-y-3">
+        <div className="bg-surface border border-white/10 rounded-3xl p-12 text-center space-y-3">
           <span className="text-4xl">🎟️</span>
-          <p className="text-paper-50 text-base font-bold">
+          <p className="text-white text-base font-bold">
             No active passes found.
           </p>
-          <p className="text-xs text-paper-50/60 max-w-sm mx-auto">
+          <p className="text-xs text-white/60 max-w-sm mx-auto">
             Browse upcoming workshops, hackathons, and cultural battles on the
             Discover feed to claim your seat.
           </p>
@@ -200,19 +205,19 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
             return (
               <div
                 key={reg.id}
-                className="relative bg-gradient-to-br from-ink-900 via-ink-850 to-ink-900 border border-royal-500/30 rounded-3xl p-6 sm:p-7 shadow-2xl flex flex-col justify-between overflow-hidden group hover:border-gold-400/40 transition-all"
+                className="relative bg-surface border border-white/10 rounded-3xl p-6 sm:p-7 shadow-card hover:border-violet-500/40 hover:shadow-card-hover transition-all flex flex-col justify-between overflow-hidden group"
               >
                 {/* Decorative background watermark */}
-                <div className="absolute -right-12 -top-12 text-[140px] font-black text-royal-500/5 select-none pointer-events-none font-display">
+                <div className="absolute -right-8 -top-8 text-[120px] font-black text-white/[0.02] select-none pointer-events-none font-mono">
                   PASS
                 </div>
 
                 <div className="space-y-4 relative z-10">
                   {/* Pass Header */}
-                  <div className="flex items-center justify-between border-b border-royal-500/15 pb-3">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-gold-400 animate-pulse"></div>
-                      <span className="text-[11px] font-mono tracking-widest uppercase font-bold text-paper-50">
+                      <div className="w-2.5 h-2.5 rounded-full bg-violet-400 animate-pulse"></div>
+                      <span className="text-[11px] font-mono tracking-widest uppercase font-bold text-white">
                         CHRIST FESTIVAL ADMISSION
                       </span>
                     </div>
@@ -220,8 +225,8 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
                     <span
                       className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full ${
                         isConfirmed
-                          ? "bg-mint-400/20 text-mint-400 border border-mint-400/30"
-                          : "bg-gold-400/20 text-gold-400 border border-gold-400/30"
+                          ? "bg-mint-500/20 text-mint-300 border border-mint-500/30"
+                          : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
                       }`}
                     >
                       {reg.status}
@@ -233,13 +238,13 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
 
                   {/* Event Details */}
                   <div className="space-y-1">
-                    <h3 className="text-xl font-bold text-paper-50 group-hover:text-gold-400 transition-colors">
+                    <h3 className="text-xl font-bold text-white group-hover:text-violet-300 transition-colors">
                       {event.title}
                     </h3>
-                    <p className="text-xs text-royal-300 font-mono">
+                    <p className="text-xs text-violet-400 font-mono">
                       📍 {event.venueName}
                     </p>
-                    <p className="text-xs text-paper-50/60 font-mono">
+                    <p className="text-xs text-white/60 font-mono">
                       🕒{" "}
                       {new Date(event.startsAt).toLocaleString("en-IN", {
                         timeZone: "Asia/Kolkata",
@@ -252,49 +257,49 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
                     </p>
                   </div>
 
-                  {/* QR Code Presentation Box */}
+                  {/* QR Presentation Box */}
                   {isConfirmed && (
-                    <div className="bg-ink-950/80 p-5 rounded-2xl border border-royal-500/25 flex flex-col items-center justify-center text-center space-y-3">
+                    <div className="bg-surface-2 p-5 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center space-y-3">
                       {activeToken?.id === reg.id ? (
                         <div className="space-y-3 w-full flex flex-col items-center animate-fadeIn">
                           {/* Simulated High-Res QR Ticket Canvas */}
                           <div className="w-40 h-40 bg-white p-2.5 rounded-2xl shadow-xl flex items-center justify-center">
-                            <div className="w-full h-full border-4 border-ink-950 flex flex-col items-center justify-center p-1.5 bg-white">
+                            <div className="w-full h-full border-4 border-void flex flex-col items-center justify-center p-1.5 bg-white">
                               <div className="grid grid-cols-5 gap-1 w-full h-full">
-                                <div className="bg-ink-950"></div>
-                                <div className="bg-ink-950"></div>
+                                <div className="bg-void"></div>
+                                <div className="bg-void"></div>
                                 <div></div>
-                                <div className="bg-ink-950"></div>
-                                <div className="bg-ink-950"></div>
+                                <div className="bg-void"></div>
+                                <div className="bg-void"></div>
                                 <div></div>
-                                <div className="bg-ink-950"></div>
-                                <div className="bg-ink-950"></div>
+                                <div className="bg-void"></div>
+                                <div className="bg-void"></div>
                                 <div></div>
                                 <div></div>
-                                <div className="bg-ink-950"></div>
+                                <div className="bg-void"></div>
                                 <div></div>
-                                <div className="bg-ink-950"></div>
+                                <div className="bg-void"></div>
                                 <div></div>
-                                <div className="bg-ink-950"></div>
-                                <div className="bg-ink-950"></div>
-                                <div className="bg-ink-950"></div>
+                                <div className="bg-void"></div>
+                                <div className="bg-void"></div>
+                                <div className="bg-void"></div>
                                 <div></div>
-                                <div className="bg-ink-950"></div>
-                                <div className="bg-ink-950"></div>
+                                <div className="bg-void"></div>
+                                <div className="bg-void"></div>
                                 <div></div>
-                                <div className="bg-ink-950"></div>
-                                <div className="bg-ink-950"></div>
+                                <div className="bg-void"></div>
+                                <div className="bg-void"></div>
                                 <div></div>
-                                <div className="bg-ink-950"></div>
+                                <div className="bg-void"></div>
                               </div>
                             </div>
                           </div>
 
                           <div className="space-y-1 w-full">
-                            <div className="text-[11px] font-mono text-gold-400 break-all px-2 bg-ink-900 py-1.5 rounded-lg border border-gold-400/20">
+                            <div className="text-[11px] font-mono text-violet-300 break-all px-2 bg-surface-3 py-1.5 rounded-lg border border-violet-500/20">
                               {activeToken.token}
                             </div>
-                            <div className="text-[10px] text-paper-50/50 flex items-center justify-center gap-1.5">
+                            <div className="text-[10px] text-white/50 flex items-center justify-center gap-1.5">
                               <span className="w-1.5 h-1.5 rounded-full bg-mint-400 animate-ping"></span>
                               <span>
                                 Rotating token active • Gate scan ready
@@ -305,7 +310,7 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
                       ) : (
                         <button
                           onClick={() => handleShowRotatingToken(reg.id)}
-                          className="w-full py-3 px-4 bg-royal-500 hover:bg-royal-400 text-paper-50 rounded-xl text-xs font-bold shadow-lg shadow-royal-500/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01]"
+                          className="w-full py-3 px-4 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-violet-600/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01]"
                         >
                           <span>📱</span>
                           <span>Generate Dynamic Gate Pass QR</span>
@@ -314,15 +319,15 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
                     </div>
                   )}
 
-                  {/* Perforated Ticket Divider */}
+                  {/* Perforated Ticket Notch Divider */}
                   <div className="relative py-2 select-none">
-                    <div className="border-t border-dashed border-royal-500/30"></div>
-                    <div className="absolute -left-9 -top-1 w-5 h-5 rounded-full bg-ink-950 border-r border-royal-500/30"></div>
-                    <div className="absolute -right-9 -top-1 w-5 h-5 rounded-full bg-ink-950 border-l border-royal-500/30"></div>
+                    <div className="border-t border-dashed border-white/10"></div>
+                    <div className="absolute -left-9 -top-1 w-5 h-5 rounded-full bg-void border-r border-white/10"></div>
+                    <div className="absolute -right-9 -top-1 w-5 h-5 rounded-full bg-void border-l border-white/10"></div>
                   </div>
 
-                  {/* Ticket Footer / Verification Meta */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-paper-50/50 pt-1">
+                  {/* Ticket Footer / Action Buttons */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-white/50 pt-1">
                     <div>PASS ID: {reg.id.slice(0, 14)}</div>
                     <div className="flex items-center gap-3">
                       {isConfirmed && (
@@ -334,8 +339,8 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
                               event.venueName || "Central Campus",
                             )
                           }
-                          className="text-gold-400 hover:text-gold-300 font-semibold flex items-center gap-1 transition-colors"
-                          title="Save offline PNG ticket"
+                          className="text-violet-300 hover:text-white font-semibold flex items-center gap-1 transition-colors"
+                          title="Save offline PNG pass"
                         >
                           <span>💾</span>
                           <span>Save Pass</span>
@@ -343,7 +348,7 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
                       )}
                       <button
                         onClick={() => handleCancel(reg.id)}
-                        className="text-ember-400 hover:text-ember-300 font-medium underline"
+                        className="text-rose-400 hover:text-rose-300 font-medium underline"
                       >
                         Release Ticket
                       </button>

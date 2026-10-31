@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { EventItem } from "../api/types.js";
 import type { CampusFomoClient } from "../api/client.js";
+import { sound } from "../utils/audio.js";
 
 interface EventHeadScreenProps {
   client: CampusFomoClient;
@@ -71,6 +72,7 @@ export function EventHeadScreen({
         budget: Number(budget),
         teamSize: Number(teamSize),
       });
+      sound.playSuccess();
       setProposalMsg(
         "Proposal submitted! Department faculty mentor notified for endorsement review.",
       );
@@ -78,6 +80,7 @@ export function EventHeadScreen({
       setDescription("");
       onRefresh();
     } catch (err: any) {
+      sound.playAlert();
       setProposalMsg(`Error submitting: ${err.message}`);
     }
   };
@@ -87,10 +90,12 @@ export function EventHeadScreen({
     setVolunteerMsg(null);
     try {
       await client.assignVolunteer(selectedEventId, studentSub, roleTitle);
+      sound.playSuccess();
       setVolunteerMsg(
         "Volunteer assigned! Scanner permissions granted on the student's dashboard.",
       );
     } catch (err: any) {
+      sound.playAlert();
       setVolunteerMsg(`Error assigning volunteer: ${err.message}`);
     }
   };
@@ -100,27 +105,29 @@ export function EventHeadScreen({
     setBroadcastMsg(null);
     try {
       const res = await client.broadcastMessage(selectedEventId, broadcastText);
+      sound.playSuccess();
       setBroadcastMsg(
         `Dispatched to ${res.recipientCount || 100} attendees via Email and Push (Recipients masked).`,
       );
       setBroadcastText("");
     } catch (err: any) {
+      sound.playAlert();
       setBroadcastMsg(`Broadcast failed: ${err.message}`);
     }
   };
 
   return (
-    <div className="space-y-8 text-left">
+    <div className="space-y-8 text-left animate-fadeIn">
       <div>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-royal-500/15 text-royal-300 text-xs font-mono font-bold border border-royal-500/30">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/15 text-violet-300 text-xs font-mono font-bold border border-violet-500/30">
           <span>⚡ EVENT LEAD CONSOLE</span>
           <span>•</span>
           <span>STORY CARDS EH-01 TO EH-05</span>
         </div>
-        <h2 className="text-3xl font-extrabold text-paper-50 font-display mt-2">
+        <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mt-2">
           Event Operations & Management
         </h2>
-        <p className="text-xs text-royal-300 font-body max-w-xl">
+        <p className="text-xs text-white/60 max-w-xl mt-1">
           Submit proposals across the 5 binding handbook fields, delegate door
           scanning roles, and broadcast urgent schedule shifts.
         </p>
@@ -128,14 +135,14 @@ export function EventHeadScreen({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column: Submit Proposal */}
-        <section className="bg-gradient-to-br from-ink-900 to-ink-850 border border-royal-500/30 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl">
-          <div className="flex items-center gap-2 border-b border-royal-500/15 pb-3">
+        <section className="bg-surface border border-white/10 rounded-3xl p-6 sm:p-8 space-y-5 shadow-card">
+          <div className="flex items-center gap-2 border-b border-white/10 pb-3">
             <span className="text-xl">📋</span>
             <div>
-              <h3 className="font-bold text-paper-50 text-base">
+              <h3 className="font-bold text-white text-base">
                 Event Proposal Submission (EH-01)
               </h3>
-              <span className="text-[10px] text-royal-300 font-mono">
+              <span className="text-[10px] text-violet-300 font-mono">
                 Validated against mid-sem blackouts and venue collisions
               </span>
             </div>
@@ -143,7 +150,7 @@ export function EventHeadScreen({
 
           <form onSubmit={handleCreateProposal} className="space-y-4 text-xs">
             <div>
-              <label className="block text-paper-50/70 mb-1 font-semibold">
+              <label className="block text-white/70 mb-1 font-semibold">
                 1. Event Title
               </label>
               <input
@@ -152,12 +159,12 @@ export function EventHeadScreen({
                 placeholder="e.g. Autonomous Agents Hackathon"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-ink-950 border border-royal-500/30 focus:border-royal-400 rounded-xl p-3 text-paper-50"
+                className="w-full bg-surface-2 border border-white/10 focus:border-violet-500 rounded-xl p-3 text-white outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-paper-50/70 mb-1 font-semibold">
+              <label className="block text-white/70 mb-1 font-semibold">
                 2. Description (Goals, format, and rules)
               </label>
               <textarea
@@ -166,19 +173,19 @@ export function EventHeadScreen({
                 placeholder="Describe team formations, technical tracks, and equipment requirements..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-ink-950 border border-royal-500/30 focus:border-royal-400 rounded-xl p-3 text-paper-50"
+                className="w-full bg-surface-2 border border-white/10 focus:border-violet-500 rounded-xl p-3 text-white outline-none"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-paper-50/70 mb-1 font-semibold">
+                <label className="block text-white/70 mb-1 font-semibold">
                   3. Requested Venue
                 </label>
                 <select
                   value={venueId}
                   onChange={(e) => setVenueId(e.target.value)}
-                  className="w-full bg-ink-950 border border-royal-500/30 rounded-xl p-3 text-paper-50"
+                  className="w-full bg-surface-2 border border-white/10 rounded-xl p-3 text-white outline-none"
                 >
                   <option value="ven-auditorium">
                     Central Campus Auditorium
@@ -190,7 +197,7 @@ export function EventHeadScreen({
               </div>
 
               <div>
-                <label className="block text-paper-50/70 mb-1 font-semibold">
+                <label className="block text-white/70 mb-1 font-semibold">
                   4. Budget Requested (₹)
                 </label>
                 <input
@@ -198,14 +205,14 @@ export function EventHeadScreen({
                   required
                   value={budget}
                   onChange={(e) => setBudget(Number(e.target.value))}
-                  className="w-full bg-ink-950 border border-royal-500/30 rounded-xl p-3 text-paper-50 font-mono"
+                  className="w-full bg-surface-2 border border-white/10 rounded-xl p-3 text-white font-mono outline-none"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-paper-50/70 mb-1 font-semibold">
+                <label className="block text-white/70 mb-1 font-semibold">
                   5. Total Capacity Limit
                 </label>
                 <input
@@ -213,12 +220,12 @@ export function EventHeadScreen({
                   required
                   value={capacity}
                   onChange={(e) => setCapacity(Number(e.target.value))}
-                  className="w-full bg-ink-950 border border-royal-500/30 rounded-xl p-3 text-paper-50 font-mono"
+                  className="w-full bg-surface-2 border border-white/10 rounded-xl p-3 text-white font-mono outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-paper-50/70 mb-1 font-semibold">
+                <label className="block text-white/70 mb-1 font-semibold">
                   Team Size Per Entry
                 </label>
                 <input
@@ -226,14 +233,14 @@ export function EventHeadScreen({
                   required
                   value={teamSize}
                   onChange={(e) => setTeamSize(Number(e.target.value))}
-                  className="w-full bg-ink-950 border border-royal-500/30 rounded-xl p-3 text-paper-50 font-mono"
+                  className="w-full bg-surface-2 border border-white/10 rounded-xl p-3 text-white font-mono outline-none"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-paper-50/70 mb-1 font-semibold">
+                <label className="block text-white/70 mb-1 font-semibold">
                   Event Starts
                 </label>
                 <input
@@ -241,12 +248,12 @@ export function EventHeadScreen({
                   required
                   value={startsAt}
                   onChange={(e) => setStartsAt(e.target.value)}
-                  className="w-full bg-ink-950 border border-royal-500/30 rounded-xl p-2.5 text-paper-50 font-mono text-[11px]"
+                  className="w-full bg-surface-2 border border-white/10 rounded-xl p-2.5 text-white font-mono text-[11px] outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-paper-50/70 mb-1 font-semibold">
+                <label className="block text-white/70 mb-1 font-semibold">
                   Event Ends
                 </label>
                 <input
@@ -254,7 +261,7 @@ export function EventHeadScreen({
                   required
                   value={endsAt}
                   onChange={(e) => setEndsAt(e.target.value)}
-                  className="w-full bg-ink-950 border border-royal-500/30 rounded-xl p-2.5 text-paper-50 font-mono text-[11px]"
+                  className="w-full bg-surface-2 border border-white/10 rounded-xl p-2.5 text-white font-mono text-[11px] outline-none"
                 />
               </div>
             </div>
@@ -263,8 +270,8 @@ export function EventHeadScreen({
             <div
               className={`p-2.5 rounded-xl border flex items-center gap-2 text-[11px] font-mono ${
                 hasClash
-                  ? "bg-ember-500/15 border-ember-500/40 text-ember-300"
-                  : "bg-mint-400/10 border-mint-400/30 text-mint-400"
+                  ? "bg-rose-500/15 border-rose-500/40 text-rose-300"
+                  : "bg-mint-500/10 border-mint-500/30 text-mint-400"
               }`}
             >
               <span>{hasClash ? "⚠️" : "✓"}</span>
@@ -279,8 +286,8 @@ export function EventHeadScreen({
               <div
                 className={`p-3 rounded-xl text-xs font-mono ${
                   proposalMsg.includes("Error")
-                    ? "bg-ember-500/20 text-ember-300 border border-ember-500/40"
-                    : "bg-mint-400/20 text-mint-300 border border-mint-400/40"
+                    ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
+                    : "bg-mint-500/20 text-mint-300 border border-mint-500/40"
                 }`}
               >
                 {proposalMsg}
@@ -289,7 +296,7 @@ export function EventHeadScreen({
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-royal-500 hover:bg-royal-400 text-paper-50 font-bold shadow-lg shadow-royal-500/25 mt-2 transition-all hover:scale-[1.01]"
+              className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold shadow-lg shadow-violet-600/25 mt-2 transition-all hover:scale-[1.01]"
             >
               Submit Proposal for Faculty Endorsement
             </button>
@@ -299,14 +306,14 @@ export function EventHeadScreen({
         {/* Right Column: Volunteer Delegation & Urgent Broadcast */}
         <div className="space-y-6">
           {/* Volunteer Role Delegation */}
-          <section className="bg-gradient-to-br from-ink-900 to-ink-850 border border-royal-500/30 rounded-3xl p-6 sm:p-7 space-y-4 shadow-2xl">
-            <div className="flex items-center gap-2 border-b border-royal-500/15 pb-3">
+          <section className="bg-surface border border-white/10 rounded-3xl p-6 sm:p-7 space-y-4 shadow-card">
+            <div className="flex items-center gap-2 border-b border-white/10 pb-3">
               <span className="text-xl">🤝</span>
               <div>
-                <h3 className="font-bold text-paper-50 text-base">
+                <h3 className="font-bold text-white text-base">
                   Volunteer Scanner Delegation (EH-02)
                 </h3>
-                <span className="text-[10px] text-royal-300 font-mono">
+                <span className="text-[10px] text-violet-300 font-mono">
                   Grants door scan permissions without exposing budgets
                 </span>
               </div>
@@ -317,13 +324,13 @@ export function EventHeadScreen({
               className="space-y-3.5 text-xs"
             >
               <div>
-                <label className="block text-paper-50/70 mb-1 font-semibold">
+                <label className="block text-white/70 mb-1 font-semibold">
                   Select Event
                 </label>
                 <select
                   value={selectedEventId}
                   onChange={(e) => setSelectedEventId(e.target.value)}
-                  className="w-full bg-ink-950 border border-royal-500/30 rounded-xl p-2.5 text-paper-50"
+                  className="w-full bg-surface-2 border border-white/10 rounded-xl p-2.5 text-white outline-none"
                 >
                   {events.map((e) => (
                     <option key={e.id} value={e.id}>
@@ -334,7 +341,7 @@ export function EventHeadScreen({
               </div>
 
               <div>
-                <label className="block text-paper-50/70 mb-1 font-semibold">
+                <label className="block text-white/70 mb-1 font-semibold">
                   Student Sub / ID (Search)
                 </label>
                 <input
@@ -342,12 +349,12 @@ export function EventHeadScreen({
                   required
                   value={studentSub}
                   onChange={(e) => setStudentSub(e.target.value)}
-                  className="w-full bg-ink-950 border border-royal-500/30 rounded-xl p-2.5 text-paper-50 font-mono text-[11px]"
+                  className="w-full bg-surface-2 border border-white/10 rounded-xl p-2.5 text-white font-mono text-[11px] outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-paper-50/70 mb-1 font-semibold">
+                <label className="block text-white/70 mb-1 font-semibold">
                   Assigned Role
                 </label>
                 <input
@@ -355,19 +362,19 @@ export function EventHeadScreen({
                   required
                   value={roleTitle}
                   onChange={(e) => setRoleTitle(e.target.value)}
-                  className="w-full bg-ink-950 border border-royal-500/30 rounded-xl p-2.5 text-paper-50"
+                  className="w-full bg-surface-2 border border-white/10 rounded-xl p-2.5 text-white outline-none"
                 />
               </div>
 
               {volunteerMsg && (
-                <div className="p-3 bg-mint-400/20 text-mint-300 border border-mint-400/40 rounded-xl text-xs font-mono">
+                <div className="p-3 bg-mint-500/20 text-mint-300 border border-mint-500/40 rounded-xl text-xs font-mono">
                   {volunteerMsg}
                 </div>
               )}
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-royal-500 hover:bg-royal-400 text-paper-50 rounded-xl font-bold shadow-md"
+                className="w-full py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-bold shadow-md"
               >
                 Assign Door Scanner Role
               </button>
@@ -375,14 +382,14 @@ export function EventHeadScreen({
           </section>
 
           {/* Broadcast Announcements */}
-          <section className="bg-gradient-to-br from-ink-900 to-ink-850 border border-royal-500/30 rounded-3xl p-6 sm:p-7 space-y-4 shadow-2xl">
-            <div className="flex items-center gap-2 border-b border-royal-500/15 pb-3">
+          <section className="bg-surface border border-white/10 rounded-3xl p-6 sm:p-7 space-y-4 shadow-card">
+            <div className="flex items-center gap-2 border-b border-white/10 pb-3">
               <span className="text-xl">📢</span>
               <div>
-                <h3 className="font-bold text-paper-50 text-base">
+                <h3 className="font-bold text-white text-base">
                   Broadcast Urgent Alert (EH-05)
                 </h3>
-                <span className="text-[10px] text-royal-300 font-mono">
+                <span className="text-[10px] text-violet-300 font-mono">
                   BCC recipient concealment enforced
                 </span>
               </div>
@@ -393,7 +400,7 @@ export function EventHeadScreen({
               className="space-y-3.5 text-xs"
             >
               <div>
-                <label className="block text-paper-50/70 mb-1 font-semibold">
+                <label className="block text-white/70 mb-1 font-semibold">
                   Urgent Notice
                 </label>
                 <textarea
@@ -402,19 +409,19 @@ export function EventHeadScreen({
                   placeholder="e.g. Venue moved to Audi Block 2 due to rain in amphitheatre..."
                   value={broadcastText}
                   onChange={(e) => setBroadcastText(e.target.value)}
-                  className="w-full bg-ink-950 border border-royal-500/30 rounded-xl p-2.5 text-paper-50"
+                  className="w-full bg-surface-2 border border-white/10 rounded-xl p-2.5 text-white outline-none"
                 />
               </div>
 
               {broadcastMsg && (
-                <div className="p-3 bg-mint-400/20 text-mint-300 border border-mint-400/40 rounded-xl text-xs font-mono">
+                <div className="p-3 bg-mint-500/20 text-mint-300 border border-mint-500/40 rounded-xl text-xs font-mono">
                   {broadcastMsg}
                 </div>
               )}
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-ember-500 hover:bg-ember-400 text-ink-950 rounded-xl font-black shadow-lg shadow-ember-500/20"
+                className="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold shadow-lg shadow-rose-600/20"
               >
                 🚀 Dispatch Mass Broadcast (Masked Recipients)
               </button>

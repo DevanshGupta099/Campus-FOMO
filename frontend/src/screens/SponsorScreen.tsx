@@ -69,66 +69,64 @@ export function SponsorScreen({ client, onNavigate }: SponsorScreenProps) {
 
   if (loading) {
     return (
-      <p className="text-xs text-paper-50/60 text-left">
+      <p className="text-xs text-white/60 text-left">
         Loading sponsor lounge...
       </p>
     );
   }
 
   return (
-    <div className="space-y-8 text-left">
+    <div className="space-y-8 text-left animate-fadeIn">
       {/* Brand Hero Showcase */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-ink-900 via-royal-950 to-ink-950 border border-gold-400/40 rounded-3xl p-6 sm:p-10 space-y-6 shadow-2xl">
+      <section className="relative overflow-hidden bg-surface border border-amber-500/30 rounded-3xl p-6 sm:p-10 space-y-6 shadow-card">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-400/15 text-gold-400 text-xs font-mono font-bold border border-gold-400/30">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-xs font-mono font-bold border border-amber-500/30">
               <span>☕ OFFICIAL HOSPITALITY PARTNER</span>
               <span>•</span>
               <span>CHRIST FEST '26</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-paper-50 font-display">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
               {showcase?.brand}
             </h2>
 
-            <p className="text-royal-300 text-sm font-body max-w-xl">
+            <p className="text-white/70 text-sm max-w-xl leading-relaxed">
               {showcase?.tagline}
             </p>
           </div>
 
-          <div className="bg-ink-950/80 border border-royal-500/25 rounded-2xl p-4 text-xs font-mono space-y-1.5 min-w-[220px]">
-            <div className="flex items-center gap-2">
+          <div className="bg-surface-2 border border-white/10 rounded-2xl p-4 text-xs font-mono space-y-1.5 min-w-[220px]">
+            <div className="flex items-center gap-2 text-white/80">
               <span>📍</span>
               <span>{showcase?.location}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-white/80">
               <span>⏰</span>
               <span>{showcase?.hours}</span>
             </div>
             <div className="flex items-center gap-2 text-mint-400">
               <span>📶</span>
-              <span>Campus Wi-Fi Lounge</span>
+              <span>Campus Wi-Fi Lounge Active</span>
             </div>
           </div>
         </div>
 
         {/* Student Festival Perk Card */}
-        <div className="bg-gradient-to-r from-gold-400/15 via-gold-400/10 to-transparent border border-gold-400/35 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent border border-amber-500/30 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <span className="text-3xl">☕</span>
             <div>
-              <h4 className="text-base font-bold text-gold-400">
+              <h4 className="text-base font-bold text-amber-300">
                 Exclusive Festival Student Perk
               </h4>
-              <p className="text-xs text-paper-50/80">
-                {showcase?.studentPerk}
-              </p>
+              <p className="text-xs text-white/70">{showcase?.studentPerk}</p>
             </div>
           </div>
 
           <button
             onClick={() => onNavigate("/lucky-draw")}
-            className="px-5 py-2.5 bg-gold-400 hover:bg-gold-300 text-ink-950 rounded-xl text-xs font-black whitespace-nowrap shadow-lg shadow-gold-400/20 transition-transform hover:scale-[1.02]"
+            className="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-void rounded-xl text-xs font-bold whitespace-nowrap shadow-lg shadow-amber-400/20 transition-transform hover:scale-[1.02]"
           >
             Enter Free Cold Brew Draw 🎁
           </button>
@@ -136,18 +134,18 @@ export function SponsorScreen({ client, onNavigate }: SponsorScreenProps) {
       </section>
 
       {/* Specialty Menu Highlights */}
-      <section className="bg-ink-800/60 border border-royal-500/25 rounded-3xl p-6 sm:p-8 space-y-5">
-        <div className="flex items-center justify-between border-b border-royal-500/15 pb-3">
+      <section className="bg-surface border border-white/10 rounded-3xl p-6 sm:p-8 space-y-5">
+        <div className="flex items-center justify-between border-b border-white/10 pb-3">
           <div>
-            <h3 className="font-bold text-paper-50 text-lg font-display">
+            <h3 className="font-bold text-white text-lg">
               Curated Festival Brews & Bites
             </h3>
-            <p className="text-xs text-royal-300">
+            <p className="text-xs text-white/60">
               Flash your dynamic Campus FOMO gate pass at the counter to claim
               student pricing.
             </p>
           </div>
-          <span className="text-xs font-mono text-gold-400 hidden sm:inline">
+          <span className="text-xs font-mono text-amber-300 hidden sm:inline">
             FLAT 20% DISCOUNT APPLIED
           </span>
         </div>
@@ -156,22 +154,22 @@ export function SponsorScreen({ client, onNavigate }: SponsorScreenProps) {
           {showcase?.menuHighlights.map((item, i) => (
             <div
               key={i}
-              className="bg-ink-950 p-5 rounded-2xl border border-royal-500/20 hover:border-gold-400/40 transition-all space-y-3 flex flex-col justify-between"
+              className="bg-surface-2 p-5 rounded-2xl border border-white/5 hover:border-amber-500/40 transition-all space-y-3 flex flex-col justify-between"
             >
               <div>
-                <span className="text-[10px] font-mono text-royal-300 block uppercase">
+                <span className="text-[10px] font-mono text-violet-400 block uppercase">
                   Specialty Roast
                 </span>
-                <h4 className="text-sm font-bold text-paper-50 mt-0.5">
+                <h4 className="text-sm font-bold text-white mt-0.5">
                   {item.name}
                 </h4>
               </div>
 
-              <div className="flex items-baseline justify-between pt-3 border-t border-royal-500/10 text-xs font-mono">
-                <span className="text-paper-50/40 line-through">
+              <div className="flex items-baseline justify-between pt-3 border-t border-white/5 text-xs font-mono">
+                <span className="text-white/40 line-through">
                   ₹{item.price}
                 </span>
-                <span className="text-mint-400 font-bold text-sm bg-mint-400/10 px-2 py-0.5 rounded-lg border border-mint-400/25">
+                <span className="text-mint-400 font-bold text-sm bg-mint-500/10 px-2 py-0.5 rounded-lg border border-mint-500/25">
                   ₹{item.studentPrice} with Pass
                 </span>
               </div>
@@ -182,58 +180,58 @@ export function SponsorScreen({ client, onNavigate }: SponsorScreenProps) {
 
       {/* Sponsor Engagement & Privacy Isolation (Handbook p. 4 NFR) */}
       {analytics && (
-        <section className="bg-ink-900 border border-royal-500/30 rounded-3xl p-6 sm:p-8 space-y-5">
-          <div className="flex items-center justify-between border-b border-royal-500/20 pb-3">
+        <section className="bg-surface border border-white/10 rounded-3xl p-6 sm:p-8 space-y-5">
+          <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <div>
-              <h3 className="font-bold text-paper-50 text-base font-display">
+              <h3 className="font-bold text-white text-base">
                 Partner Engagement Analytics
               </h3>
-              <p className="text-xs text-royal-300 font-mono">
+              <p className="text-xs text-violet-300 font-mono">
                 Aggregated fest audience reach • Zero PII leak
               </p>
             </div>
-            <span className="text-[10px] text-paper-50/50 font-mono">
+            <span className="text-[10px] text-white/40 font-mono">
               Role: SPONSOR
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-            <div className="bg-ink-950 p-5 rounded-2xl border border-royal-500/20">
-              <span className="text-[10px] uppercase font-mono text-paper-50/60 block">
+            <div className="bg-surface-2 p-5 rounded-2xl border border-white/5">
+              <span className="text-[10px] uppercase font-mono text-white/50 block">
                 Total Banner Impressions
               </span>
-              <span className="text-4xl font-black text-royal-300 font-display mt-1 block">
+              <span className="text-3xl sm:text-4xl font-bold text-violet-300 font-mono mt-1 block">
                 {analytics.totalImpressions}
               </span>
             </div>
 
-            <div className="bg-ink-950 p-5 rounded-2xl border border-royal-500/20">
-              <span className="text-[10px] uppercase font-mono text-paper-50/60 block">
+            <div className="bg-surface-2 p-5 rounded-2xl border border-white/5">
+              <span className="text-[10px] uppercase font-mono text-white/50 block">
                 Student Click-Throughs
               </span>
-              <span className="text-4xl font-black text-gold-400 font-display mt-1 block">
+              <span className="text-3xl sm:text-4xl font-bold text-amber-300 font-mono mt-1 block">
                 {analytics.bannerClickThroughs}
               </span>
             </div>
 
-            <div className="bg-ink-950 p-5 rounded-2xl border border-royal-500/20">
-              <span className="text-[10px] uppercase font-mono text-paper-50/60 block">
+            <div className="bg-surface-2 p-5 rounded-2xl border border-white/5">
+              <span className="text-[10px] uppercase font-mono text-white/50 block">
                 Discount Vouchers Claimed
               </span>
-              <span className="text-4xl font-black text-mint-400 font-display mt-1 block">
+              <span className="text-3xl sm:text-4xl font-bold text-mint-400 font-mono mt-1 block">
                 {analytics.voucherClaims}
               </span>
             </div>
           </div>
 
           {/* Binding Handbook Privacy Guarantee */}
-          <div className="p-4 bg-ink-950 rounded-2xl border border-mint-400/30 flex items-start gap-3 text-xs text-paper-50/80">
+          <div className="p-4 bg-surface-2 rounded-2xl border border-mint-500/30 flex items-start gap-3 text-xs text-white/80">
             <span className="text-xl">🛡️</span>
             <div>
-              <span className="font-bold text-paper-50 block font-mono text-xs">
+              <span className="font-bold text-white block font-mono text-xs">
                 Zero-Trust Student Privacy Guarantee (Handbook p. 4 NFR):
               </span>
-              <span className="text-paper-50/70">{analytics.privacyNote}</span>
+              <span className="text-white/60">{analytics.privacyNote}</span>
             </div>
           </div>
         </section>

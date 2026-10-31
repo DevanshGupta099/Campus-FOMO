@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { EventItem } from "../api/types.js";
 import type { CampusFomoClient } from "../api/client.js";
+import { sound } from "../utils/audio.js";
 
 interface ApprovalsScreenProps {
   client: CampusFomoClient;
@@ -28,11 +29,13 @@ export function ApprovalsScreen({
   const handleApproveFaculty = async (id: string) => {
     try {
       await client.approveFaculty(id);
+      sound.playSuccess();
       setStatusMsg(
         "Proposal endorsed! Escalated to Dean of Students for budget clearance.",
       );
       onRefresh();
     } catch (err: any) {
+      sound.playAlert();
       setStatusMsg(`Endorsement failed: ${err.message}`);
     }
   };
@@ -40,11 +43,13 @@ export function ApprovalsScreen({
   const handleApproveDean = async (id: string, budget?: number) => {
     try {
       await client.approveDean(id, budget);
+      sound.playSuccess();
       setStatusMsg(
         "Event budget approved! Event is now PUBLISHED to campus feed.",
       );
       onRefresh();
     } catch (err: any) {
+      sound.playAlert();
       setStatusMsg(`Dean clearance failed: ${err.message}`);
     }
   };
@@ -56,6 +61,7 @@ export function ApprovalsScreen({
     }
     try {
       await client.rejectEvent(id, rejectReason);
+      sound.playAlert();
       setStatusMsg("Event rejected and logged in university audit log.");
       setRejectingId(null);
       setRejectReason("");
@@ -66,14 +72,21 @@ export function ApprovalsScreen({
   };
 
   return (
-    <div className="space-y-6 text-left">
+    <div className="space-y-6 text-left animate-fadeIn">
       <div>
-        <h2 className="text-2xl font-extrabold text-paper-50 font-display">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-500/15 text-violet-300 text-xs font-mono font-semibold border border-violet-500/30">
+          <span>🛡️ GOVERNANCE PIPELINE</span>
+          <span>•</span>
+          <span>
+            {mode === "department" ? "FACULTY LEVEL" : "DEANERY LEVEL"}
+          </span>
+        </div>
+        <h2 className="text-3xl font-bold text-white tracking-tight mt-2">
           {mode === "department"
             ? "Faculty Departmental Endorsements (FC-01)"
             : "Deanery Executive Governance & Clearance (DS-01)"}
         </h2>
-        <p className="text-xs text-royal-300 font-body">
+        <p className="text-xs text-white/60 max-w-xl mt-1">
           {mode === "department"
             ? "Verify academic alignment and check automated venue collisions before endorsing proposals."
             : "Review university budget allocations, campus safety, and grant final fest publication clearance."}
@@ -81,21 +94,21 @@ export function ApprovalsScreen({
       </div>
 
       {statusMsg && (
-        <div className="p-3 bg-mint-400/20 text-mint-300 border border-mint-400/40 rounded-xl text-xs font-mono">
+        <div className="p-3 bg-mint-500/15 text-mint-300 border border-mint-500/30 rounded-xl text-xs font-mono">
           {statusMsg}
         </div>
       )}
 
       {pendingEvents.length === 0 ? (
-        <div className="bg-ink-800/40 border border-royal-500/20 rounded-2xl p-8 text-center space-y-2">
-          <p className="text-paper-50/70 text-sm">
+        <div className="bg-surface border border-white/10 rounded-2xl p-8 text-center space-y-2">
+          <p className="text-white/70 text-sm">
             No pending proposals awaiting{" "}
             {mode === "department"
               ? "faculty endorsement"
               : "deanery clearance"}
             .
           </p>
-          <p className="text-xs text-paper-50/40">
+          <p className="text-xs text-white/40">
             All department events have been reviewed.
           </p>
         </div>
@@ -104,110 +117,108 @@ export function ApprovalsScreen({
           {pendingEvents.map((evt) => (
             <div
               key={evt.id}
-              className="bg-ink-800/70 border border-royal-500/30 rounded-2xl p-5 shadow-xl space-y-4"
+              className="bg-surface border border-white/10 rounded-2xl p-6 shadow-card space-y-4"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-royal-500/10 pb-3">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-white/10 pb-3">
                 <div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gold-400/20 text-gold-400 border border-gold-400/30">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
                     {evt.status}
                   </span>
-                  <h3 className="text-lg font-bold text-paper-50 mt-1">
+                  <h3 className="text-lg font-bold text-white mt-1">
                     {evt.title}
                   </h3>
                 </div>
 
                 {/* Automated Clash Prevention Badge */}
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-mint-400/10 border border-mint-400/30 text-mint-400 text-xs font-semibold">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-mint-500/10 border border-mint-500/30 text-mint-400 text-xs font-semibold">
                   <span>✓</span>
                   <span>Venue Available (No Conflict)</span>
                 </div>
               </div>
 
-              <p className="text-xs text-paper-50/80">{evt.description}</p>
+              <p className="text-xs text-white/70">{evt.description}</p>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono bg-ink-950 p-3 rounded-xl border border-royal-500/20">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono bg-surface-2 p-3.5 rounded-xl border border-white/5">
                 <div>
-                  <span className="text-paper-50/50 block text-[10px]">
-                    VENUE
+                  <span className="text-white/40 block text-[10px]">VENUE</span>
+                  <span className="text-white font-medium">
+                    {evt.venueName || "Audi Block 2"}
                   </span>
-                  <span>{evt.venueName || "Audi Block 2"}</span>
                 </div>
                 <div>
-                  <span className="text-paper-50/50 block text-[10px]">
+                  <span className="text-white/40 block text-[10px]">
                     CAPACITY
                   </span>
-                  <span>{evt.capacity} seats</span>
-                </div>
-                <div>
-                  <span className="text-paper-50/50 block text-[10px]">
-                    SCHEDULE
-                  </span>
-                  <span>
-                    {new Date(evt.startsAt).toLocaleDateString("en-IN", {
-                      timeZone: "Asia/Kolkata",
-                      month: "short",
-                      day: "numeric",
-                    })}
+                  <span className="text-white font-medium">
+                    {evt.capacity} seats
                   </span>
                 </div>
                 <div>
-                  <span className="text-paper-50/50 block text-[10px]">
-                    FEE
+                  <span className="text-white/40 block text-[10px]">
+                    EXTERNAL STUDENTS
                   </span>
-                  <span>{evt.fee === 0 ? "Free" : `₹${evt.fee}`}</span>
+                  <span className="text-white font-medium">
+                    {evt.isExternalOpen ? "Allowed" : "Internal Only"}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-white/40 block text-[10px]">
+                    ESTIMATED BUDGET
+                  </span>
+                  <span className="text-amber-300 font-bold">₹25,000</span>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-2">
+              <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
                 <button
                   onClick={() => setRejectingId(evt.id)}
-                  className="px-4 py-2 rounded-lg bg-ink-950 border border-ember-500/40 text-ember-400 hover:bg-ember-500/10 text-xs font-semibold"
+                  className="px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-xl text-xs font-semibold transition-colors"
                 >
-                  Reject with Reason
+                  Reject Proposal
                 </button>
 
                 {mode === "department" ? (
                   <button
                     onClick={() => handleApproveFaculty(evt.id)}
-                    className="px-5 py-2 rounded-lg bg-royal-500 hover:bg-royal-400 text-paper-50 text-xs font-bold shadow-md"
+                    className="px-5 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-xs font-bold shadow-md shadow-violet-600/30 transition-all"
                   >
-                    Endorse Proposal (Escalate to Dean)
+                    Endorse Proposal (Pass to Dean)
                   </button>
                 ) : (
                   <button
-                    onClick={() => handleApproveDean(evt.id)}
-                    className="px-5 py-2 rounded-lg bg-mint-500 hover:bg-mint-400 text-ink-950 text-xs font-extrabold shadow-md"
+                    onClick={() => handleApproveDean(evt.id, 25000)}
+                    className="px-5 py-2 bg-mint-500 hover:bg-mint-400 text-void rounded-xl text-xs font-bold shadow-md shadow-mint-500/30 transition-all"
                   >
-                    Approve Budget & Publish Event
+                    Grant Budget & Publish Event
                   </button>
                 )}
               </div>
 
-              {/* Rejection Dialog */}
+              {/* Rejection Note Drawer */}
               {rejectingId === evt.id && (
-                <div className="mt-3 p-4 bg-ink-950 border border-ember-500/40 rounded-xl space-y-2">
-                  <label className="block text-xs font-semibold text-ember-300">
-                    Rejection Reason (minimum 10 characters):
+                <div className="bg-surface-2 p-4 rounded-xl border border-rose-500/30 space-y-3 animate-fadeIn">
+                  <label className="block text-xs font-bold text-rose-300">
+                    Mandatory Rejection Reason (Logged to Audit Trail):
                   </label>
-                  <input
-                    type="text"
+                  <textarea
+                    rows={2}
                     required
-                    placeholder="e.g. Schedule conflicts with mid-semester examinations..."
+                    placeholder="State reason: e.g. Academic conflict during mid-semester examination week..."
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
-                    className="w-full bg-ink-900 border border-royal-500/30 rounded-lg p-2 text-paper-50 text-xs"
+                    className="w-full bg-void border border-white/10 rounded-xl p-2.5 text-xs text-white outline-none focus:border-rose-500"
                   />
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => setRejectingId(null)}
-                      className="px-3 py-1 rounded text-xs text-paper-50/60"
+                      className="px-3 py-1.5 text-xs text-white/60 hover:text-white"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={() => handleReject(evt.id)}
-                      className="px-3 py-1 rounded bg-ember-600 hover:bg-ember-500 text-paper-50 text-xs font-bold"
+                      className="px-4 py-1.5 bg-rose-600 text-white rounded-xl text-xs font-bold shadow-sm"
                     >
                       Confirm Rejection
                     </button>

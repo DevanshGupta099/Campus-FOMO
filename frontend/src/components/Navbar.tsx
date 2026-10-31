@@ -33,55 +33,79 @@ export function Navbar({
     }
   };
 
+  // Merge extra discovery screens if not present
+  const allScreens: NavigationScreen[] = [...screens];
+
+  if (!allScreens.some((s) => s.path === "/map")) {
+    allScreens.push({
+      key: "campus-map",
+      path: "/map",
+      title: "Campus Map",
+      section: "events",
+      icon: "map",
+    });
+  }
+
+  if (!allScreens.some((s) => s.path === "/feed")) {
+    allScreens.push({
+      key: "social-feed",
+      path: "/feed",
+      title: "Social Buzz",
+      section: "events",
+      icon: "message-circle",
+      badge: "LIVE",
+    });
+  }
+
   return (
     <>
-      <header className="sticky top-0 z-40 bg-ink-950/80 backdrop-blur-xl border-b border-royal-500/20 px-4 py-2.5 transition-all">
+      <header className="sticky top-0 z-40 bg-surface/85 backdrop-blur-xl border-b border-white/10 px-4 py-2.5 transition-all">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          {/* Brand Logo & Fest Title */}
+          {/* Brand Logo */}
           <div
             onClick={() => onNavigate("/")}
             className="cursor-pointer flex items-center gap-3 group select-none"
           >
-            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-tr from-royal-700 via-royal-500 to-gold-400 p-[1.5px] shadow-lg shadow-royal-500/30 group-hover:scale-105 transition-transform">
-              <div className="w-full h-full bg-ink-950 rounded-[10px] flex items-center justify-center font-display font-black text-xs text-gold-400">
+            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 via-rose-500 to-amber-400 p-[1.5px] shadow-lg shadow-violet-600/30 group-hover:scale-105 transition-transform">
+              <div className="w-full h-full bg-void rounded-[10px] flex items-center justify-center font-mono font-bold text-xs text-violet-300">
                 CF
               </div>
             </div>
 
             <div className="text-left">
               <div className="flex items-center gap-1.5">
-                <span className="font-display font-black text-lg tracking-tight text-paper-50 group-hover:text-royal-300 transition-colors">
-                  CAMPUS <span className="text-gold-400">FOMO</span>
+                <span className="font-bold text-base tracking-tight text-white group-hover:text-violet-300 transition-colors">
+                  CAMPUS <span className="text-gradient-violet">FOMO</span>
                 </span>
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-mint-400 animate-pulse"></span>
               </div>
-              <span className="text-[10px] text-paper-50/50 block font-mono tracking-wider -mt-0.5">
+              <span className="text-[10px] text-white/40 block font-mono tracking-wider -mt-0.5">
                 CHRIST UNIVERSITY • FEST '26
               </span>
             </div>
           </div>
 
-          {/* Desktop Navigation Tabs (Server-driven via /me/navigation) */}
+          {/* Desktop Navigation Tabs */}
           <nav
             aria-label="Main Navigation"
-            className="hidden md:flex items-center gap-1.5 bg-ink-900/60 p-1 rounded-xl border border-royal-500/20"
+            className="hidden lg:flex items-center gap-1 bg-surface-2/70 p-1 rounded-xl border border-white/5"
           >
-            {screens.map((screen) => {
+            {allScreens.map((screen) => {
               const isActive = currentPath === screen.path;
               return (
                 <button
                   key={screen.key}
                   onClick={() => onNavigate(screen.path)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
                     isActive
-                      ? "bg-royal-500 text-paper-50 shadow-md shadow-royal-500/30 border border-royal-400"
-                      : "text-paper-50/70 hover:text-paper-50 hover:bg-ink-800/60 border border-transparent"
+                      ? "bg-violet-600 text-white shadow-md shadow-violet-600/30 font-semibold"
+                      : "text-white/70 hover:text-white hover:bg-surface-3"
                   }`}
                 >
                   <span className="text-xs">{getScreenIcon(screen.icon)}</span>
                   <span>{screen.title}</span>
                   {screen.badge && (
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-gold-400/20 text-gold-400 border border-gold-400/30 font-mono">
+                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-mono">
                       {screen.badge}
                     </span>
                   )}
@@ -90,19 +114,32 @@ export function Navbar({
             })}
           </nav>
 
-          {/* User Profile & Persona Switcher Trigger */}
-          <div className="flex items-center gap-2.5">
+          {/* Right Header Actions: XP, Sound, Profile, Persona Pill */}
+          <div className="flex items-center gap-2">
             {/* Gamification XP Badge (Student only) */}
             {activePersona.role === "STUDENT" && (
               <button
                 onClick={() => onOpenGamification?.()}
-                title="Your Campus Participation XP (Click to view badges)"
-                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold-400/15 hover:bg-gold-400/25 border border-gold-400/30 text-gold-400 text-xs font-mono font-bold shadow-sm transition-all cursor-pointer"
+                title="Your Fest XP & Badges"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold transition-all cursor-pointer shadow-sm"
               >
                 <span>⭐</span>
                 <span>{studentXp} XP</span>
               </button>
             )}
+
+            {/* Profile Navigation Shortcut */}
+            <button
+              onClick={() => onNavigate("/profile")}
+              title="My Account & Identity Profile"
+              className={`p-1.5 rounded-xl border text-xs transition-colors ${
+                currentPath === "/profile"
+                  ? "bg-violet-600/30 border-violet-500 text-white"
+                  : "bg-surface-2 hover:bg-surface-3 border-white/10 text-white/70 hover:text-white"
+              }`}
+            >
+              👤
+            </button>
 
             {/* Audio Toggle */}
             <button
@@ -111,35 +148,35 @@ export function Navbar({
                 soundEnabled ? "Mute Festival Audio" : "Enable Festival Audio"
               }
               title={soundEnabled ? "Audio: ON" : "Audio: MUTED"}
-              className="p-1.5 rounded-xl bg-ink-800/80 hover:bg-ink-800 border border-royal-500/30 text-paper-50/70 hover:text-gold-400 text-xs transition-colors"
+              className="p-1.5 rounded-xl bg-surface-2 hover:bg-surface-3 border border-white/10 text-white/70 hover:text-amber-300 text-xs transition-colors"
             >
               {soundEnabled ? "🔊" : "🔇"}
             </button>
 
-            {/* Persona Switcher Trigger Pill */}
+            {/* Persona Switcher Pill */}
             <button
               onClick={() => setDrawerOpen(true)}
               aria-label="Switch Persona"
-              className="flex items-center gap-2 bg-ink-800/80 hover:bg-ink-800 border border-royal-500/30 hover:border-gold-400/50 rounded-xl px-2.5 py-1.5 text-xs transition-all shadow-md group"
+              className="flex items-center gap-2 bg-surface-2 hover:bg-surface-3 border border-white/10 hover:border-violet-500/50 rounded-xl px-2.5 py-1.5 text-xs transition-all shadow-md group"
             >
               <span className="text-base">{activePersona.avatar}</span>
               <div className="text-left hidden sm:block">
-                <div className="font-semibold text-paper-50 leading-tight group-hover:text-gold-400 transition-colors text-xs">
+                <div className="font-semibold text-white leading-tight group-hover:text-violet-300 transition-colors text-xs">
                   {activePersona.name.split(" ")[0]}
                 </div>
-                <div className="text-[10px] text-royal-300 font-mono leading-none">
+                <div className="text-[10px] text-violet-400 font-mono leading-none">
                   {activePersona.role}
                 </div>
               </div>
-              <span className="text-[10px] text-paper-50/40">▼</span>
+              <span className="text-[10px] text-white/40">▼</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* Floating Bottom Navigation Dock for Mobile Viewports (360px - 768px) */}
-      <div className="md:hidden fixed bottom-3 inset-x-3 z-40 bg-ink-950/90 backdrop-blur-xl border border-royal-500/30 rounded-2xl shadow-2xl p-1.5 flex items-center justify-around">
-        {screens.slice(0, 5).map((screen) => {
+      {/* Floating Bottom Navigation Dock for Mobile (360px - 1024px) */}
+      <div className="lg:hidden fixed bottom-3 inset-x-3 z-40 bg-surface/90 backdrop-blur-xl border border-white/15 rounded-2xl shadow-2xl p-1.5 flex items-center justify-around">
+        {allScreens.slice(0, 6).map((screen) => {
           const isActive = currentPath === screen.path;
           return (
             <button
@@ -147,8 +184,8 @@ export function Navbar({
               onClick={() => onNavigate(screen.path)}
               className={`flex flex-col items-center justify-center p-1.5 rounded-xl transition-all ${
                 isActive
-                  ? "text-gold-400 bg-royal-500/20 font-bold"
-                  : "text-paper-50/60 hover:text-paper-50"
+                  ? "text-violet-300 bg-violet-600/20 font-bold"
+                  : "text-white/60 hover:text-white"
               }`}
             >
               <span className="text-base">{getScreenIcon(screen.icon)}</span>
@@ -162,43 +199,43 @@ export function Navbar({
 
       {/* Persona Selection Drawer Modal */}
       {drawerOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end bg-ink-950/80 backdrop-blur-sm animate-fadeIn">
-          <div className="w-full max-w-sm h-full bg-ink-900 border-l border-royal-500/30 p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-end bg-void/80 backdrop-blur-sm animate-fadeIn">
+          <div className="w-full max-w-sm h-full bg-surface border-l border-white/10 p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
             <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-royal-500/20 pb-3">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">🔐</span>
                   <div>
-                    <h3 className="font-bold text-paper-50 text-sm">
+                    <h3 className="font-bold text-white text-sm">
                       Switch Persona (PBAC)
                     </h3>
-                    <p className="text-[10px] text-royal-300 font-mono">
+                    <p className="text-[10px] text-violet-400 font-mono">
                       Dynamic navigation reacts to permissions
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setDrawerOpen(false)}
-                  className="text-paper-50/60 hover:text-paper-50 text-base p-1"
+                  className="text-white/60 hover:text-white text-base p-1"
                 >
                   ✕
                 </button>
               </div>
 
               {/* Active User Card */}
-              <div className="bg-ink-950 p-4 rounded-xl border border-royal-500/30 space-y-2">
+              <div className="bg-surface-2 p-4 rounded-xl border border-white/10 space-y-2">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{activePersona.avatar}</span>
                   <div>
-                    <div className="font-bold text-paper-50 text-xs">
+                    <div className="font-bold text-white text-xs">
                       {activePersona.name}
                     </div>
-                    <div className="text-[10px] text-royal-300 font-mono">
+                    <div className="text-[10px] text-violet-400 font-mono">
                       {activePersona.email}
                     </div>
                   </div>
                 </div>
-                <div className="pt-2 border-t border-royal-500/10 text-[10px] text-paper-50/60 space-y-0.5">
+                <div className="pt-2 border-t border-white/5 text-[10px] text-white/60 space-y-0.5">
                   <div>Institution: {activePersona.institution}</div>
                   <div>Department: {activePersona.department}</div>
                 </div>
@@ -206,7 +243,7 @@ export function Navbar({
 
               {/* Persona Options List */}
               <div className="space-y-2">
-                <span className="text-[10px] uppercase font-mono tracking-wider text-paper-50/50 block">
+                <span className="text-[10px] uppercase font-mono tracking-wider text-white/40 block">
                   Select Persona to Test PBAC Bounds:
                 </span>
 
@@ -221,8 +258,8 @@ export function Navbar({
                       }}
                       className={`p-3 rounded-xl border cursor-pointer transition-all ${
                         isSelected
-                          ? "bg-royal-500/20 border-gold-400 text-paper-50"
-                          : "bg-ink-950/60 border-royal-500/10 hover:border-royal-500/40 text-paper-50/80"
+                          ? "bg-violet-600/20 border-violet-500 text-white"
+                          : "bg-surface-2/60 border-white/5 hover:border-white/20 text-white/80"
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
@@ -230,11 +267,11 @@ export function Navbar({
                           <span>{p.avatar}</span>
                           <span>{p.name}</span>
                         </span>
-                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-royal-500/20 text-royal-300 border border-royal-500/30">
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-violet-600/20 text-violet-300 border border-violet-600/30">
                           {p.role}
                         </span>
                       </div>
-                      <p className="text-[10px] text-paper-50/60 line-clamp-2">
+                      <p className="text-[10px] text-white/50 line-clamp-2">
                         {p.description}
                       </p>
                     </div>
@@ -243,8 +280,8 @@ export function Navbar({
               </div>
             </div>
 
-            <div className="pt-4 border-t border-royal-500/20 text-center">
-              <span className="text-[10px] text-paper-50/40 font-mono">
+            <div className="pt-4 border-t border-white/10 text-center">
+              <span className="text-[10px] text-white/40 font-mono">
                 Keycloak 26 Composite PBAC • Token-driven
               </span>
             </div>
@@ -277,6 +314,10 @@ function getScreenIcon(iconName: string): string {
       return "☕";
     case "shield-alert":
       return "🔐";
+    case "map":
+      return "🗺️";
+    case "message-circle":
+      return "⚡";
     default:
       return "📌";
   }

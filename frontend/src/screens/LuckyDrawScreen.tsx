@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { LuckyDrawCampaign, DrawVerification } from "../api/types.js";
 import type { CampusFomoClient } from "../api/client.js";
+import { sound } from "../utils/audio.js";
 
 interface LuckyDrawScreenProps {
   client: CampusFomoClient;
@@ -48,9 +49,11 @@ export function LuckyDrawScreen({ client }: LuckyDrawScreenProps) {
     try {
       const session = await client.startLuckySession(campId);
       const res = await client.enterLuckyDraw(campId, session.sessionId);
+      sound.playSuccess();
       setStatusMsg(`🎉 ${res.message}! Total entries: ${res.totalEntries}.`);
       fetchCampaigns();
     } catch (err: any) {
+      sound.playAlert();
       setStatusMsg(`Entry rejected: ${err.message}`);
     }
   };
@@ -66,11 +69,13 @@ export function LuckyDrawScreen({ client }: LuckyDrawScreenProps) {
     setStatusMsg(null);
     try {
       const drawn = await client.executeLuckyDraw(campId);
+      sound.playSuccess();
       setStatusMsg(
         `🏆 Draw completed! Winner selected: ${drawn.winnerName?.split(" ")[0]} (${drawn.winnerDept}).`,
       );
       fetchCampaigns();
     } catch (err: any) {
+      sound.playAlert();
       setStatusMsg(`Draw execution failed: ${err.message}`);
     }
   };
@@ -85,68 +90,70 @@ export function LuckyDrawScreen({ client }: LuckyDrawScreenProps) {
   };
 
   return (
-    <div className="space-y-8 text-left">
+    <div className="space-y-8 text-left animate-fadeIn">
       <div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-400/10 text-gold-400 text-xs font-mono font-bold border border-gold-400/30">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-xs font-mono font-bold border border-amber-500/30">
           <span>🎲 PROVABLY FAIR</span>
           <span>•</span>
-          <span>SHA-256 COMMIT-REVEAL</span>
+          <span>SHA-256 COMMIT-REVEAL PROTOCOL</span>
         </div>
-        <h2 className="text-3xl font-extrabold text-paper-50 font-display mt-2">
+        <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mt-2">
           Campus Fest Lucky Draws (Story Card SP-02, A10)
         </h2>
-        <p className="text-xs text-royal-300 font-body max-w-xl">
+        <p className="text-xs text-white/60 max-w-xl mt-1">
           Winners are mathematically determined from pre-committed cryptographic
           seeds. Zero pay-to-win, zero administrative tampering.
         </p>
       </div>
 
       {statusMsg && (
-        <div className="p-4 bg-mint-400/20 text-mint-300 border border-mint-400/40 rounded-2xl text-xs font-mono">
+        <div className="p-4 bg-mint-500/15 text-mint-300 border border-mint-500/30 rounded-2xl text-xs font-mono">
           {statusMsg}
         </div>
       )}
 
       {/* Commit-Reveal Protocol Stepper */}
-      <section className="bg-ink-800/60 border border-royal-500/25 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl">
-        <h3 className="font-bold text-paper-50 text-sm uppercase tracking-wider font-mono">
-          How the Commit-Reveal Protocol Works:
+      <section className="bg-surface border border-white/10 rounded-3xl p-6 sm:p-8 space-y-4 shadow-card">
+        <h3 className="font-bold text-white text-xs uppercase tracking-wider font-mono">
+          How the Cryptographic Commit-Reveal Protocol Works:
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-xs font-mono">
-          <div className="bg-ink-950 p-4 rounded-2xl border border-royal-500/20 space-y-1">
-            <span className="text-gold-400 font-bold block">1. Seed Hash</span>
-            <span className="text-paper-50/70">
+          <div className="bg-surface-2 p-4 rounded-2xl border border-white/5 space-y-1">
+            <span className="text-violet-300 font-bold block">
+              1. Seed Hash
+            </span>
+            <span className="text-white/60">
               A 256-bit seed is generated and its SHA-256 hash published before
               entries open.
             </span>
           </div>
 
-          <div className="bg-ink-950 p-4 rounded-2xl border border-royal-500/20 space-y-1">
-            <span className="text-gold-400 font-bold block">
+          <div className="bg-surface-2 p-4 rounded-2xl border border-white/5 space-y-1">
+            <span className="text-violet-300 font-bold block">
               2. Anti-Replay
             </span>
-            <span className="text-paper-50/70">
+            <span className="text-white/60">
               Students enter once per campaign; unique session tokens reject
               replay attacks.
             </span>
           </div>
 
-          <div className="bg-ink-950 p-4 rounded-2xl border border-royal-500/20 space-y-1">
-            <span className="text-gold-400 font-bold block">
+          <div className="bg-surface-2 p-4 rounded-2xl border border-white/5 space-y-1">
+            <span className="text-violet-300 font-bold block">
               3. Seed Reveal
             </span>
-            <span className="text-paper-50/70">
-              At event close, the raw seed is published and checked against the
+            <span className="text-white/60">
+              At event close, the raw seed is published and verified against the
               pre-commit hash.
             </span>
           </div>
 
-          <div className="bg-ink-950 p-4 rounded-2xl border border-royal-500/20 space-y-1">
-            <span className="text-gold-400 font-bold block">
+          <div className="bg-surface-2 p-4 rounded-2xl border border-white/5 space-y-1">
+            <span className="text-violet-300 font-bold block">
               4. Derived Winner
             </span>
-            <span className="text-paper-50/70">
+            <span className="text-white/60">
               Winner index is calculated via{" "}
               <code className="text-mint-400">BigInt(sha256) % total</code>.
             </span>
@@ -156,60 +163,58 @@ export function LuckyDrawScreen({ client }: LuckyDrawScreenProps) {
 
       {/* Campaigns Grid */}
       {loading ? (
-        <p className="text-xs text-paper-50/60">Loading campaigns...</p>
+        <p className="text-xs text-white/60">Loading campaigns...</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {campaigns.map((camp) => (
             <div
               key={camp.id}
-              className="bg-gradient-to-br from-ink-900 via-ink-850 to-ink-900 border border-royal-500/30 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 flex flex-col justify-between"
+              className="bg-surface border border-white/10 hover:border-violet-500/40 rounded-3xl p-6 sm:p-7 shadow-card space-y-5 flex flex-col justify-between transition-all"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span
                     className={`text-[10px] font-mono font-bold px-3 py-1 rounded-full ${
                       camp.status === "OPEN"
-                        ? "bg-mint-400/20 text-mint-400 border border-mint-400/30"
-                        : "bg-gold-400/20 text-gold-400 border border-gold-400/30"
+                        ? "bg-mint-500/20 text-mint-300 border border-mint-500/30"
+                        : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
                     }`}
                   >
                     STATUS: {camp.status}
                   </span>
 
-                  <span className="text-xs text-paper-50/60 font-mono font-semibold">
+                  <span className="text-xs text-white/60 font-mono font-semibold">
                     🎟️ {camp.totalEntries || 0} Entrants
                   </span>
                 </div>
 
-                <h3 className="text-xl font-bold text-paper-50">
-                  {camp.title}
-                </h3>
+                <h3 className="text-xl font-bold text-white">{camp.title}</h3>
 
-                <div className="bg-ink-950 p-4 rounded-2xl border border-royal-500/20 space-y-2.5 text-xs font-mono">
+                <div className="bg-surface-2 p-4 rounded-2xl border border-white/5 space-y-2.5 text-xs font-mono">
                   <div>
-                    <span className="text-[10px] text-paper-50/50 block font-bold">
+                    <span className="text-[10px] text-white/40 block font-bold">
                       PUBLISHED PRE-COMMIT HASH (SHA-256)
                     </span>
-                    <span className="text-royal-300 break-all text-[11px] font-mono">
+                    <span className="text-violet-300 break-all text-[11px] font-mono">
                       {camp.seedHash}
                     </span>
                   </div>
 
                   {camp.seedRevealed && (
-                    <div className="pt-2.5 border-t border-royal-500/10">
+                    <div className="pt-2.5 border-t border-white/5">
                       <span className="text-[10px] text-mint-400 block font-bold">
                         REVEALED SEED
                       </span>
-                      <span className="text-gold-400 break-all text-[11px] font-mono">
+                      <span className="text-amber-300 break-all text-[11px] font-mono">
                         {camp.seedRevealed}
                       </span>
                     </div>
                   )}
 
                   {camp.winnerName && (
-                    <div className="pt-2.5 border-t border-royal-500/10 flex items-center justify-between">
-                      <span className="text-paper-50/70">Selected Winner:</span>
-                      <span className="text-gold-400 font-bold text-sm">
+                    <div className="pt-2.5 border-t border-white/5 flex items-center justify-between">
+                      <span className="text-white/60">Selected Winner:</span>
+                      <span className="text-amber-300 font-bold text-sm">
                         {camp.winnerName.split(" ")[0]} ({camp.winnerDept})
                       </span>
                     </div>
@@ -218,18 +223,18 @@ export function LuckyDrawScreen({ client }: LuckyDrawScreenProps) {
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-3 border-t border-royal-500/15 flex flex-wrap items-center gap-3">
+              <div className="pt-3 border-t border-white/10 flex flex-wrap items-center gap-3">
                 {camp.status === "OPEN" ? (
                   <>
                     <button
                       onClick={() => handleEnterDraw(camp.id)}
-                      className="px-5 py-2.5 bg-royal-500 hover:bg-royal-400 text-paper-50 rounded-xl text-xs font-bold shadow-lg shadow-royal-500/25 transition-transform hover:scale-[1.02]"
+                      className="px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-violet-600/25 transition-transform hover:scale-[1.02]"
                     >
                       🎁 Enter Draw (Anti-Replay)
                     </button>
                     <button
                       onClick={() => handleExecuteDraw(camp.id)}
-                      className="px-4 py-2.5 bg-ink-950 border border-royal-500/40 text-royal-300 hover:text-paper-50 rounded-xl text-xs font-semibold"
+                      className="px-4 py-2.5 bg-surface-2 border border-white/10 text-white/80 hover:text-white rounded-xl text-xs font-semibold"
                     >
                       ⚡ Trigger Commit-Reveal Draw
                     </button>
@@ -237,7 +242,7 @@ export function LuckyDrawScreen({ client }: LuckyDrawScreenProps) {
                 ) : (
                   <button
                     onClick={() => handleVerify(camp.id)}
-                    className="w-full py-3 bg-gold-400 hover:bg-gold-300 text-ink-950 rounded-xl text-xs font-black shadow-lg shadow-gold-400/20"
+                    className="w-full py-3 bg-amber-400 hover:bg-amber-300 text-void rounded-xl text-xs font-bold shadow-lg shadow-amber-400/20"
                   >
                     🔍 Inspect Public Cryptographic Proof
                   </button>
@@ -250,41 +255,41 @@ export function LuckyDrawScreen({ client }: LuckyDrawScreenProps) {
 
       {/* Public Cryptographic Verification Modal */}
       {verification && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/80 backdrop-blur-md">
-          <div className="bg-ink-900 border border-gold-400/50 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5 animate-fadeIn">
-            <div className="flex items-center justify-between border-b border-royal-500/20 pb-3">
-              <h3 className="font-bold text-gold-400 text-base font-display">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-void/80 backdrop-blur-md">
+          <div className="bg-surface border border-amber-500/40 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5 animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <h3 className="font-bold text-amber-300 text-base">
                 Public Cryptographic Verification Proof
               </h3>
               <button
                 onClick={() => setVerification(null)}
-                className="text-paper-50/50 hover:text-paper-50 text-base p-1"
+                className="text-white/50 hover:text-white text-base p-1"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-3 text-xs font-mono bg-ink-950 p-5 rounded-2xl border border-royal-500/20">
+            <div className="space-y-3 text-xs font-mono bg-surface-2 p-5 rounded-2xl border border-white/5">
               <div>
-                <span className="text-paper-50/50 block text-[10px]">
+                <span className="text-white/40 block text-[10px]">
                   1. PRE-COMMIT HASH:
                 </span>
-                <span className="text-royal-300 break-all">
+                <span className="text-violet-300 break-all">
                   {verification.seedHash}
                 </span>
               </div>
 
               <div>
-                <span className="text-paper-50/50 block text-[10px]">
+                <span className="text-white/40 block text-[10px]">
                   2. REVEALED SECRET SEED:
                 </span>
-                <span className="text-gold-400 break-all">
+                <span className="text-amber-300 break-all">
                   {verification.seedRevealed}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between py-1.5 border-t border-royal-500/10">
-                <span className="text-paper-50/70">
+              <div className="flex items-center justify-between py-1.5 border-t border-white/5">
+                <span className="text-white/60">
                   SHA-256 Hash Verification:
                 </span>
                 <span className="text-mint-400 font-bold">
@@ -294,40 +299,36 @@ export function LuckyDrawScreen({ client }: LuckyDrawScreenProps) {
                 </span>
               </div>
 
-              <div className="flex items-center justify-between py-1.5 border-t border-royal-500/10">
-                <span className="text-paper-50/70">Total Entrants Sorted:</span>
-                <span className="text-paper-50 font-bold">
+              <div className="flex items-center justify-between py-1.5 border-t border-white/5">
+                <span className="text-white/60">Total Entrants Sorted:</span>
+                <span className="text-white font-bold">
                   {verification.totalEntries}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between py-1.5 border-t border-royal-500/10">
-                <span className="text-paper-50/70">
-                  Calculated Winner Index:
-                </span>
-                <span className="text-gold-400 font-bold">
+              <div className="flex items-center justify-between py-1.5 border-t border-white/5">
+                <span className="text-white/60">Calculated Winner Index:</span>
+                <span className="text-amber-300 font-bold">
                   #{verification.winnerIndex}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between py-1.5 border-t border-royal-500/10">
-                <span className="text-paper-50/70">
-                  Winner Derived Profile:
-                </span>
+              <div className="flex items-center justify-between py-1.5 border-t border-white/5">
+                <span className="text-white/60">Winner Derived Profile:</span>
                 <span className="text-mint-400 font-bold">
                   {verification.winnerFirstname} (
                   {verification.winnerDepartment})
                 </span>
               </div>
 
-              <div className="pt-2 border-t border-royal-500/10 text-[10px] text-paper-50/50">
+              <div className="pt-2 border-t border-white/5 text-[10px] text-white/40">
                 Formula: <code>{verification.verificationFormula}</code>
               </div>
             </div>
 
             <button
               onClick={() => setVerification(null)}
-              className="w-full py-2.5 bg-royal-500 text-paper-50 rounded-xl text-xs font-bold"
+              className="w-full py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-xs font-bold"
             >
               Close Verification Inspector
             </button>

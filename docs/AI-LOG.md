@@ -334,3 +334,72 @@
 - **Follow-ups**: Ensure Vite dev server hot reload picks up the clean file.
 
 ---
+
+### [2026-10-31 15:50 IST] FRONTEND-REVAMP-3D-INFINITE-STAGE — Full 3D Modern UI Revamp & New Screen Architecture
+
+- **Prompt**: PROCEED WITH Campus FOMO — Frontend Revamp Implementation Plan. STRICTLY - Dont do changes by urself do it first properly.
+- **Hat**: Frontend Architect & 3D WebGL Lead
+- **What I did**:
+  - Implemented approved Option A: "Infinite Stage" design direction inspired by Linear/Vercel (deep void #080808, electric violet and rose accents, luminous gradient borders, frosted glass).
+  - Added self-hosted Geist and Geist Mono variable typography via `@fontsource/geist` and `@fontsource-variable/geist-mono`.
+  - Installed verified packages: `@react-three/fiber@8.17.10`, `@react-three/drei@9.115.0`, `three`, `@types/three`, `framer-motion`, and `lenis`.
+  - Created code-split 3D Hero canvas component (`HeroCanvas3D.tsx`) with animated floating icosahedron, orbiting torus, ambient particle sparkles, and static fallback for `prefers-reduced-motion` and headless test environments (jsdom).
+  - Created `EventCard3D.tsx` with perspective hover 3D tilt, dynamic shine reflection, category badges, live capacity track bar, and FOMO urgency alerts.
+  - Revamped all 9 existing screens: `DiscoverScreen`, `MyTicketsScreen`, `ScannerScreen`, `LuckyDrawScreen`, `SponsorScreen`, `GalleryScreen`, `EventHeadScreen`, `ApprovalsScreen`, `AdminRbacScreen`.
+  - Built 3 brand-new screens requested by user:
+    - `ProfileScreen.tsx` (`/profile`) — Persona identity, PBAC permissions viewer, active test token export, fest stats.
+    - `CampusMapScreen.tsx` (`/map`) — Interactive spatial campus venue explorer with live occupancy gauges and scheduled fests.
+    - `SocialFeedScreen.tsx` (`/feed`) — Live festival chatter, attendee updates, topic hashtags, and instant emoji reaction engine.
+  - Updated `Navbar.tsx` with frosted glass blur rail, PBAC dynamic routing, gamification XP trigger, audio synthesizer toggle, and mobile dock.
+  - Modernized `GamificationModal.tsx` and `BroadcastToast.tsx` with design system tokens.
+  - Added unit test coverage in `frontend/src/App.test.tsx` for new headline ("Campus FOMO — Where Every Moment Counts"), spatial map, social feed navigation, and gamification modal interaction.
+- **Files changed**:
+  - `frontend/package.json` — Added 3D, animation, and typography dependencies.
+  - `frontend/index.html` — Updated meta tags and modern viewport parameters.
+  - `frontend/tailwind.config.ts` — Added Infinite Stage color tokens, Geist fonts, and glow shadows.
+  - `frontend/src/index.css` — Global design tokens, glass utilities, custom scrollbar, and animations.
+  - `frontend/src/tokens.ts` — Updated design token constants.
+  - `frontend/src/components/HeroCanvas.tsx` — Lazy-loaded 3D hero wrapper with reduced-motion and jsdom guards.
+  - `frontend/src/components/HeroCanvas3D.tsx` — Three.js WebGL scene with R3F float meshes and particle cloud.
+  - `frontend/src/components/EventCard3D.tsx` — 3D interactive tilt card with capacity progress.
+  - `frontend/src/components/Navbar.tsx` — Frosted glass navbar with mobile dock and PBAC persona drawer.
+  - `frontend/src/components/BroadcastToast.tsx` — Animated notification toast with audio cues.
+  - `frontend/src/components/ToastTypes.ts` — Extracted toast types.
+  - `frontend/src/components/GamificationModal.tsx` — Level progress bar, festival badges, and XP tips.
+  - `frontend/src/screens/DiscoverScreen.tsx` — 3D hero banner, Bento event grid, atomic registration modal.
+  - `frontend/src/screens/MyTicketsScreen.tsx` — 3D ticket flip, rotating HMAC token, PNG download engine.
+  - `frontend/src/screens/ScannerScreen.tsx` — High-tech door security terminal with green laser scan.
+  - `frontend/src/screens/LuckyDrawScreen.tsx` — Provably fair SHA-256 commit-reveal protocol with proof modal.
+  - `frontend/src/screens/SponsorScreen.tsx` — Third Wave Coffee hospitality showcase, student discounts, privacy audit.
+  - `frontend/src/screens/GalleryScreen.tsx` — 3D photo grid with lightbox modal and student appreciations.
+  - `frontend/src/screens/EventHeadScreen.tsx` — Multi-field proposal form with automated clash detection.
+  - `frontend/src/screens/ApprovalsScreen.tsx` — Department and deanery governance clearance dashboard.
+  - `frontend/src/screens/AdminRbacScreen.tsx` — Zero-trust APISIX + Keycloak PBAC matrix.
+  - `frontend/src/screens/ProfileScreen.tsx` — NEW screen for attendee credentials and active PBAC scopes.
+  - `frontend/src/screens/CampusMapScreen.tsx` — NEW screen for interactive campus venue exploration.
+  - `frontend/src/screens/SocialFeedScreen.tsx` — NEW screen for community buzz and live event reactions.
+  - `frontend/src/App.tsx` — Wired new routes, layout shell, and SSE real-time stream.
+  - `frontend/src/App.test.tsx` — Expanded unit tests covering new headline, routes, and modals.
+  - `docs/AI-LOG.md` — Appended log entry.
+- **Commands run + results**:
+  - `pnpm --filter campus-fomo-frontend typecheck` → PASS (0 errors)
+  - `pnpm --filter campus-fomo-frontend test:unit` → PASS (3 tests)
+  - `pnpm --filter campus-fomo-frontend build` → PASS (Built cleanly in 12.44s with code-split 3D bundle)
+  - `pnpm --filter campus-fomo-backend test:unit` → PASS (37 tests across 4 suites)
+  - `pnpm verify` → PASS
+- **Decisions & assumptions**:
+  - Pinned `@react-three/fiber` to v8 (8.17.10) to maintain strict compatibility with React 18.
+  - Separated `HeroCanvas3D.tsx` into a lazy chunk so that R3F/Three.js reconciler is only loaded on clients with WebGL and skipped in jsdom and reduced-motion modes.
+  - Maintained backward compatibility color mappings (`ink`, `royal`, `gold`, `ember`, `mint`, `paper`) alongside new Option A tokens.
+- **Tests**:
+  - `frontend/src/App.test.tsx` → PASS (3 tests covering ST-01, GU-01, ST-02, SP-01, ST-03, XP-01)
+  - `backend/src/contracts/contracts.test.ts` → PASS (10 tests)
+  - `backend/src/domain/domain.test.ts` → PASS (8 tests)
+  - `backend/src/access/pbac.test.ts` → PASS (17 tests)
+  - `backend/src/modules/health/health.test.ts` → PASS (2 tests)
+- **[AI-WRONG] mistakes found**:
+  - `[AI-WRONG]` Initial package install of `@react-three/fiber` without version tag resolved to v9.8.2 which requires React 19; fixed by pinning to `@react-three/fiber@8.17.10` and `@react-three/drei@9.115.0`.
+  - `[AI-WRONG]` `window.matchMedia` is undefined in jsdom testing environment, causing test runner crash; guarded with `typeof window.matchMedia === 'function'` and safe fallback.
+- **Follow-ups**: Verify full monorepo pipeline and restart dev server daemons.
+
+---

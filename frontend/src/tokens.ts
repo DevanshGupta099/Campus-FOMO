@@ -1,45 +1,71 @@
 export const colors = {
-  ink: {
-    950: "#050B1F", // Deep night background
-    900: "#071536",
-    800: "#0B1F4D", // Panels, cards
-    700: "#132B66",
-    600: "#1D3B82",
+  void: "#080808",
+  surface: {
+    DEFAULT: "#111111",
+    2: "#1a1a1a",
+    3: "#222222",
   },
-  royal: {
-    700: "#133BA6",
-    500: "#1E4FD8", // Primary university blue
-    300: "#6E93FF", // Links, glows
-    100: "#D6E2FF",
+  violet: {
+    light: "#a78bfa",
+    500: "#7c3aed",
+    dim: "#4c1d95",
   },
-  gold: {
-    600: "#C79402",
-    400: "#F2B705", // Accent, XP, CTAs, last seats
-    200: "#FCE788",
-  },
-  ember: {
-    600: "#D93E20",
-    500: "#FF5A3C", // Urgency / FOMO
-    300: "#FFA08E",
+  rose: {
+    light: "#fb7185",
+    500: "#f43f5e",
   },
   mint: {
-    600: "#26B386",
-    400: "#3EE6B0", // Success, confirmed
-    200: "#B5F7DF",
+    light: "#34d399",
+    500: "#10b981",
+  },
+  amber: {
+    light: "#fbbf24",
+    500: "#f59e0b",
+  },
+  sky: {
+    light: "#38bdf8",
+    500: "#0ea5e9",
+  },
+  // Backwards compatibility tokens
+  ink: {
+    950: "#080808",
+    900: "#111111",
+    800: "#1a1a1a",
+    700: "#222222",
+    600: "#2a2a2a",
+  },
+  royal: {
+    700: "#5b21b6",
+    500: "#7c3aed",
+    300: "#a78bfa",
+    100: "#ede9fe",
+  },
+  gold: {
+    600: "#d97706",
+    400: "#fbbf24",
+    200: "#fde68a",
+  },
+  ember: {
+    600: "#e11d48",
+    500: "#f43f5e",
+    300: "#fda4af",
   },
   paper: {
-    50: "#F6F8FF", // Text on dark, light-panel background
-    100: "#EDF1FC",
-    200: "#DDE4F8",
+    50: "#fafafa",
+    100: "#f4f4f5",
+    200: "#e4e4e7",
+    300: "#d4d4d8",
+    400: "#a1a1aa",
+    500: "#71717a",
   },
   white: "#FFFFFF",
   black: "#000000",
 } as const;
 
 export const fonts = {
-  display: "Unbounded, sans-serif",
-  body: "Inter, system-ui, -apple-system, sans-serif",
-  mono: "JetBrains Mono, monospace",
+  display: "Geist, system-ui, sans-serif",
+  body: "Geist, system-ui, sans-serif",
+  mono: "Geist Mono Variable, Geist Mono, monospace",
 } as const;
 
 export const breakpoints = {
@@ -49,18 +75,3 @@ export const breakpoints = {
   xl: "1280px",
   "2xl": "1536px",
 } as const;
-
-export const cssVariables = `
-:root {
-  --ink-950: ${colors.ink[950]};
-  --ink-800: ${colors.ink[800]};
-  --royal-500: ${colors.royal[500]};
-  --royal-300: ${colors.royal[300]};
-  --gold-400: ${colors.gold[400]};
-  --ember-500: ${colors.ember[500]};
-  --mint-400: ${colors.mint[400]};
-  --paper-50: ${colors.paper[50]};
-  --font-display: ${fonts.display};
-  --font-body: ${fonts.body};
-}
-`;

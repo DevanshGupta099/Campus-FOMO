@@ -1,67 +1,108 @@
-import { useEffect } from "react";
-import { sound } from "../utils/audio.js";
+import { motion, AnimatePresence } from "framer-motion";
+import type { ToastMessage } from "./ToastTypes.js";
 
-export interface ToastMessage {
-  id: string;
-  title: string;
-  message: string;
-  type?: "info" | "success" | "alert";
-}
+export type { ToastMessage };
 
 interface BroadcastToastProps {
   toast: ToastMessage | null;
   onDismiss: () => void;
 }
 
+const icons: Record<string, string> = {
+  alert: "📢",
+  success: "🎉",
+  info: "ℹ️",
+  warning: "⚠️",
+};
+
+const colors: Record<string, string> = {
+  alert: "var(--violet)",
+  success: "var(--mint)",
+  info: "var(--sky)",
+  warning: "var(--amber)",
+};
+
 export function BroadcastToast({ toast, onDismiss }: BroadcastToastProps) {
-  useEffect(() => {
-    if (!toast) return;
-
-    if (toast.type === "alert") {
-      sound.playAlert();
-    } else {
-      sound.playSuccess();
-    }
-
-    const timer = setTimeout(() => {
-      onDismiss();
-    }, 7000);
-
-    return () => clearTimeout(timer);
-  }, [toast, onDismiss]);
-
-  if (!toast) return null;
-
   return (
     <div
-      role="alert"
-      className="fixed top-16 sm:top-20 inset-x-4 max-w-md mx-auto z-50 pointer-events-auto animate-slideDown"
+      style={{
+        position: "fixed",
+        top: "1rem",
+        right: "1rem",
+        zIndex: 9999,
+        maxWidth: "360px",
+        width: "100%",
+      }}
+      role="region"
+      aria-live="assertive"
+      aria-label="Notifications"
     >
-      <div className="relative rounded-2xl bg-ink-900/95 backdrop-blur-xl border border-gold-400/50 p-4 shadow-2xl shadow-gold-400/20 flex items-start gap-3 text-left">
-        <div className="p-2 rounded-xl bg-gold-400/20 text-gold-400 text-lg flex-shrink-0 animate-pulse">
-          📢
-        </div>
-        <div className="flex-1 min-w-0 pr-2">
-          <div className="flex items-center gap-2 mb-0.5">
-            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-royal-500/30 text-royal-300 border border-royal-500/40">
-              CAMPUS BROADCAST
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            key={toast.id}
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 350, damping: 28 }}
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border-strong)",
+              borderRadius: "var(--radius-xl)",
+              padding: "1rem 1.25rem",
+              display: "flex",
+              gap: "0.75rem",
+              alignItems: "flex-start",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+              borderLeft: `3px solid ${colors[toast.type] || colors.info}`,
+            }}
+            role="alert"
+          >
+            <span
+              style={{ fontSize: "1.25rem", flexShrink: 0, lineHeight: 1.4 }}
+            >
+              {icons[toast.type] || icons.info}
             </span>
-            <span className="text-xs font-bold text-paper-50 truncate">
-              {toast.title}
-            </span>
-          </div>
-          <p className="text-xs text-paper-50/80 leading-relaxed font-body">
-            {toast.message}
-          </p>
-        </div>
-        <button
-          onClick={onDismiss}
-          aria-label="Dismiss Notification"
-          className="text-paper-50/50 hover:text-paper-50 text-sm p-1 transition-colors flex-shrink-0"
-        >
-          ✕
-        </button>
-      </div>
+            <div style={{ flex: 1, minWidth: 0, textAlign: "left" }}>
+              <p
+                style={{
+                  fontWeight: 700,
+                  fontSize: "0.875rem",
+                  color: "var(--text-primary)",
+                  marginBottom: "0.125rem",
+                }}
+              >
+                {toast.title}
+              </p>
+              <p
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "var(--text-secondary)",
+                  lineHeight: 1.5,
+                }}
+              >
+                {toast.message}
+              </p>
+            </div>
+            <button
+              onClick={onDismiss}
+              aria-label="Dismiss notification"
+              style={{
+                background: "none",
+                border: "none",
+                color: "var(--text-muted)",
+                cursor: "pointer",
+                padding: "0.125rem",
+                fontSize: "1rem",
+                lineHeight: 1,
+                flexShrink: 0,
+              }}
+            >
+              ✕
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

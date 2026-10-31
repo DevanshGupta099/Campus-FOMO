@@ -21,6 +21,9 @@ import { LuckyDrawScreen } from "./screens/LuckyDrawScreen.js";
 import { SponsorScreen } from "./screens/SponsorScreen.js";
 import { GalleryScreen } from "./screens/GalleryScreen.js";
 import { AdminRbacScreen } from "./screens/AdminRbacScreen.js";
+import { ProfileScreen } from "./screens/ProfileScreen.js";
+import { CampusMapScreen } from "./screens/CampusMapScreen.js";
+import { SocialFeedScreen } from "./screens/SocialFeedScreen.js";
 
 let currentToken: string = DEMO_PERSONAS[0].token;
 
@@ -239,6 +242,23 @@ export function App() {
         return <GalleryScreen client={client} />;
       case "/admin/rbac":
         return <AdminRbacScreen />;
+      case "/profile":
+        return (
+          <ProfileScreen
+            activePersona={activePersona}
+            studentXp={studentXp}
+            onOpenGamification={() => setIsGamificationOpen(true)}
+          />
+        );
+      case "/map":
+        return <CampusMapScreen events={events} onNavigate={setCurrentPath} />;
+      case "/feed":
+        return (
+          <SocialFeedScreen
+            activePersona={activePersona}
+            onNavigate={setCurrentPath}
+          />
+        );
       default:
         return (
           <DiscoverScreen
@@ -253,7 +273,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-ink-950 text-paper-50 flex flex-col font-sans">
+    <div className="min-h-screen bg-void text-paper-50 flex flex-col font-sans selection:bg-violet-500/30 selection:text-white relative">
       <BroadcastToast toast={toast} onDismiss={() => setToast(null)} />
 
       <Navbar
@@ -268,9 +288,10 @@ export function App() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pb-24 md:pb-8">
         {loading ? (
-          <div className="py-20 text-center">
-            <p className="text-royal-300 text-sm animate-pulse">
-              Loading Campus FOMO...
+          <div className="py-24 text-center space-y-3">
+            <div className="w-10 h-10 border-2 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="text-violet-300 text-xs font-mono tracking-wider">
+              LOADING CAMPUS FOMO...
             </p>
           </div>
         ) : (
@@ -286,7 +307,7 @@ export function App() {
       />
 
       {/* Footer & Zero-Trust PBAC System Info Bar */}
-      <footer className="bg-ink-950 border-t border-royal-500/20 py-4 px-6 text-xs text-paper-50/60">
+      <footer className="bg-surface border-t border-white/10 py-5 px-6 text-xs text-white/50">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5">
@@ -299,12 +320,12 @@ export function App() {
             <span>•</span>
             <span>
               Persona:{" "}
-              <strong className="text-paper-50">{activePersona.name}</strong> (
+              <strong className="text-white">{activePersona.name}</strong> (
               {activePersona.role})
             </span>
           </div>
 
-          <div className="text-[11px] text-paper-50/40 font-mono">
+          <div className="text-[11px] text-white/40 font-mono">
             CHRIST University • Zero-Trust PBAC • APISIX + Keycloak 26
           </div>
         </div>

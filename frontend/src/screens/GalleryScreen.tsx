@@ -98,19 +98,19 @@ export function GalleryScreen({ client }: GalleryScreenProps) {
   };
 
   return (
-    <div className="space-y-8 text-left">
+    <div className="space-y-8 text-left animate-fadeIn">
       <div>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-royal-500/15 text-royal-300 text-xs font-mono font-semibold border border-royal-500/30">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/15 text-violet-300 text-xs font-mono font-semibold border border-violet-500/30">
           <span>📸 ARCHIVE</span>
           <span>•</span>
           <span>CAMPUS FESTIVAL MEMORIES</span>
         </div>
-        <h2 className="text-3xl font-extrabold text-paper-50 font-display mt-2">
+        <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mt-2">
           Campus Fest Gallery (Story Card GU-02)
         </h2>
-        <p className="text-xs text-royal-300 font-body max-w-xl">
+        <p className="text-xs text-white/60 max-w-xl mt-1">
           Relive grand concert stages, 24-hour hackathon war-rooms, and floodlit
-          sports finals. Zero layout shift masonry.
+          sports finals with zero layout shift masonry.
         </p>
       </div>
 
@@ -122,8 +122,8 @@ export function GalleryScreen({ client }: GalleryScreenProps) {
             onClick={() => setSelectedTag(tag)}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
               selectedTag === tag
-                ? "bg-royal-500 text-paper-50 border border-royal-400 shadow-md shadow-royal-500/25 scale-[1.02]"
-                : "bg-ink-800/70 hover:bg-ink-800 text-paper-50/70 hover:text-paper-50 border border-royal-500/20"
+                ? "bg-violet-600 text-white shadow-md shadow-violet-600/25 scale-[1.02]"
+                : "bg-surface-2 hover:bg-surface-3 text-white/70 hover:text-white border border-white/5"
             }`}
           >
             {tag}
@@ -132,78 +132,88 @@ export function GalleryScreen({ client }: GalleryScreenProps) {
       </div>
 
       {loading ? (
-        <p className="text-xs text-paper-50/60">Loading festival gallery...</p>
+        <p className="text-xs text-white/60">Loading festival gallery...</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => (
             <div
               key={item.id}
               onClick={() => setActivePhoto(item)}
-              className="cursor-pointer group relative bg-ink-800/70 border border-royal-500/25 hover:border-royal-400/60 rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="cursor-pointer group relative overflow-hidden rounded-2xl bg-surface border border-white/10 hover:border-violet-500/50 transition-all shadow-card hover:shadow-card-hover flex flex-col justify-between"
             >
-              <div className="relative aspect-video overflow-hidden bg-ink-950">
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-2">
                 <img
                   src={item.thumbnailUrl}
                   alt={item.title}
                   loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <span className="absolute top-3 right-3 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-ink-950/80 text-gold-400 backdrop-blur-md border border-gold-400/30">
+                <div className="absolute inset-0 bg-gradient-to-t from-void/90 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+
+                <span className="absolute top-3 left-3 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-void/80 text-violet-300 border border-white/10 backdrop-blur-md">
                   {item.category}
                 </span>
-              </div>
-
-              <div className="p-4 flex items-center justify-between bg-ink-900/90 border-t border-royal-500/15">
-                <h4 className="text-xs font-bold text-paper-50 group-hover:text-gold-400 transition-colors truncate max-w-[200px]">
-                  {item.title}
-                </h4>
 
                 <button
                   onClick={(e) => handleLike(item.id, e)}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-ink-950 hover:bg-royal-500/20 border border-royal-500/20 text-xs font-mono text-paper-50 transition-colors"
+                  aria-label="Like photo"
+                  className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-void/80 text-rose-300 border border-white/10 backdrop-blur-md text-xs font-mono transition-transform hover:scale-110 active:scale-95"
                 >
-                  <span className="text-ember-500">❤️</span>
+                  <span>❤️</span>
                   <span>{item.likes}</span>
                 </button>
+              </div>
+
+              <div className="p-4">
+                <h3 className="text-sm font-bold text-white group-hover:text-violet-300 transition-colors line-clamp-1">
+                  {item.title}
+                </h3>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Lightbox Zoom Modal */}
+      {/* Lightbox Modal */}
       {activePhoto && (
         <div
           onClick={() => setActivePhoto(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/90 backdrop-blur-md animate-fadeIn cursor-pointer"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-void/90 backdrop-blur-md animate-fadeIn cursor-pointer"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="max-w-4xl w-full bg-ink-900 border border-royal-500/40 rounded-3xl overflow-hidden shadow-2xl space-y-4 p-4 text-left"
+            className="max-w-4xl w-full bg-surface border border-white/15 rounded-3xl overflow-hidden shadow-2xl space-y-4 p-5 cursor-default"
           >
-            <div className="flex items-center justify-between border-b border-royal-500/20 pb-3 px-2">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div>
-                <h3 className="font-bold text-paper-50 text-base">
+                <span className="text-[10px] font-mono text-violet-400 uppercase">
+                  {activePhoto.category}
+                </span>
+                <h3 className="font-bold text-white text-lg">
                   {activePhoto.title}
                 </h3>
-                <span className="text-xs text-gold-400 font-mono">
-                  {activePhoto.category} Festival Archive
-                </span>
               </div>
               <button
                 onClick={() => setActivePhoto(null)}
-                className="text-paper-50/60 hover:text-paper-50 text-lg p-1"
+                className="w-8 h-8 rounded-full bg-surface-2 flex items-center justify-center text-white/70 hover:text-white"
               >
                 ✕
               </button>
             </div>
 
-            <div className="rounded-2xl overflow-hidden bg-ink-950 aspect-video max-h-[500px]">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-void">
               <img
                 src={activePhoto.imageUrl}
                 alt={activePhoto.title}
                 className="w-full h-full object-contain"
               />
+            </div>
+
+            <div className="flex items-center justify-between text-xs font-mono text-white/60 pt-2">
+              <span>Festival Photographic Archive • CHRIST University</span>
+              <span className="text-rose-400 font-bold">
+                ❤️ {activePhoto.likes} student appreciations
+              </span>
             </div>
           </div>
         </div>
