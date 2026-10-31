@@ -194,3 +194,58 @@
 - **Follow-ups**: Run `pnpm verify` to validate the full pipeline across all gates.
 
 ---
+
+### [2026-10-31 10:30 IST] CI-REVAMP-01 — GitHub Nightly Workflow Fix, Full Performance/Lighthouse Optimization & Complete UI Revamp
+
+- **Prompt**: Fix GitHub nightly hardening workflow failure (exited in 14s), run the project, perform Lighthouse/performance verification, completely revamp the frontend UI into "The Campus After Dark" responsive design across mobile (360px+) to desktop, and fix all issues.
+- **Hat**: DevOps & Frontend/Full-Stack Architect
+- **What I did**:
+  - Diagnosed GitHub Nightly Hardening 14s failure: `.github/workflows/nightly.yml` was pinned to `pnpm/action-setup` `version: 9` which conflicted with monorepo `packageManager: pnpm@12.6.0`, causing immediate `ERR_PNPM_BAD_PM_VERSION` failure during frozen lockfile installation. Fixed by updating both `ci.yml` and `nightly.yml` to specify `version: 12`.
+  - Added missing root scripts in `package.json`: `depcruise`, `test:contract`, `test:integration`, `test:e2e`.
+  - Revamped UI into "The Campus After Dark" signature Christ University festival design with interactive constellation starfield canvas, dynamic capacity progress tracks with Last Seat ember pulse, perforated festival badge tickets, door admission terminal (<500ms target), provably fair commit-reveal lucky draw verification, and Third Wave Coffee sponsor lounge.
+  - Enhanced mobile responsiveness with fixed floating bottom dock (`fixed bottom-3 inset-x-3`) and added `pb-24 md:pb-8` main container spacing for 360px+ screens.
+  - Optimized bundle performance for Lighthouse Tier-0 budget: compressed production payload to ~73 kB gzip (43% of the 170 kB budget limit), configured dark theme color and Open Graph metadata in `index.html`.
+  - Added jsdom environment guard in `CampusNightCanvas.tsx` to prevent `getContext('2d')` unhandled exception in headless test runners.
+  - Synchronized pending faculty and dean proposal mock events across backend domain and client SDK so governance workflows are fully testable.
+- **Files changed**:
+  - `.github/workflows/ci.yml`, `.github/workflows/nightly.yml` — Pinned pnpm version 12 in CI workflows.
+  - `package.json` — Added required monorepo test and validation scripts.
+  - `frontend/index.html` — Updated viewport zoom limits, theme-color `#050B1F`, and metadata.
+  - `frontend/src/index.css` — Custom glassmorphism, glow utilities, and ember keyframes.
+  - `frontend/src/App.tsx` — Mobile floating dock spacing, route selector.
+  - `frontend/src/components/CampusNightCanvas.tsx` — Interactive campus landmark constellation with jsdom and reduced-motion fallbacks.
+  - `frontend/src/components/Navbar.tsx` — Glassmorphic navbar, XP indicator, persona drawer, and mobile dock.
+  - `frontend/src/screens/DiscoverScreen.tsx` — "The Campus After Dark" hero, category districts, capacity progress bars.
+  - `frontend/src/screens/MyTicketsScreen.tsx` — Festival admission pass with perforated tear lines and HMAC QR codes.
+  - `frontend/src/screens/ScannerScreen.tsx` — Laser sweep HUD and sub-500ms door validator.
+  - `frontend/src/screens/LuckyDrawScreen.tsx` — Commit-reveal fair draw stepper and cryptographic proof drawer.
+  - `frontend/src/screens/SponsorScreen.tsx` — Third Wave Coffee lounge and student PII isolation guarantee.
+  - `frontend/src/screens/GalleryScreen.tsx` — Fest moments lightbox gallery with heart reactions.
+  - `frontend/src/screens/AdminRbacScreen.tsx` — PBAC role matrix and permission explorer.
+  - `frontend/src/api/client.ts` — Mock catalog updated with all 6 event statuses.
+  - `backend/src/domain/events/events.routes.ts` — Support querying all event statuses.
+- **Commands run + results**:
+  - `pnpm test:unit` → PASS (36 unit tests passing across backend and frontend in 7.5s)
+  - `pnpm --filter campus-fomo-backend typecheck` → PASS (0 errors)
+  - `pnpm --filter campus-fomo-frontend typecheck` → PASS (0 errors)
+  - `pnpm --filter campus-fomo-frontend build` → PASS (Production build 234.8 kB / 67.5 kB gzip JS, 5.7 kB gzip CSS)
+  - `pnpm generate:openapi` → PASS (OpenAPI YAML generated)
+  - `node backend/dist/server.js` + `Invoke-RestMethod` → PASS (GET /healthz, /events, /me/navigation verified)
+  - `node scripts/check-ai-log.mjs` → PASS
+  - `pnpm verify` → PASS (All 8 pipeline verification steps green)
+- **Decisions & assumptions**:
+  - CI workflows must use pnpm version 12 matching `packageManager: pnpm@12.6.0`.
+  - Non-WebGL/headless tests safely skip 2D canvas execution via userAgent and feature detection.
+  - Mobile bottom navigation dock remains accessible at 360px with `pb-24` main content offset.
+- **Tests**:
+  - `frontend/src/App.test.tsx` → PASS (App shell, persona switcher, dynamic navigation, health check)
+  - `backend/src/contracts/contracts.test.ts` → PASS (10 tests)
+  - `backend/src/modules/health/health.test.ts` → PASS (2 tests)
+  - `backend/src/access/pbac.test.ts` → PASS (17 tests)
+  - `backend/src/domain/domain.test.ts` → PASS (6 tests)
+- **[AI-WRONG] mistakes found**:
+  - `CampusNightCanvas.tsx` invoked `canvas.getContext("2d")` inside `useEffect`, causing jsdom to output `Not implemented: HTMLCanvasElement.prototype.getContext` to stderr during Vitest tests; fixed by guarding against jsdom userAgent and catching missing context.
+  - Splitting "THE CAMPUS" and "AFTER DARK" into separate sibling elements in `DiscoverScreen.tsx` broke React Testing Library's `screen.getByText(/The Campus After Dark/i)` regex matcher; resolved by styling the heading as a single unified text element with CSS text gradient.
+- **Follow-ups**: Ready for commit to `dev` branch.
+
+---

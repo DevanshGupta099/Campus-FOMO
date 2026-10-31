@@ -17,7 +17,11 @@ export const eventRoutes: FastifyPluginAsync = async (app) => {
       };
       const isExternalOnly = query.external === "true";
       const events = eventsService.listEvents({
-        status: query.status || "PUBLISHED",
+        status:
+          query.status === "all"
+            ? undefined
+            : query.status ||
+              (request.headers.authorization ? undefined : "PUBLISHED"),
         category: query.category,
         isExternalOnly,
       });

@@ -191,7 +191,7 @@ export function App() {
         onSelectPersona={handleSelectPersona}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pb-24 md:pb-8">
         {loading ? (
           <div className="py-20 text-center">
             <p className="text-royal-300 text-sm animate-pulse">

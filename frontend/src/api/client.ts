@@ -156,6 +156,82 @@ export class CampusFomoClient {
           fee: 0,
           version: 1,
         },
+        {
+          id: "evt-cultural-dance",
+          title: "Dhwani 2026: Campus Battle of the Bands & Dance Fest",
+          description:
+            "The grand annual cultural explosion featuring top collegiate musicians and dance crews.",
+          category: "Cultural",
+          status: "PUBLISHED",
+          venueId: "ven-amphi",
+          venueName: "Campus Open-Air Amphitheatre",
+          startsAt: new Date(Date.now() + 259200000).toISOString(),
+          endsAt: new Date(Date.now() + 288000000).toISOString(),
+          capacity: 150,
+          confirmedCount: 148,
+          waitlistCap: 20,
+          waitlistCount: 0,
+          isExternalOpen: true,
+          fee: 100,
+          version: 1,
+        },
+        {
+          id: "evt-sports-futsal",
+          title: "Night Futsal Super League",
+          description:
+            "Fast-paced 5v5 floodlit night football championship across university departments.",
+          category: "Sports",
+          status: "PUBLISHED",
+          venueId: "ven-sports",
+          venueName: "Sports Complex Floodlit Turf",
+          startsAt: new Date(Date.now() + 345600000).toISOString(),
+          endsAt: new Date(Date.now() + 360000000).toISOString(),
+          capacity: 60,
+          confirmedCount: 60,
+          waitlistCap: 10,
+          waitlistCount: 4,
+          isExternalOpen: false,
+          fee: 50,
+          version: 1,
+        },
+        {
+          id: "evt-pending-faculty",
+          title: "CyberSecurity CTF Challenge 2026",
+          description:
+            "Defend campus servers against simulated red-team attacks in a 12-hour Capture-The-Flag sprint.",
+          category: "Technical",
+          status: "PENDING_FACULTY",
+          venueId: "ven-audi-2",
+          venueName: "Audi Block 2",
+          startsAt: new Date(Date.now() + 432000000).toISOString(),
+          endsAt: new Date(Date.now() + 453600000).toISOString(),
+          capacity: 40,
+          confirmedCount: 0,
+          waitlistCap: 10,
+          waitlistCount: 0,
+          isExternalOpen: true,
+          fee: 0,
+          version: 1,
+        },
+        {
+          id: "evt-pending-dean",
+          title: "CHRIST National Model United Nations (MUN)",
+          description:
+            "Simulating UN committees on global AI governance, climate resilience, and cyber international law.",
+          category: "Competition",
+          status: "PENDING_DEAN",
+          venueId: "ven-auditorium",
+          venueName: "Central Campus Auditorium",
+          startsAt: new Date(Date.now() + 518400000).toISOString(),
+          endsAt: new Date(Date.now() + 547200000).toISOString(),
+          capacity: 80,
+          confirmedCount: 0,
+          waitlistCap: 15,
+          waitlistCount: 0,
+          isExternalOpen: true,
+          fee: 250,
+          version: 1,
+        },
       ] as unknown as T;
     }
     if (endpoint === "/sponsors/showcase") {
@@ -289,9 +365,7 @@ export class CampusFomoClient {
     });
   }
 
-  async getRotatingQrToken(
-    registrationId: string,
-  ): Promise<{
+  async getRotatingQrToken(registrationId: string): Promise<{
     registrationId: string;
     qrToken: string;
     expiresInSeconds: number;

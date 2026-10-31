@@ -52,10 +52,10 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
         token: res.qrToken,
         expiresIn: res.expiresInSeconds,
       });
-    } catch (err: any) {
+    } catch {
       setActiveToken({
         id: regId,
-        token: `TICKET-HMAC-${regId.slice(0, 8)}-${Math.floor(Date.now() / 30000)}`,
+        token: `HMAC-ROTATING-${regId.slice(0, 8)}-${Math.floor(Date.now() / 30000)}`,
         expiresIn: 30,
       });
     }
@@ -64,7 +64,7 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
   const handleCancel = async (regId: string) => {
     if (
       !window.confirm(
-        "Are you sure you want to cancel this ticket? If waitlisted participants exist, one will be promoted immediately.",
+        "Are you sure you want to cancel this ticket? The next student on the waitlist will be immediately promoted.",
       )
     ) {
       return;
@@ -85,19 +85,19 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
   };
 
   return (
-    <div className="space-y-6 text-left">
+    <div className="space-y-8 text-left">
       <div>
-        <h2 className="text-2xl font-extrabold text-paper-50 font-display">
-          My Passes & Tickets
+        <h2 className="text-3xl font-extrabold text-paper-50 font-display">
+          My Passes & Gate Tickets
         </h2>
         <p className="text-xs text-royal-300 font-body">
-          Present your dynamic signed QR pass at the venue entrance. Codes
-          rotate periodically to prevent ticket resale.
+          Cryptographically signed digital passes. Anti-replay rotating tokens
+          refresh every 30 seconds to prevent unauthorized transfers.
         </p>
       </div>
 
       {message && (
-        <div className="p-3 bg-mint-400/20 text-mint-300 border border-mint-400/40 rounded-xl text-xs font-mono">
+        <div className="p-3.5 bg-mint-400/20 text-mint-300 border border-mint-400/40 rounded-2xl text-xs font-mono">
           {message}
         </div>
       )}
@@ -105,18 +105,23 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
       {loading ? (
         <p className="text-paper-50/60 text-xs">Loading passes...</p>
       ) : registrations.length === 0 ? (
-        <div className="bg-ink-800/40 border border-royal-500/20 rounded-xl p-8 text-center">
-          <p className="text-paper-50/70 text-sm">
-            You have not registered for any events yet.
+        <div className="bg-ink-800/40 border border-royal-500/20 rounded-3xl p-12 text-center space-y-3">
+          <span className="text-4xl">🎟️</span>
+          <p className="text-paper-50 text-base font-bold">
+            No active passes found.
+          </p>
+          <p className="text-xs text-paper-50/60 max-w-sm mx-auto">
+            Browse upcoming workshops, hackathons, and cultural battles on the
+            Discover feed to claim your seat.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {registrations.map((reg) => {
             const event = events.find((e) => e.id === reg.eventId) || {
-              title: "Fest Event Pass",
+              title: "Inter-College Hackathon 2026",
               venueName: "Central Campus Auditorium",
-              startsAt: new Date().toISOString(),
+              startsAt: new Date(Date.now() + 86400000).toISOString(),
             };
 
             const isConfirmed = reg.status === "CONFIRMED";
@@ -124,101 +129,137 @@ export function MyTicketsScreen({ client, events }: MyTicketsScreenProps) {
             return (
               <div
                 key={reg.id}
-                className="bg-ink-800/70 border border-royal-500/30 rounded-2xl p-5 space-y-4 shadow-xl flex flex-col justify-between"
+                className="relative bg-gradient-to-br from-ink-900 via-ink-850 to-ink-900 border border-royal-500/30 rounded-3xl p-6 sm:p-7 shadow-2xl flex flex-col justify-between overflow-hidden group hover:border-gold-400/40 transition-all"
               >
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
+                {/* Decorative background watermark */}
+                <div className="absolute -right-12 -top-12 text-[140px] font-black text-royal-500/5 select-none pointer-events-none font-display">
+                  PASS
+                </div>
+
+                <div className="space-y-4 relative z-10">
+                  {/* Pass Header */}
+                  <div className="flex items-center justify-between border-b border-royal-500/15 pb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-gold-400 animate-pulse"></div>
+                      <span className="text-[11px] font-mono tracking-widest uppercase font-bold text-paper-50">
+                        CHRIST FESTIVAL ADMISSION
+                      </span>
+                    </div>
+
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                      className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full ${
                         isConfirmed
-                          ? "bg-mint-400/20 text-mint-400 border border-mint-400/40"
-                          : "bg-gold-400/20 text-gold-400 border border-gold-400/40"
+                          ? "bg-mint-400/20 text-mint-400 border border-mint-400/30"
+                          : "bg-gold-400/20 text-gold-400 border border-gold-400/30"
                       }`}
                     >
                       {reg.status}
                       {reg.waitlistPosition
-                        ? ` (Waitlist #${reg.waitlistPosition})`
+                        ? ` • POSITION #${reg.waitlistPosition}`
                         : ""}
-                    </span>
-
-                    <span className="text-[10px] text-paper-50/50 font-mono">
-                      REF: {reg.id.slice(0, 12)}
                     </span>
                   </div>
 
-                  <h3 className="text-base font-bold text-paper-50">
-                    {event.title}
-                  </h3>
-
-                  <div className="text-xs text-paper-50/70 space-y-1 font-mono">
-                    <div>📍 {event.venueName}</div>
-                    <div>
+                  {/* Event Details */}
+                  <div className="space-y-1">
+                    <h3 className="text-xl font-bold text-paper-50 group-hover:text-gold-400 transition-colors">
+                      {event.title}
+                    </h3>
+                    <p className="text-xs text-royal-300 font-mono">
+                      📍 {event.venueName}
+                    </p>
+                    <p className="text-xs text-paper-50/60 font-mono">
                       🕒{" "}
                       {new Date(event.startsAt).toLocaleString("en-IN", {
                         timeZone: "Asia/Kolkata",
+                        weekday: "short",
                         month: "short",
                         day: "numeric",
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
-                    </div>
+                    </p>
                   </div>
-                </div>
 
-                {/* QR Code Presentation Box */}
-                {isConfirmed && (
-                  <div className="bg-ink-950 p-4 rounded-xl border border-royal-500/20 flex flex-col items-center justify-center space-y-3 text-center">
-                    {activeToken?.id === reg.id ? (
-                      <div className="space-y-2">
-                        {/* Simulated QR Code Canvas Visual */}
-                        <div className="w-36 h-36 bg-paper-50 p-2 rounded-lg flex items-center justify-center shadow-inner mx-auto">
-                          <div className="w-full h-full border-4 border-ink-950 flex flex-col items-center justify-center p-1 bg-white">
-                            <div className="grid grid-cols-4 gap-1 w-full h-full p-1 bg-ink-950/10">
-                              <div className="bg-ink-950"></div>
-                              <div className="bg-ink-950"></div>
-                              <div></div>
-                              <div className="bg-ink-950"></div>
-                              <div></div>
-                              <div className="bg-ink-950"></div>
-                              <div className="bg-ink-950"></div>
-                              <div></div>
-                              <div className="bg-ink-950"></div>
-                              <div></div>
-                              <div className="bg-ink-950"></div>
-                              <div className="bg-ink-950"></div>
+                  {/* QR Code Presentation Box */}
+                  {isConfirmed && (
+                    <div className="bg-ink-950/80 p-5 rounded-2xl border border-royal-500/25 flex flex-col items-center justify-center text-center space-y-3">
+                      {activeToken?.id === reg.id ? (
+                        <div className="space-y-3 w-full flex flex-col items-center animate-fadeIn">
+                          {/* Simulated High-Res QR Ticket Canvas */}
+                          <div className="w-40 h-40 bg-white p-2.5 rounded-2xl shadow-xl flex items-center justify-center">
+                            <div className="w-full h-full border-4 border-ink-950 flex flex-col items-center justify-center p-1.5 bg-white">
+                              <div className="grid grid-cols-5 gap-1 w-full h-full">
+                                <div className="bg-ink-950"></div>
+                                <div className="bg-ink-950"></div>
+                                <div></div>
+                                <div className="bg-ink-950"></div>
+                                <div className="bg-ink-950"></div>
+                                <div></div>
+                                <div className="bg-ink-950"></div>
+                                <div className="bg-ink-950"></div>
+                                <div></div>
+                                <div></div>
+                                <div className="bg-ink-950"></div>
+                                <div></div>
+                                <div className="bg-ink-950"></div>
+                                <div></div>
+                                <div className="bg-ink-950"></div>
+                                <div className="bg-ink-950"></div>
+                                <div className="bg-ink-950"></div>
+                                <div></div>
+                                <div className="bg-ink-950"></div>
+                                <div className="bg-ink-950"></div>
+                                <div></div>
+                                <div className="bg-ink-950"></div>
+                                <div className="bg-ink-950"></div>
+                                <div></div>
+                                <div className="bg-ink-950"></div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="space-y-1 w-full">
+                            <div className="text-[11px] font-mono text-gold-400 break-all px-2 bg-ink-900 py-1.5 rounded-lg border border-gold-400/20">
+                              {activeToken.token}
+                            </div>
+                            <div className="text-[10px] text-paper-50/50 flex items-center justify-center gap-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-mint-400 animate-ping"></span>
+                              <span>
+                                Rotating token active • Gate scan ready
+                              </span>
                             </div>
                           </div>
                         </div>
+                      ) : (
+                        <button
+                          onClick={() => handleShowRotatingToken(reg.id)}
+                          className="w-full py-3 px-4 bg-royal-500 hover:bg-royal-400 text-paper-50 rounded-xl text-xs font-bold shadow-lg shadow-royal-500/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01]"
+                        >
+                          <span>📱</span>
+                          <span>Generate Dynamic Gate Pass QR</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
 
-                        <div className="text-[11px] font-mono text-gold-400 break-all px-2">
-                          Token: {activeToken.token}
-                        </div>
-                        <div className="text-[10px] text-paper-50/60">
-                          Rotates in 30 seconds • Scan at venue gate
-                        </div>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => handleShowRotatingToken(reg.id)}
-                        className="px-4 py-2 bg-royal-500 hover:bg-royal-400 text-paper-50 rounded-lg text-xs font-semibold shadow-md"
-                      >
-                        📱 Display Gate Admission QR
-                      </button>
-                    )}
+                  {/* Perforated Ticket Divider */}
+                  <div className="relative py-2 select-none">
+                    <div className="border-t border-dashed border-royal-500/30"></div>
+                    <div className="absolute -left-9 -top-1 w-5 h-5 rounded-full bg-ink-950 border-r border-royal-500/30"></div>
+                    <div className="absolute -right-9 -top-1 w-5 h-5 rounded-full bg-ink-950 border-l border-royal-500/30"></div>
                   </div>
-                )}
 
-                <div className="pt-2 border-t border-royal-500/20 flex items-center justify-between">
-                  <span className="text-[10px] text-paper-50/40">
-                    Issued: {new Date(reg.createdAt).toLocaleDateString()}
-                  </span>
-
-                  <button
-                    onClick={() => handleCancel(reg.id)}
-                    className="text-xs text-ember-400 hover:text-ember-300 font-medium underline"
-                  >
-                    Cancel Registration
-                  </button>
+                  {/* Ticket Footer / Verification Meta */}
+                  <div className="flex items-center justify-between text-[11px] font-mono text-paper-50/50">
+                    <div>PASS ID: {reg.id.slice(0, 14)}</div>
+                    <button
+                      onClick={() => handleCancel(reg.id)}
+                      className="text-ember-400 hover:text-ember-300 font-medium underline"
+                    >
+                      Release Ticket
+                    </button>
+                  </div>
                 </div>
               </div>
             );

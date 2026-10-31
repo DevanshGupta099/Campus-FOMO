@@ -4,15 +4,20 @@
 
 :root {
   --ink-950: #050B1F;
+  --ink-900: #071536;
   --ink-800: #0B1F4D;
+  --ink-700: #132B66;
   --royal-500: #1E4FD8;
+  --royal-400: #3B6BF2;
   --royal-300: #6E93FF;
   --gold-400: #F2B705;
+  --gold-300: #F6CA3E;
   --ember-500: #FF5A3C;
   --mint-400: #3EE6B0;
   --paper-50: #F6F8FF;
-  --font-display: 'Unbounded', system-ui, sans-serif;
+  --font-display: 'Unbounded', 'Syne', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 body {
@@ -20,4 +25,83 @@ body {
   font-family: var(--font-body);
   background-color: var(--ink-950);
   color: var(--paper-50);
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(30, 79, 216, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 85% 30%, rgba(242, 183, 5, 0.08) 0%, transparent 35%),
+    radial-gradient(circle at 50% 80%, rgba(62, 230, 176, 0.06) 0%, transparent 45%);
+  background-attachment: fixed;
+}
+
+/* Custom glow and glassmorphism helpers */
+.glass-panel {
+  background: rgba(11, 31, 77, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(110, 147, 255, 0.18);
+}
+
+.glass-panel-elevated {
+  background: rgba(11, 31, 77, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(110, 147, 255, 0.3);
+  box-shadow: 0 12px 36px -8px rgba(5, 11, 31, 0.8), 0 0 24px -4px rgba(30, 79, 216, 0.15);
+}
+
+.glow-gold {
+  box-shadow: 0 0 25px -4px rgba(242, 183, 5, 0.35);
+}
+
+.glow-royal {
+  box-shadow: 0 0 25px -4px rgba(30, 79, 216, 0.45);
+}
+
+.glow-ember {
+  box-shadow: 0 0 20px -2px rgba(255, 90, 60, 0.4);
+}
+
+.glow-mint {
+  box-shadow: 0 0 20px -2px rgba(62, 230, 176, 0.35);
+}
+
+@keyframes fomo-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.82;
+    transform: scale(1.02);
+  }
+}
+
+.animate-fomo-pulse {
+  animation: fomo-pulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes laser-sweep {
+  0% { top: 0%; opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { top: 96%; opacity: 0.8; }
+}
+
+.animate-laser {
+  animation: laser-sweep 2s ease-in-out infinite alternate;
+}
+
+/* Scrollbar polish */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #050B1F;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E4FD8;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6E93FF;
 }
