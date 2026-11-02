@@ -8,6 +8,7 @@ import type {
 import { DEMO_PERSONAS, type PersonaConfig } from "./auth/persona.js";
 import { Navbar } from "./components/Navbar.js";
 import { GamificationModal } from "./components/GamificationModal.js";
+import { LoadingSpinner } from "./components/LoadingSpinner.js";
 import {
   BroadcastToast,
   type ToastMessage,
@@ -288,12 +289,7 @@ export function App() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pb-24 md:pb-8">
         {loading ? (
-          <div className="py-24 text-center space-y-3">
-            <div className="w-10 h-10 border-2 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p className="text-violet-300 text-xs font-mono tracking-wider">
-              LOADING CAMPUS FOMO...
-            </p>
-          </div>
+          <LoadingSpinner label="LOADING CAMPUS FOMO..." size="md" />
         ) : (
           renderScreen()
         )}
