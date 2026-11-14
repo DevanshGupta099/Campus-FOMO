@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <rect width="800" height="600" fill="#122131"/>
+  <circle cx="400" cy="260" r="190" fill="#0B1520" stroke="#D6A756" stroke-width="2"/>
+  <circle cx="400" cy="260" r="135" stroke="#B8893A" stroke-width="1.5" stroke-dasharray="8 6"/>
+  <path d="M140 470V230L400 110L660 230V470" stroke="#FCFBF7" stroke-width="2"/>
+  <path d="M220 470V270M310 470V230M400 470V200M490 470V230M580 470V270" stroke="#D6A756" stroke-width="3"/>
+  <rect x="100" y="470" width="600" height="8" fill="#C84B31"/>
+  <text x="56" y="68" fill="#D6A756" font-family="monospace" font-size="14" letter-spacing="3">BLOSSOMS · CENTRAL QUADRANGLE</text>
+  <text x="56" y="546" fill="#FCFBF7" font-family="Georgia, serif" font-size="28">Inter-Deanery Cultural Showcase</text>
+</svg>

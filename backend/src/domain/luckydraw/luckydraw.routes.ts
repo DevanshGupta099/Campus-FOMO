@@ -1,6 +1,20 @@
 import type { FastifyPluginAsync } from "fastify";
+import { z } from "zod";
 import { luckyDrawService } from "./luckydraw.service.js";
 import { requirePermission } from "../../auth/middleware.js";
+
+const CampaignCreateBodySchema = z.object({
+  eventId: z.string().trim().min(1, "eventId is required").max(64),
+  title: z
+    .string()
+    .trim()
+    .min(3, "Campaign title must be at least 3 characters")
+    .max(160),
+});
+
+const CampaignEnterBodySchema = z.object({
+  sessionId: z.string().trim().min(3, "sessionId is required").max(128),
+});
 
 export const luckyDrawRoutes: FastifyPluginAsync = async (app) => {
   // GET /api/v1/luckydraw/campaigns (List campaigns)
@@ -23,10 +37,19 @@ export const luckyDrawRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [requirePermission("luckydraw:run")],
     },
     async (request, reply) => {
-      const body = request.body as { eventId: string; title: string };
+      const parsed = CampaignCreateBodySchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          type: "about:blank",
+          title: "Validation Error",
+          status: 400,
+          detail: parsed.error.issues[0]?.message || "Invalid campaign payload",
+          code: "VALIDATION_ERROR",
+        });
+      }
       const campaign = luckyDrawService.createCampaign(
-        body.eventId,
-        body.title,
+        parsed.data.eventId,
+        parsed.data.title,
       );
       return reply.status(201).send(campaign);
     },
@@ -57,14 +80,23 @@ export const luckyDrawRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [requirePermission("luckydraw:enter")],
     },
     async (request, reply) => {
+      const parsed = CampaignEnterBodySchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          type: "about:blank",
+          title: "Validation Error",
+          status: 400,
+          detail: parsed.error.issues[0]?.message || "sessionId is required",
+          code: "VALIDATION_ERROR",
+        });
+      }
       try {
         const params = request.params as { id: string };
-        const body = request.body as { sessionId: string };
         const user = request.user!;
 
         const result = await luckyDrawService.enterCampaign({
           campaignId: params.id,
-          sessionId: body.sessionId,
+          sessionId: parsed.data.sessionId,
           userSub: user.sub,
           userName: user.name,
           department: user.department || "General",

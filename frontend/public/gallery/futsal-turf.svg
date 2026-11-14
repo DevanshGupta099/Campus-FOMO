@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <rect width="800" height="600" fill="#0D1F1B"/>
+  <rect x="90" y="120" width="620" height="350" rx="8" stroke="#FCFBF7" stroke-width="2.5"/>
+  <line x1="400" y1="120" x2="400" y2="470" stroke="#FCFBF7" stroke-width="2"/>
+  <circle cx="400" cy="295" r="64" stroke="#D6A756" stroke-width="2.5"/>
+  <rect x="90" y="220" width="85" height="150" stroke="#FCFBF7" stroke-width="2"/>
+  <rect x="625" y="220" width="85" height="150" stroke="#FCFBF7" stroke-width="2"/>
+  <text x="90" y="84" fill="#D6A756" font-family="monospace" font-size="14" letter-spacing="3">CHANCELLOR'S SHIELD · SOUTH GATE TURF</text>
+  <text x="90" y="534" fill="#FCFBF7" font-family="Georgia, serif" font-size="28">Inter-Deanery Floodlit Futsal Finals</text>
+</svg>

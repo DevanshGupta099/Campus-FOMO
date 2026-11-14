@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" fill="none">
+  <rect width="960" height="540" fill="#0B1520"/>
+  <g opacity="0.22" stroke="#243B53" stroke-width="1">
+    <line x1="0" y1="90" x2="960" y2="90"/><line x1="0" y1="180" x2="960" y2="180"/>
+    <line x1="0" y1="270" x2="960" y2="270"/><line x1="0" y1="360" x2="960" y2="360"/>
+    <line x1="160" y1="0" x2="160" y2="540"/><line x1="320" y1="0" x2="320" y2="540"/>
+    <line x1="480" y1="0" x2="480" y2="540"/><line x1="640" y1="0" x2="640" y2="540"/>
+    <line x1="800" y1="0" x2="800" y2="540"/>
+  </g>
+  <path d="M120 430L240 210H720L840 430H120Z" fill="#122131" stroke="#B8893A" stroke-width="2"/>
+  <rect x="290" y="130" width="380" height="210" rx="6" fill="#0D1824" stroke="#C84B31" stroke-width="2"/>
+  <circle cx="480" cy="235" r="56" stroke="#D6A756" stroke-width="2" stroke-dasharray="6 4"/>
+  <circle cx="480" cy="235" r="24" fill="#C84B31"/>
+  <path d="M180 430H780" stroke="#FCFBF7" stroke-width="3"/>
+  <text x="60" y="72" fill="#D6A756" font-family="monospace" font-size="15" letter-spacing="3">LABYRINTH 2025 · AUDI BLOCK</text>
+  <text x="60" y="492" fill="#FCFBF7" font-family="Georgia, serif" font-size="30">24-Hour Systems Engineering Grand Finale</text>
+</svg>

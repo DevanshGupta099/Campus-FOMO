@@ -5,6 +5,7 @@ export const PERSONA_ROLE_BUNDLES: Record<string, Permission[]> = {
     "event:read:public",
     "gallery:read",
     "registration:create",
+    "registration:cancel:own",
     "registration:read:own",
     "notification:read:own",
   ],
@@ -121,3 +122,23 @@ export const PERSONA_ROLE_BUNDLES: Record<string, Permission[]> = {
     "ops:view",
   ],
 };
+
+/**
+ * Pure PBAC scope check (Rule 4: Permissions, never role names):
+ * Identifies external fest guest scopes that hold public registration rights
+ * without internal CHRIST campus privileges.
+ */
+export function isExternalParticipantScope(permissions: string[]): boolean {
+  if (!permissions || permissions.length === 0) return false;
+  const internalMarkers = [
+    "gamification:read:own",
+    "luckydraw:enter",
+    "event:create",
+    "event:read:any",
+    "checkin:scan:own-event",
+    "sponsor:profile:manage:own",
+    "rbac:manage",
+    "admin:*",
+  ];
+  return !internalMarkers.some((perm) => permissions.includes(perm));
+}

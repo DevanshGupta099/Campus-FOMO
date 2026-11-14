@@ -1,4 +1,4 @@
-import { createHmac, randomBytes } from "node:crypto";
+import { randomBytes } from "node:crypto";
 import { eventsService } from "../events/events.service.js";
 import { streamHub } from "../stream/stream.routes.js";
 
@@ -35,8 +35,27 @@ export class RegistrationService {
   private registrations = new Map<string, RegistrationRecord>();
   private idempotencyStore = new Map<string, RegistrationRecord>();
 
-  // Lock primitive to guarantee strict sequential atomicity during concurrency tests
   private lockPromise: Promise<void> = Promise.resolve();
+
+  constructor() {
+    // Seed one confirmed pass for demo student Asha on Workshop so My Passes has an immediate live QR pass
+    const workshop = eventsService.getEvent("evt-tech-workshop");
+    if (workshop) {
+      const seedId = "reg-seed-asha-workshop";
+      this.registrations.set(seedId, {
+        id: seedId,
+        eventId: "evt-tech-workshop",
+        userSub: "01927500-0001-7000-8000-000000000001",
+        userEmail: "asha@christuniversity.in",
+        userName: "Asha Kumar",
+        userPhone: "+919000000011",
+        status: "CONFIRMED",
+        isGuest: false,
+        ticketQrSecret: "seed-hmac-secret-christ-central-asha-01",
+        createdAt: new Date(Date.now() - 86_400_000).toISOString(),
+      });
+    }
+  }
 
   private async acquireLock(): Promise<() => void> {
     let release: () => void;
@@ -59,7 +78,6 @@ export class RegistrationService {
     guestInstitution?: string;
     idempotencyKey?: string;
   }): Promise<{ registration: RegistrationRecord; isWaitlisted: boolean }> {
-    // Idempotency check
     if (
       params.idempotencyKey &&
       this.idempotencyStore.has(params.idempotencyKey)
@@ -80,8 +98,12 @@ export class RegistrationService {
           `Cannot register for event with status: ${event.status}`,
         );
       }
+      if (params.isGuest && !event.isExternalOpen) {
+        throw new Error(
+          "EXTERNAL_CLOSED: This event is open exclusively to CHRIST University members",
+        );
+      }
 
-      // Check for existing active registration by this user
       for (const reg of this.registrations.values()) {
         if (
           reg.eventId === params.eventId &&
@@ -95,7 +117,6 @@ export class RegistrationService {
       const id = `reg-${randomBytes(8).toString("hex")}`;
       const ticketQrSecret = randomBytes(16).toString("hex");
 
-      // Atomic seat check: capacity condition
       if (event.confirmedCount < event.capacity) {
         event.confirmedCount += 1;
         const reg: RegistrationRecord = {
@@ -113,8 +134,15 @@ export class RegistrationService {
           createdAt: new Date().toISOString(),
         };
         this.registrations.set(id, reg);
-        if (params.idempotencyKey)
+        if (params.idempotencyKey) {
           this.idempotencyStore.set(params.idempotencyKey, reg);
+        }
+
+        eventsService.awardXp(
+          params.userSub,
+          50,
+          `Confirmed seat for ${event.title}`,
+        );
 
         streamHub.broadcast("seat.updated", {
           eventId: event.id,
@@ -126,7 +154,6 @@ export class RegistrationService {
         return { registration: reg, isWaitlisted: false };
       }
 
-      // Seat full — check waitlist cap
       if (event.waitlistCount < event.waitlistCap) {
         event.waitlistCount += 1;
         const waitlistPosition = event.waitlistCount;
@@ -146,8 +173,9 @@ export class RegistrationService {
           createdAt: new Date().toISOString(),
         };
         this.registrations.set(id, reg);
-        if (params.idempotencyKey)
+        if (params.idempotencyKey) {
           this.idempotencyStore.set(params.idempotencyKey, reg);
+        }
 
         streamHub.broadcast("waitlist.updated", {
           eventId: event.id,
@@ -158,7 +186,6 @@ export class RegistrationService {
         return { registration: reg, isWaitlisted: true };
       }
 
-      // Event is completely full (capacity and waitlist exhausted)
       throw new Error("EVENT_FULL: Capacity and waitlist limit reached");
     } finally {
       release();
@@ -173,13 +200,19 @@ export class RegistrationService {
     try {
       const reg = this.registrations.get(registrationId);
       if (!reg) throw new Error("Registration not found");
-      if (reg.userSub !== userSub)
+      if (reg.userSub !== userSub) {
         throw new Error("Cannot cancel another user's registration");
-      if (reg.status === "CANCELLED")
+      }
+      if (reg.status === "CANCELLED") {
         throw new Error("Registration is already cancelled");
+      }
 
       const event = eventsService.getEvent(reg.eventId);
       if (!event) throw new Error("Event not found");
+
+      if (Date.now() >= new Date(event.startsAt).getTime()) {
+        throw new Error("Cancellations close once the event has started");
+      }
 
       const wasConfirmed = reg.status === "CONFIRMED";
       reg.status = "CANCELLED";
@@ -187,9 +220,8 @@ export class RegistrationService {
       let promoted: RegistrationRecord | undefined;
 
       if (wasConfirmed) {
-        event.confirmedCount -= 1;
+        event.confirmedCount = Math.max(0, event.confirmedCount - 1);
 
-        // Atomic waitlist promotion: find waitlist position 1
         const waitlisted = Array.from(this.registrations.values())
           .filter((r) => r.eventId === reg.eventId && r.status === "WAITLISTED")
           .sort(
@@ -201,10 +233,9 @@ export class RegistrationService {
           first.status = "CONFIRMED";
           first.waitlistPosition = undefined;
           event.confirmedCount += 1;
-          event.waitlistCount -= 1;
+          event.waitlistCount = Math.max(0, event.waitlistCount - 1);
           promoted = first;
 
-          // Re-index remaining waitlisted attendees
           for (let i = 1; i < waitlisted.length; i++) {
             if (waitlisted[i].waitlistPosition) {
               waitlisted[i].waitlistPosition = i;
@@ -212,8 +243,7 @@ export class RegistrationService {
           }
         }
       } else {
-        // Was waitlisted
-        event.waitlistCount -= 1;
+        event.waitlistCount = Math.max(0, event.waitlistCount - 1);
         const waitlisted = Array.from(this.registrations.values())
           .filter(
             (r) =>
@@ -239,6 +269,7 @@ export class RegistrationService {
       if (promoted) {
         streamHub.broadcast("waitlist.promoted", {
           eventId: event.id,
+          eventTitle: event.title,
           promotedRegistrationId: promoted.id,
           userSub: promoted.userSub,
         });
@@ -254,10 +285,25 @@ export class RegistrationService {
     return this.registrations.get(id);
   }
 
-  listUserRegistrations(userSub: string): RegistrationRecord[] {
-    return Array.from(this.registrations.values()).filter(
-      (r) => r.userSub === userSub,
-    );
+  listUserRegistrations(userSub: string) {
+    return Array.from(this.registrations.values())
+      .filter((r) => r.userSub === userSub)
+      .map((r) => {
+        const evt = eventsService.getEvent(r.eventId);
+        const { ticketQrSecret: _secret, userPhone, userEmail, ...rest } = r;
+        return {
+          ...rest,
+          userEmail: maskEmail(userEmail),
+          userPhone: userPhone ? maskPhone(userPhone) : undefined,
+          eventTitle: evt?.title || "Campus Event",
+          venueName: evt?.venueName || "Central Campus",
+          startsAt: evt?.startsAt || r.createdAt,
+          endsAt: evt?.endsAt || r.createdAt,
+          category: evt?.category || "General",
+          fee: evt?.fee ?? 0,
+          lastUpdateBanner: evt?.lastUpdateBanner,
+        };
+      });
   }
 
   listAttendees(eventId: string, maskPII = true) {

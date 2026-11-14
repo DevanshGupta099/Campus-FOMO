@@ -469,3 +469,148 @@
 - **Follow-ups**: None.
 
 ---
+
+### [2026-11-14 13:42 IST] CHRIST-CENTRAL-CONCOURSE-V2 — Full Frontend Rebuild & Backend Zero-Trust Audit
+
+- **Prompt**: Clone Campus-FOMO, remove existing frontend 100%, redesign Awwwards-level Swiss Architectural Editorial frontend for CHRIST University Central Campus (no AI slop palette, zero emojis, interactive hero media anchor, proper login/signup, PBAC role-adaptive workspace), audit and fix all backend/infra issues.
+- **Hat**: Principal Full-Stack Architect, Security Auditor & Design Engineer
+- **What I did**:
+  - Audited every backend module, domain service, OpenAPI contract, APISIX gateway route, and test file.
+  - Fixed backend security & domain defects: built complete `backend/src/modules/auth/` (scrypt password verification, HS256 JWT issuance + `jti` logout revocation, HMAC-SHA256 OTP flow, dual-track Student/Guest signup, secret-free `/auth/personas`), created shared `backend/src/modules/audit/`, sealed pre-draw `seedSecret` in `luckydraw.service.ts`, fixed QR token IDOR in `checkin.routes.ts`, enforced external-only Guest boundary in `registration` & `events`, added `<150ms` `/events/clash-check` and `/venues`, wired live XP into `/me`, fixed Fastify SSE `reply.hijack()` CORS headers, and regenerated `backend/openapi.yaml`.
+  - Removed legacy `frontend/` 100% and engineered a new CHRIST (Deemed to be University) Central Campus frontend from scratch using Warm Limestone (`#F5F1E8`), Collegiate Obsidian (`#0B1520`), Signal Terracotta (`#C84B31`), Antique Brass (`#B8893A`), Courtyard Pine (`#1D6B52`), self-hosted Instrument Serif + Plus Jakarta Sans + JetBrains Mono, custom SVG gallery illustrations, and Lucide icons (zero emojis).
+  - Built public editorial Landing Page (with 3-mode interactive Hero Media Anchor: Live Console, capability-gated Three.js 3D Precinct + SVG blueprint fallback, and live 30s HMAC Pass), split-screen Login (Password + OTP + 8-persona evaluator sandbox), Dual-Track Signup (CHRIST Student vs External Fest Guest), and 10 PBAC-gated workspace views driven strictly by `hasPerm` / `/me/navigation`.
+- **Files changed**:
+  - `backend/src/config.ts`, `backend/src/app.ts`, `backend/src/auth/{jwt.ts,middleware.ts}`, `backend/src/access/roles.ts` — Auth config, HS256/JWKS verification, `jti` revocation, ScopeResolver PBAC, Guest cancel grant.
+  - `backend/src/modules/audit/index.ts`, `backend/src/modules/auth/{index.ts,routes.ts,service.ts,auth.test.ts}` — Shared audit ledger, full auth/OTP/signup service, and 6 security/domain integration tests.
+  - `backend/src/modules/me/{index.ts,routes.ts}`, `backend/src/modules/admin/{index.ts,rbac-routes.ts}` — Live XP integration, masked PII, live RBAC user grants, audit & ops endpoints.
+  - `backend/src/domain/events/{events.service.ts,events.routes.ts}`, `backend/src/domain/registration/{registration.service.ts,registration.routes.ts}`, `backend/src/domain/checkin/{checkin.service.ts,checkin.routes.ts}`, `backend/src/domain/luckydraw/luckydraw.service.ts`, `backend/src/domain/stream/stream.routes.ts` — CHRIST Central venues/events, `<150ms` clash check, outdoor monsoon backup validation, IDOR & commit-reveal fixes, SSE hijack fix.
+  - `backend/src/contracts/openapi.ts`, `backend/openapi.yaml`, `infra/apisix/apisix.yaml`, `.env.example`, `tests/pipeline.test.ts`, `docs/HANDBOOK-COMPLIANCE.md` — Contract sync, gateway routes, pipeline test import fix.
+  - `frontend/*` — Complete clean-slate rebuild (`LandingPage`, `HeroMediaAnchor`, `LoginPage`, `SignupPage`, `WorkspaceShell`, 10 PBAC workspace views, `QrMatrixCanvas`, custom SVG gallery, `App.test.tsx`).
+  - `docs/AI-LOG.md` — Appended this entry.
+- **Commands run + results**:
+  - `node scripts/check-ai-log.mjs` → PASS
+  - `pnpm --filter campus-fomo-backend typecheck` → PASS
+  - `pnpm --filter campus-fomo-frontend typecheck` → PASS
+  - `pnpm --filter campus-fomo-backend test:unit` → PASS (5 files, 43 tests)
+  - `pnpm --filter campus-fomo-frontend test:unit` → PASS (1 file, 5 tests)
+  - `vitest run tests/pipeline.test.ts` → PASS (1 test)
+  - `pnpm --filter campus-fomo-backend generate:openapi` → PASS
+  - `pnpm --filter campus-fomo-backend build` → PASS
+  - `pnpm --filter campus-fomo-frontend build` → PASS
+  - `pnpm verify` (`node scripts/verify/index.js`) → PASS
+- **Decisions & assumptions**:
+  - Customised campus venues, clubs, and copy for CHRIST (Deemed to be University) Central Campus, Hosur Road, Bengaluru while preserving exact canonical test event IDs (`evt-hackathon-100` with 49/50 seats) for regression compatibility.
+- **Tests**:
+  - `backend/src/modules/auth/auth.test.ts` → PASS (6 tests: login, guest external boundary, logout jti revocation, lucky-draw seedSecret non-leakage, <150ms clash check, QR IDOR defense)
+  - `frontend/src/App.test.tsx` → PASS (5 tests: editorial landing + hero anchor modes + zero-emoji check, student PBAC nav + XP, guest signup boundary, faculty Stage-1 queue, PermissionGate block)
+- **[AI-WRONG] mistakes found**:
+  - `[AI-WRONG]` Legacy `luckydraw.service.ts` stored `seedSecret` directly on `LuckyCampaign` objects returned by `GET /luckydraw/campaigns`, leaking the secret seed before draw execution; isolated secrets into a private server-only `Map`.
+  - `[AI-WRONG]` Legacy `GET /checkin/token/:id` lacked ownership verification, allowing any authenticated user to mint rotating QR tokens for another student's registration ID; enforced strict owner/admin check.
+  - `[AI-WRONG]` Legacy `tests/pipeline.test.ts` imported deleted workspace package `@campus-fomo/contracts`; updated to validate generated `backend/openapi.yaml` contract.
+  - `[AI-WRONG]` During frontend rebuild, `AuthContext.hydrateNavigationAndProfile` initially called `setUser(initialUser)` before `await apiClient.getNavigation()` resolved, causing `LoginPage` to redirect into `WorkspaceShell` one tick before `screens` populated; fixed by awaiting navigation and profile hydration before setting authenticated user state.
+- **Follow-ups**: Optional live Keycloak 26 + PostgreSQL 16 Docker Compose deployment (`pnpm infra:up`) when moving beyond local standalone Fastify mode.
+
+---
+
+### [2026-11-14 13:49 IST] DEV-SERVERS-START — Launch Live Backend & Frontend Development Servers
+
+- **Prompt**: run the project now give me links
+- **Hat**: DevOps & Runtime Engineer
+- **What I did**:
+  - Started the Fastify backend API daemon (`campus-fomo-backend dev` via `tsx watch src/server.ts`) listening on `http://localhost:3001/api/v1`.
+  - Started the Vite frontend dev server daemon (`campus-fomo-frontend dev`) listening on `http://localhost:5173/`.
+- **Files changed**:
+  - `docs/AI-LOG.md` — Appended this runtime launch entry.
+- **Commands run + results**:
+  - `corepack pnpm --filter campus-fomo-backend dev` → PASS (listening on `0.0.0.0:3001`)
+  - `corepack pnpm --filter campus-fomo-frontend dev` → PASS (ready in 306 ms on `localhost:5173`)
+  - `node scripts/check-ai-log.mjs` → PASS
+- **Decisions & assumptions**:
+  - Ran both servers in standalone local development mode using validated boot configuration defaults from `backend/src/config.ts`.
+- **Tests**:
+  - Verified clean server startup logs for both daemons.
+- **[AI-WRONG] mistakes found**:
+  - None.
+- **Follow-ups**: Keep daemon processes active while user explores the live UI.
+
+---
+
+### [2026-11-14 14:32 IST] CHRIST-CENTRAL-CONCOURSE-V3-WEBGL — AAA WebGL Kinetic Typography, 3D Precinct Twin & Full-Immersion Redesign
+
+- **Prompt**: Redesign frontend further with Awwwards-level aesthetic, better typography including AAA-game-style WebGL GPU-rendered typography, full responsiveness (360px+), Three.js/WebGL/media photography, find gaps & missing features, fix project accordingly, and add extra high-value features.
+- **Hat**: Creative Technologist, WebGL Shader Engineer & Principal Full-Stack Architect
+- **What I did**:
+  - Upgraded typography system from Instrument Serif to Neo-Industrial Kinetic Variable Typography (`Syne Variable`, `Space Grotesk Variable`, `Outfit Variable`, `Chakra Petch` + `JetBrains Mono`) plus static `.woff` glyph tables (`frontend/public/fonts/syne-800.woff`, `space-grotesk-700.woff`) for GPU Signed Distance Field (SDF) text generation.
+  - Engineered AAA-game-style WebGL GPU-rendered typography (`WebGLKineticHeroText.tsx`) using `troika-three-text` + custom `onBeforeCompile` GLSL vertex wave displacement, `-Z` molten vermilion wireframe parallax echo, gyroscopic telemetry rings, responsive FOV scaling, and accessible `<h1>` / non-WebGL fallback.
+  - Engineered `WebGLShaderMarquee.tsx` (interactive GLSL fragment-shader velocity-shear & chromatic aberration ribbon) and `CampusPrecinct3DMap.tsx` (interactive 9-block CHRIST Central Campus Three.js 3D Digital Twin with raycast block selection, capacity beacons, monsoon backup badges, and 2D blueprint fallback).
+  - Redesigned theme to Anodized Matte Carbon (`#07090D` / `#0C1017` / `#101620`), Warm Titanium Bone (`#F4F0E6`), Molten Signal Vermilion (`#FF4D1C`), Champagne Gold (`#E2B45A`), and Telemetry Phosphor (`#2EE59D`) with a Warm Bone contrast chapter on the Landing Page, Lenis smooth scroll, and 6 bespoke high-resolution campus photographs (`frontend/public/media/*.jpg`).
+  - Closed backend & workspace gaps: replaced remaining `.role === "GUEST"` checks with pure PBAC `isExternalParticipantScope(permissions)` (Rule 4), implemented `/me/bookmarks`, `/me/bookmarks/:eventId`, `/me/xp`, `/events/leaderboard`, `/events/pulse`, regenerated `backend/openapi.yaml`, and added `/app/map` (`CampusMapView`), Global `Ctrl+K` `CommandPalette`, Watchlist Bookmarks, Deanery XP League, and a 360px-responsive Mobile Bottom Quick-Dock.
+- **Files changed**:
+  - `backend/src/access/{roles.ts,screens.ts}`, `backend/src/domain/events/{events.service.ts,events.routes.ts}`, `backend/src/domain/registration/registration.routes.ts`, `backend/src/modules/me/routes.ts`, `backend/src/contracts/openapi.ts`, `backend/openapi.yaml`, `backend/src/modules/auth/auth.test.ts` — Pure PBAC external scope helper, `/map` screen, bookmarks/XP/leaderboard/pulse endpoints, OpenAPI sync, and unit tests.
+  - `frontend/package.json`, `frontend/vite.config.ts`, `frontend/tailwind.config.ts`, `frontend/index.html`, `frontend/src/{index.css,main.tsx,tokens.ts,vite-env.d.ts}` — Verified font/WebGL/motion packages, Anodized Carbon + Molten Vermilion token system, vendor chunk splitting.
+  - `frontend/public/fonts/*.woff`, `frontend/public/media/*.jpg` — Local static WOFF binaries for Troika SDF shaders and 6 bespoke campus/fest photographs.
+  - `frontend/src/components/webgl/{WebGLKineticHeroText.tsx,WebGLShaderMarquee.tsx,CampusPrecinct3DMap.tsx}`, `frontend/src/components/{CommandPalette.tsx,HeroMediaAnchor.tsx,PublicNavbar.tsx,BrandMarks.tsx,WorkspaceShell.tsx,EventDetailModal.tsx,QrMatrixCanvas.tsx,ToastStack.tsx}` — WebGL SDF typography, 3D Precinct Twin, `Ctrl+K` Command Palette, high-contrast QR frame, mobile quick-dock.
+  - `frontend/src/pages/{LandingPage.tsx,LoginPage.tsx,SignupPage.tsx}`, `frontend/src/pages/workspace/{CampusMapView.tsx,DiscoverView.tsx,GalleryView.tsx,ProfileModal.tsx,AdminRbacView.tsx,ApprovalsView.tsx,EventOpsView.tsx,LuckyDrawView.tsx,MyTicketsView.tsx,ScannerView.tsx,SponsorView.tsx}`, `frontend/src/{App.tsx,App.test.tsx}` — v3 editorial surfaces, `/app/map` view, watchlist & leaderboard, WCAG AA/AAA dark-carbon contrast audit, and 6-test frontend suite.
+  - `docs/AI-LOG.md` — Appended entry `#CHRIST-CENTRAL-CONCOURSE-V3-WEBGL`.
+- **Commands run + results**:
+  - `node scripts/check-ai-log.mjs` → PASS
+  - `corepack pnpm --filter campus-fomo-backend generate:openapi` → PASS
+  - `corepack pnpm --filter campus-fomo-backend test:unit` → PASS (5 files, 44 tests)
+  - `corepack pnpm --filter campus-fomo-frontend test:unit` → PASS (1 file, 6 tests)
+  - `corepack pnpm exec vitest run tests/pipeline.test.ts` → PASS (1 test)
+  - `node scripts/verify/index.js` (`pnpm verify`) → PASS (All 8 verification pipeline gates passed)
+- **Decisions & assumptions**:
+  - Used `@fontsource/chakra-petch@5.3.0` (verified on npm) after confirming `@fontsource-variable/chakra-petch` is unpublished (`404`), and bundled static `.woff` files in `public/fonts/` so `troika-three-text` parses OpenType tables deterministically offline.
+  - Enforced `#07090D` (`text-void`) on Molten Vermilion (`#FF4D1C`) and Phosphor (`#2EE59D`) CTAs (5.77:1 to 12.2:1 contrast) and `#F4F0E6` (`text-bone`) inside `#F4F0E6`-framed QR quiet zones.
+- **Tests**:
+  - `backend/src/modules/auth/auth.test.ts` → PASS (7 tests including leaderboard, pulse, bookmarks, `/me/xp`)
+  - `frontend/src/App.test.tsx` → PASS (6 tests including Landing v3, `Ctrl+K` Command Palette, `/app/map` 3D Precinct Radar, Watchlist bookmarks, PBAC gates)
+- **[AI-WRONG] mistakes found**:
+  - `[AI-WRONG]` Remapping `paper.elevated` to dark gunmetal (`#101620`) initially left v2 `text-paper-elevated` button/header classes dark-on-dark; audited all 91 source files and replaced every `text-paper-elevated` with high-contrast `text-bone` or `text-void`.
+  - `[AI-WRONG]` `CampusMapView.tsx` initially referenced `v.type` / `v.indoorBackup` instead of canonical `VenueItem.isOutdoor`, and `LandingPage.tsx` had an unquoted `Guest Lecture` object key; caught immediately by `tsc --noEmit` and fixed.
+- **Follow-ups**: Keep Fastify (`:3001`) and Vite (`:5173`) dev daemons running for live browser exploration.
+
+---
+
+### [2026-11-14 15:10 IST] FINAL-AUDIT-HARDENING-VIDEO-LIGHTHOUSE-DOCS — Security Audit, Strict Zod Validation, H.264 Cinema Showreels, Lighthouse 99–100 & Full Handbook Docs
+
+- **Prompt**: Check for issues, vulnerabilities, and bugs; ensure all proper validations are present; improve frontend and backend; use both images and videos to make the frontend super attractive; ensure full responsiveness (360px+); run proper Lighthouse testing (performance & SEO); complete all pending project documentation; verify everything works and push to GitHub.
+- **Hat**: Principal Application Security Auditor, Performance/SEO Engineer & Technical Author
+- **What I did**:
+  - **Backend Security & Validation Hardening**:
+    - Patched organizer ownership scope fallback (`eventOwnerId: evt?.organizerSub || req.user?.sub` -> `evt?.organizerSub ?? "__missing_event__"`) + `404 EVENT_NOT_FOUND` guards and sanitized `Content-Disposition` filename headers (`[^a-zA-Z0-9_-]`) across `backend/src/domain/events/events.routes.ts` and `backend/src/domain/registration/registration.routes.ts`.
+    - Added strict Zod input schemas across `events.routes.ts` (`proposals`, `approve-dean`, `reject`, `cancel`, `volunteers`, `broadcast`), `registration.routes.ts` (`register`), `checkin.routes.ts` (`scan`), `luckydraw.routes.ts` (`campaigns`, `enter`), `admin/rbac-routes.ts` (validating permission strings against `ALL_PERMISSIONS`), `me/routes.ts` (`PATCH /me`), and `auth/routes.ts` (`POST /auth/refresh`).
+    - Registered `@fastify/rate-limit`, set `bodyLimit: 1_048_576` (1 MiB), redacted `5xx` error messages in `production`, and mounted `healthRoutes` at root `/` (`/healthz`, `/readyz`) in `backend/src/app.ts`.
+    - Added `priority: 25` `protected-event-subroutes` OIDC Bearer guard in `infra/apisix/apisix.yaml` and `fast-uri` security overrides in `pnpm-workspace.yaml`.
+  - **Cinema Video Showreels & Media Optimization**:
+    - Encoded two seamless H.264 `yuv420p` (`+faststart`) looping `.mp4` campus showreels (`frontend/public/media/christ-concourse-reel.mp4` and `blossoms-stage-loop.mp4`), compressed all 6 campus `.jpg` photographs (`5.47 MB -> 569 KB`), and added `960x540` WebP hero assets (`hero-central-campus.webp`, `fest-blossoms-stage.webp`).
+    - Built accessible `<CinemaVideoFrame>` (`frontend/src/components/CinemaVideoFrame.tsx`) with instant poster LCP, Play/Pause HUD button, and `prefers-reduced-motion` static poster fallback; integrated video showreels into `HeroMediaAnchor.tsx`, `LandingPage.tsx`, `GalleryView.tsx`, `LoginPage.tsx`, and `SignupPage.tsx`.
+  - **Lighthouse, SEO & 360px Responsiveness**:
+    - Code-split all routes and WebGL chunks (`96.9 kB` gzip entry bundle), added `favicon.svg`, `robots.txt`, `sitemap.xml`, `site.webmanifest`, OpenGraph/Twitter meta, and Schema.org JSON-LD (`frontend/index.html`).
+    - Executed real Chrome Headless `lighthouse@13.6.0` audits: **Desktop 99 Performance / 100 Accessibility / 100 Best Practices / 100 SEO** (`FCP 0.3s`, `LCP 1.0s`, `TBT 0ms`, `CLS 0.039`) and **Mobile (360px Slow 4G) 87 Performance / 100 Accessibility / 100 Best Practices / 100 SEO** (`TBT 0ms`, `CLS 0.028`), plus verified `0px` horizontal overflow across `360x800`, `768x1024`, and `1440x900`.
+  - **Complete Stage 1–7 Documentation**:
+    - Scrubbed plaintext demo password from `README.md` (Rule 8), created `docs/CHANGE-REQUESTS.md` (Stage 5), `docs/RELEASE-AUDIT.md` (Stage 6), and `docs/LIGHTHOUSE-AUDIT.md`, and updated `docs/HANDBOOK-COMPLIANCE.md` (all 7 stages `DONE`), `docs/DESIGN-SYSTEM.md`, and `docs/STATUS.md`.
+- **Files changed**:
+  - `backend/src/app.ts`, `backend/src/modules/{auth/routes.ts,me/routes.ts,admin/rbac-routes.ts}`, `backend/src/domain/{events/events.routes.ts,registration/registration.routes.ts,checkin/checkin.routes.ts,luckydraw/luckydraw.routes.ts}`, `backend/src/modules/auth/auth.test.ts`, `backend/openapi.yaml` — Security & Zod hardening + regression tests.
+  - `infra/apisix/apisix.yaml`, `pnpm-workspace.yaml`, `pnpm-lock.yaml` — Gateway subroute OIDC guard and `fast-uri` patch overrides.
+  - `frontend/index.html`, `frontend/public/{favicon.svg,robots.txt,sitemap.xml,site.webmanifest}`, `frontend/public/media/*.{mp4,jpg,webp}`, `frontend/src/App.tsx`, `frontend/src/components/{CinemaVideoFrame.tsx,HeroMediaAnchor.tsx}`, `frontend/src/pages/{LandingPage.tsx,LoginPage.tsx,SignupPage.tsx}`, `frontend/src/pages/workspace/{CampusMapView.tsx,GalleryView.tsx}` — H.264 cinema showreels, code-splitting, SEO, WCAG contrast, 360px overflow fix.
+  - `README.md`, `docs/{CHANGE-REQUESTS.md,RELEASE-AUDIT.md,LIGHTHOUSE-AUDIT.md,HANDBOOK-COMPLIANCE.md,DESIGN-SYSTEM.md,STATUS.md,AI-LOG.md}` — Complete Stage 1–7 documentation & release audit.
+- **Commands run + results**:
+  - `corepack pnpm install --frozen-lockfile` → PASS (631 entries verified)
+  - `corepack pnpm --filter campus-fomo-backend test:unit` → PASS (5 files, 46 tests)
+  - `corepack pnpm --filter campus-fomo-frontend test:unit` → PASS (1 file, 6 tests)
+  - `lighthouse http://localhost:4173/ --preset=desktop` → PASS (99 / 100 / 100 / 100)
+  - `lighthouse http://localhost:4173/ --form-factor=mobile --screenEmulation.width=360` → PASS (87 / 100 / 100 / 100)
+  - `node scripts/verify/index.js` (`pnpm verify`) → PASS
+- **Decisions & assumptions**:
+  - Kept `master` untouched (protected release branch per `AGENTS.md`) and pushed verified changes cleanly to `origin/dev`.
+- **Tests**:
+  - Added 2 new security & schema boundary tests in `backend/src/modules/auth/auth.test.ts` (`// covers: EH-01, EH-03, EH-05, VL-01, AD-01`).
+- **[AI-WRONG] mistakes found**:
+  - `[AI-WRONG]` Audited `:own-event` resolvers in `events.routes.ts` & `registration.routes.ts` had `evt?.organizerSub || req.user?.sub`, which fell back to caller `sub` when `evt` was missing; fixed with `evt?.organizerSub ?? "__missing_event__"`.
+  - `[AI-WRONG]` pnpm v12 ignores `pnpm.overrides` inside `package.json`; moved overrides into `pnpm-workspace.yaml`.
+  - `[AI-WRONG]` React 18 warned on camelCase `fetchPriority` JSX prop; moved priority hint to HTML head / eager loading.
+  - `[AI-WRONG]` First Lighthouse pass exposed `3.97:1` contrast on `#D9380C` over `#F2EDE2` and `0.17` CLS from conditional pulse strip insertion, plus a `3px` overflow (`363px`) at `360px` mobile width; fixed all three (`#A82400` `6.24:1`, constant-height pulse strip, `text-[2.25rem]` mobile hero).
+- **Follow-ups**: Keep local dev servers running (`:3001` and `:5173`) after `git push origin dev`.
+
+---

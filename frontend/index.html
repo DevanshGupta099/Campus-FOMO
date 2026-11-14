@@ -1,15 +1,83 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CONCOURSE // CHRIST University Central Campus Event OS</title>
+    <meta
+      name="description"
+      content="CONCOURSE is the Zero-Trust Campus Event Operating System for CHRIST (Deemed to be University), Central Campus, Bengaluru — featuring atomic seat locks, 30s rotating HMAC QR gate passes, WebGL 3D precinct twin, and 8 permission-scoped roles."
+    />
+    <meta
+      name="keywords"
+      content="CHRIST University Central Campus, Campus Events Bengaluru, Labyrinth Hackathon, Blossoms Fest, Magnovite, Zero Trust PBAC, Campus Event Management"
+    />
+    <meta name="author" content="CHRIST Central Campus Concourse Engineering" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#07090D" />
+    <link rel="canonical" href="https://concourse.christuniversity.in/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
-    <meta name="theme-color" content="#080808" />
-    <meta name="description" content="Campus FOMO — Christ University's official festival & event platform. Where every moment counts." />
-    <meta name="color-scheme" content="dark" />
-    <title>Campus FOMO</title>
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- OpenGraph Metadata -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CONCOURSE // CHRIST Central Campus" />
+    <meta
+      property="og:title"
+      content="CONCOURSE // CHRIST University Central Campus Event OS"
+    />
+    <meta
+      property="og:description"
+      content="Atomic seat reservations, sub-150ms venue clash verification, 30-second rotating HMAC gate passes, and interactive 3D campus topology for CHRIST Central Campus, Bengaluru."
+    />
+    <meta property="og:url" content="https://concourse.christuniversity.in/" />
+    <meta
+      property="og:image"
+      content="https://concourse.christuniversity.in/media/hero-central-campus.jpg"
+    />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter Card Metadata -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="CONCOURSE // CHRIST University Central Campus Event OS"
+    />
+    <meta
+      name="twitter:description"
+      content="Zero-Trust PBAC Event Operating System & 3D Precinct Twin for CHRIST (Deemed to be University), Hosur Road, Bengaluru."
+    />
+    <meta
+      name="twitter:image"
+      content="https://concourse.christuniversity.in/media/hero-central-campus.jpg"
+    />
+
+    <!-- Structured Data (Schema.org JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "CONCOURSE — CHRIST Central Campus Event Operating System",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web",
+        "url": "https://concourse.christuniversity.in/",
+        "description": "Zero-trust permission-based campus event governance, atomic seat reservation engine, rotating HMAC QR gate passes, and 3D precinct digital twin.",
+        "provider": {
+          "@type": "CollegeOrUniversity",
+          "name": "CHRIST (Deemed to be University) — Central Campus",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Hosur Road, Bhavani Nagar, S.G. Palya",
+            "addressLocality": "Bengaluru",
+            "addressRegion": "Karnataka",
+            "postalCode": "560029",
+            "addressCountry": "IN"
+          }
+        }
+      }
+    </script>
   </head>
-  <body>
+  <body class="bg-void text-bone antialiased selection:bg-vermilion selection:text-void">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

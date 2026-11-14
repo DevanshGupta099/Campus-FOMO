@@ -25,6 +25,13 @@ const EnvSchema = z.object({
     .string()
     .min(32, "COOKIE_SECRET must be at least 32 characters")
     .default("dev_cookie_signing_secret_key_at_least_32_bytes_long!"),
+  OTP_HMAC_SECRET: z
+    .string()
+    .min(32, "OTP_HMAC_SECRET must be at least 32 characters")
+    .default("dev_otp_hmac_secret_key_for_hash_storage_32chars!"),
+  KEYCLOAK_URL: z.string().default("http://localhost:8080"),
+  KEYCLOAK_REALM: z.string().default("campus-fomo"),
+  KEYCLOAK_CLIENT_ID: z.string().default("campus-api"),
   APP_ORIGIN: z.string().default("http://localhost:5173"),
   SMS_PROVIDER: z.enum(["dev", "tw", "msg91"]).default("dev"),
   EMAIL_PROVIDER: z

@@ -19,6 +19,15 @@ export const SCREEN_CATALOG: ScreenDefinition[] = [
     matchMode: "any",
   },
   {
+    key: "campus-map",
+    path: "/map",
+    title: "3D Precinct Radar",
+    section: "events",
+    icon: "map",
+    requiredPermissions: ["event:read:public"],
+    matchMode: "any",
+  },
+  {
     key: "my-tickets",
     path: "/my-tickets",
     title: "My Passes & Tickets",

@@ -166,6 +166,38 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/MyBookmarkItem"
+  /me/bookmarks/{eventId}:
+    post:
+      summary: Toggle saved bookmark for an event
+      responses:
+        "200":
+          description: Updated bookmark status
+          content:
+            application/json:
+              schema:
+                type: object
+  /events/leaderboard:
+    get:
+      summary: Get privacy-safe deanery and student XP leaderboard
+      responses:
+        "200":
+          description: Campus leaderboard standings
+          content:
+            application/json:
+              schema:
+                type: object
+  /events/pulse:
+    get:
+      summary: Get anonymized live concourse activity pulse
+      responses:
+        "200":
+          description: Campus pulse stream
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
   /me/xp:
     get:
       summary: Get user XP, streak, and badges
@@ -381,6 +413,189 @@ paths:
           description: SSE event stream
           content:
             text/event-stream: {}
+  /stream/poll:
+    get:
+      summary: HTTP short-polling stream fallback
+      responses:
+        "200":
+          description: Recent stream events
+  /venues:
+    get:
+      summary: List CHRIST Central Campus venues
+      responses:
+        "200":
+          description: Campus venue directory
+  /events/clash-check:
+    get:
+      summary: Automated <150ms venue clash and monsoon backup check
+      responses:
+        "200":
+          description: Clash inspection report
+  /events/proposals:
+    post:
+      summary: Submit two-stage event proposal
+      responses:
+        "201":
+          description: Proposal created in PENDING_FACULTY
+  /events/{id}/approve-faculty:
+    post:
+      summary: Stage-1 Faculty Coordinator departmental endorsement
+      responses:
+        "200":
+          description: Transitioned to PENDING_DEAN
+  /events/{id}/approve-dean:
+    post:
+      summary: Stage-2 Dean of Students budget clearance and publication
+      responses:
+        "200":
+          description: Transitioned to PUBLISHED
+  /events/{id}/reject:
+    post:
+      summary: Reject event proposal with mandatory reason
+      responses:
+        "200":
+          description: Transitioned to REJECTED
+  /events/{id}/volunteers:
+    get:
+      summary: List delegated gate volunteers
+      responses:
+        "200":
+          description: Volunteer assignments
+    post:
+      summary: Delegate QR scanner volunteer access
+      responses:
+        "200":
+          description: Volunteer assigned
+  /events/{id}/broadcast:
+    post:
+      summary: Send BCC-masked broadcast announcement
+      responses:
+        "200":
+          description: Broadcast dispatched
+  /events/{id}/export:
+    get:
+      summary: Export masked attendee roster
+      responses:
+        "200":
+          description: Attendee export attachment
+  /registrations/me:
+    get:
+      summary: List authenticated attendee passes
+      responses:
+        "200":
+          description: User registrations
+  /registrations/{id}/cancel:
+    post:
+      summary: "Cancel registration and atomically promote waitlist #1"
+      responses:
+        "200":
+          description: Cancelled and promoted
+  /checkin/scan:
+    post:
+      summary: Verify rotating 30s HMAC QR pass (<500ms)
+      responses:
+        "200":
+          description: Checkin admission verdict
+  /checkin/stats:
+    get:
+      summary: Zero-PII gate admission telemetry
+      responses:
+        "200":
+          description: Gate admission counters
+  /checkin/token/{id}:
+    get:
+      summary: Issue rotating 30s HMAC QR token for ticket owner
+      responses:
+        "200":
+          description: Rotating QR token
+  /luckydraw/campaigns:
+    get:
+      summary: List commit-reveal lucky draw campaigns (seedSecret sealed)
+      responses:
+        "200":
+          description: Campaign list
+    post:
+      summary: Create commit-reveal lucky draw campaign
+      responses:
+        "201":
+          description: Campaign created
+  /luckydraw/campaigns/{id}/session:
+    post:
+      summary: Start anti-replay entry session
+      responses:
+        "200":
+          description: Entry session token
+  /luckydraw/campaigns/{id}/enter:
+    post:
+      summary: Submit single-entry draw ticket
+      responses:
+        "201":
+          description: Draw entry confirmed
+  /luckydraw/campaigns/{id}/draw:
+    post:
+      summary: Execute SHA-256 commit-reveal draw
+      responses:
+        "200":
+          description: Winner selected and seed revealed
+  /luckydraw/campaigns/{id}/verify:
+    get:
+      summary: Verify cryptographic SHA-256 commit-reveal proof
+      responses:
+        "200":
+          description: Mathematical verification proof
+  /gallery:
+    get:
+      summary: List Campus Fest gallery archive
+      responses:
+        "200":
+          description: Gallery items
+  /sponsors/showcase:
+    get:
+      summary: Public campus partner showcase
+      responses:
+        "200":
+          description: Partner showcase data
+  /sponsors/analytics:
+    get:
+      summary: Aggregated PII-free partner engagement analytics
+      responses:
+        "200":
+          description: Aggregated analytics
+  /me/permissions:
+    get:
+      summary: List active PBAC permissions
+      responses:
+        "200":
+          description: User permissions
+  /me/navigation:
+    get:
+      summary: Permission-filtered navigation screens
+      responses:
+        "200":
+          description: Authorized screen catalog
+  /me/gamification:
+    get:
+      summary: Append-only student XP and badges ledger
+      responses:
+        "200":
+          description: XP ledger
+  /admin/rbac/roles:
+    get:
+      summary: Inspect PBAC role bundles and 44 canonical permissions
+      responses:
+        "200":
+          description: Role matrix
+    post:
+      summary: Create or update runtime PBAC role bundle
+      responses:
+        "201":
+          description: Role saved
+  /admin/rbac/users/{sub}/grant:
+    post:
+      summary: Grant direct PBAC permissions to user
+      responses:
+        "200":
+          description: Permissions granted
 components:
   schemas:
     HealthResponse:
@@ -402,6 +617,194 @@ components:
           type: string
         uptime:
           type: number
+    ReadyResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    SignUpRequest:
+      type: object
+      required:
+        - email
+        - password
+        - name
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 10
+        name:
+          type: string
+        phone:
+          type: string
+        studentRegisterNumber:
+          type: string
+        department:
+          type: string
+        institution:
+          type: string
+        year:
+          type: integer
+        accountType:
+          type: string
+          enum:
+            - student
+            - guest
+    AuthTokenResponse:
+      type: object
+      required:
+        - accessToken
+        - expiresIn
+        - user
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+        user:
+          $ref: "#/components/schemas/UserPublic"
+    OtpResponse:
+      type: object
+      required:
+        - message
+        - expiresInSeconds
+        - cooldownSeconds
+      properties:
+        message:
+          type: string
+        expiresInSeconds:
+          type: integer
+        cooldownSeconds:
+          type: integer
+    MessageResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    UserPublic:
+      type: object
+      required:
+        - id
+        - email
+        - name
+        - role
+      properties:
+        id:
+          type: string
+        sub:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        name:
+          type: string
+        role:
+          type: string
+        department:
+          type: string
+          nullable: true
+        institution:
+          type: string
+          nullable: true
+        permissions:
+          type: array
+          items:
+            type: string
+    MyRegistrationItem:
+      type: object
+    MyBookmarkItem:
+      type: object
+    MyXpSummary:
+      type: object
+    Event:
+      type: object
+      required:
+        - id
+        - title
+        - category
+        - status
+        - venueName
+        - startsAt
+        - endsAt
+        - capacity
+        - confirmedCount
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        status:
+          type: string
+        venueId:
+          type: string
+        venueName:
+          type: string
+        startsAt:
+          type: string
+          format: date-time
+        endsAt:
+          type: string
+          format: date-time
+        capacity:
+          type: integer
+        confirmedCount:
+          type: integer
+        waitlistCap:
+          type: integer
+        waitlistCount:
+          type: integer
+        isExternalOpen:
+          type: boolean
+        fee:
+          type: integer
+    EventsListResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Event"
+    EventAttendeesResponse:
+      type: array
+      items:
+        type: object
+    EventQrResponse:
+      type: object
+    RegisterResponse:
+      type: object
+    CancelRegistrationResponse:
+      type: object
+    CheckInResponse:
+      type: object
+    ApprovalsListResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Event"
+    AdminUsersListResponse:
+      type: object
+    AuditLogsResponse:
+      type: object
+    OpsMetricsResponse:
+      type: object
+    FeedResponse:
+      type: object
+    SearchSuggestResponse:
+      type: object
     ProblemDetails:
       type: object
       required:

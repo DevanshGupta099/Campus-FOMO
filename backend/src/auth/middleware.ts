@@ -17,9 +17,11 @@ export type ScopeResolver = (
 ) => Promise<ScopeContext> | ScopeContext;
 
 export function requirePermission(
-  permission: string,
+  permission: string | string[],
   resolver?: ScopeResolver,
 ) {
+  const requiredList = Array.isArray(permission) ? permission : [permission];
+
   return async (req: FastifyRequest, reply: FastifyReply) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -42,13 +44,16 @@ export function requirePermission(
         scopeCtx = await resolver(req);
       }
 
-      const hasAccess = checkPermission(user.permissions, permission, scopeCtx);
+      const hasAccess = requiredList.some((perm) =>
+        checkPermission(user.permissions, perm, scopeCtx),
+      );
+
       if (!hasAccess) {
         return reply.status(403).send({
           type: "about:blank",
           title: "Forbidden",
           status: 403,
-          detail: `Permission denied: missing required permission "${permission}"`,
+          detail: `Permission denied: missing required permission "${requiredList.join(" | ")}"`,
           code: "FORBIDDEN_INSUFFICIENT_PERMISSION",
         });
       }
@@ -67,7 +72,6 @@ export function requirePermission(
 const authPluginCallback: FastifyPluginAsync = async (app) => {
   // Enforce Zero Trust: Fail boot if any route lacks explicit auth declaration
   app.addHook("onRoute", (routeOptions) => {
-    // Exclude internal fastify docs or static routes if any
     if (
       routeOptions.url.startsWith("/docs") ||
       routeOptions.url === "/favicon.ico"

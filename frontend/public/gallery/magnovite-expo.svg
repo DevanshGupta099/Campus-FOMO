@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" fill="none">
+  <rect width="720" height="720" fill="#F5F1E8"/>
+  <rect x="44" y="44" width="632" height="632" stroke="#0D1824" stroke-width="2"/>
+  <circle cx="360" cy="340" r="170" fill="#EAE4D7" stroke="#1D6B52" stroke-width="3"/>
+  <polygon points="360,190 495,415 225,415" fill="none" stroke="#0D1824" stroke-width="2.5"/>
+  <circle cx="360" cy="340" r="36" fill="#C84B31"/>
+  <text x="76" y="102" fill="#1D6B52" font-family="monospace" font-size="14" letter-spacing="3">MAGNOVITE · SKYVIEW 10F</text>
+  <text x="76" y="630" fill="#0D1824" font-family="Georgia, serif" font-size="28">Autonomous Robotics &amp; Design Expo</text>
+</svg>

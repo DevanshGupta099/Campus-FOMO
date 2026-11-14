@@ -1,8 +1,19 @@
 routes:
-  # Route 1: Public Health and Discovery Endpoints (Rate Limited, No Token Required)
+  # Route 1: Public Health, Auth, Discovery, Showcase & Verify Endpoints (Rate Limited, Public)
   - id: public-routes
-    uri: /api/v1/public/*
-    methods: ["GET", "OPTIONS"]
+    uris:
+      - /healthz
+      - /readyz
+      - /api/v1/healthz
+      - /api/v1/readyz
+      - /api/v1/auth/*
+      - /api/v1/venues
+      - /api/v1/gallery
+      - /api/v1/sponsors/showcase
+      - /api/v1/events/leaderboard
+      - /api/v1/events/pulse
+    priority: 20
+    methods: ["GET", "POST", "OPTIONS"]
     upstream:
       type: roundrobin
       nodes:
@@ -15,22 +26,24 @@ routes:
         key: remote_addr
         rejected_code: 429
       cors:
-        allow_origins: "*"
+        allow_origins: "http://localhost:5173"
         allow_methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS"
         allow_headers: "*"
+        allow_credential: true
       request-id:
         include_in_response: true
 
-  # Route 2: SSE Real-Time Stream (Unbuffered, Long Timeout, Protected)
-  - id: sse-stream
-    uri: /api/v1/stream
+  # Route 1b: Protected Event Governance & Roster GET Sub-Routes (Higher Priority than /api/v1/events/*)
+  - id: protected-event-subroutes
+    uris:
+      - /api/v1/events/clash-check
+      - /api/v1/events/*/attendees
+      - /api/v1/events/*/export
+      - /api/v1/events/*/volunteers
+    priority: 25
     methods: ["GET", "OPTIONS"]
     upstream:
       type: roundrobin
-      timeout:
-        connect: 10
-        send: 300
-        read: 300
       nodes:
         "host.docker.internal:3001": 1
     plugins:
@@ -41,15 +54,69 @@ routes:
         bearer_only: true
         realm: "campus-fomo"
       cors:
-        allow_origins: "*"
+        allow_origins: "http://localhost:5173"
         allow_methods: "GET,OPTIONS"
         allow_headers: "*"
+        allow_credential: true
       request-id:
         include_in_response: true
 
-  # Route 3: Standard Protected API Routes (OpenID Connect Bearer-Only Validation)
+  # Route 2: Public GET Discovery Feeds (Events & Lucky Draw Verification)
+  - id: public-read-feeds
+    uris:
+      - /api/v1/events
+      - /api/v1/events/*
+      - /api/v1/luckydraw/campaigns
+      - /api/v1/luckydraw/campaigns/*/verify
+    priority: 15
+    methods: ["GET", "OPTIONS"]
+    upstream:
+      type: roundrobin
+      nodes:
+        "host.docker.internal:3001": 1
+    plugins:
+      limit-req:
+        rate: 30
+        burst: 15
+        key_type: var
+        key: remote_addr
+        rejected_code: 429
+      cors:
+        allow_origins: "http://localhost:5173"
+        allow_methods: "GET,OPTIONS"
+        allow_headers: "*"
+        allow_credential: true
+      request-id:
+        include_in_response: true
+
+  # Route 3: SSE Real-Time Stream & Short-Polling Fallback (Unbuffered, Long Timeout)
+  - id: sse-stream
+    uris:
+      - /api/v1/stream
+      - /api/v1/stream/poll
+    priority: 20
+    methods: ["GET", "OPTIONS"]
+    upstream:
+      type: roundrobin
+      timeout:
+        connect: 10
+        send: 300
+        read: 300
+      nodes:
+        "host.docker.internal:3001": 1
+    plugins:
+      cors:
+        allow_origins: "http://localhost:5173"
+        allow_methods: "GET,OPTIONS"
+        allow_headers: "*"
+        allow_credential: true
+      request-id:
+        include_in_response: true
+
+  # Route 4: Protected Mutation & Governance API Routes (Bearer Validation)
   - id: protected-api
     uri: /api/v1/*
+    priority: 1
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
     upstream:
       type: roundrobin
@@ -63,11 +130,11 @@ routes:
         bearer_only: true
         realm: "campus-fomo"
       cors:
-        allow_origins: "*"
+        allow_origins: "http://localhost:5173"
         allow_methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS"
         allow_headers: "*"
+        allow_credential: true
       request-id:
         include_in_response: true
 
-# Global End of Standalone APISIX Config
 #END

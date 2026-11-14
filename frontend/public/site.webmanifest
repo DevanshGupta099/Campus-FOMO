@@ -1,0 +1,17 @@
+{
+  "name": "CONCOURSE // CHRIST University Central Campus Event OS",
+  "short_name": "CONCOURSE",
+  "description": "Zero-Trust Campus Event Operating System, 3D Precinct Digital Twin & Rotating HMAC Gate Passes for CHRIST (Deemed to be University), Central Campus, Bengaluru.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07090D",
+  "theme_color": "#07090D",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

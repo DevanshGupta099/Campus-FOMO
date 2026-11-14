@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" fill="none">
+  <rect width="720" height="720" fill="#F5F1E8"/>
+  <path d="M110 520A250 250 0 0 1 610 520" stroke="#0D1824" stroke-width="2.5"/>
+  <path d="M170 520A190 190 0 0 1 550 520" stroke="#B8893A" stroke-width="2"/>
+  <path d="M230 520A130 130 0 0 1 490 520" stroke="#C84B31" stroke-width="2"/>
+  <circle cx="360" cy="485" r="28" fill="#0B1520"/>
+  <text x="76" y="96" fill="#B8893A" font-family="monospace" font-size="14" letter-spacing="3">IN-BLOOM · BIRDS PARK AMPHITHEATRE</text>
+  <text x="76" y="630" fill="#0D1824" font-family="Georgia, serif" font-size="28">Twilight Acoustic &amp; Classical Session</text>
+</svg>

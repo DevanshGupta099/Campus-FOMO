@@ -2,11 +2,13 @@ import { createHmac } from "node:crypto";
 import { registrationService } from "../registration/registration.service.js";
 import { eventsService } from "../events/events.service.js";
 import { streamHub } from "../stream/stream.routes.js";
+import { auditService } from "../../modules/audit/index.js";
 
 export interface CheckinResult {
   status: "ADMITTED" | "ALREADY_CHECKED_IN" | "INVALID_TICKET";
   registrationId: string;
   userName: string;
+  eventTitle?: string;
   scannedAt: string;
   latencyMs: number;
   message: string;
@@ -15,7 +17,12 @@ export interface CheckinResult {
 export class CheckinService {
   private admittedCheckins = new Map<
     string,
-    { scannedBy: string; scannedAt: string }
+    {
+      scannedBy: string;
+      scannedAt: string;
+      firstName: string;
+      eventTitle: string;
+    }
   >();
 
   generateRotatingQrToken(
@@ -23,7 +30,7 @@ export class CheckinService {
     secret: string,
     nowMs = Date.now(),
   ): string {
-    const window = Math.floor(nowMs / 30000); // 30-second rotating time slice
+    const window = Math.floor(nowMs / 30000);
     const signature = createHmac("sha256", secret)
       .update(`${registrationId}:${window}`)
       .digest("hex");
@@ -52,8 +59,7 @@ export class CheckinService {
       if (!reg) return { registrationId, isValid: false, isExpired: false };
 
       const currentWindow = Math.floor(Date.now() / 30000);
-      // Valid if in current 30s window or immediate previous 30s window
-      if (tokenWindow < currentWindow - 1) {
+      if (tokenWindow < currentWindow - 1 || tokenWindow > currentWindow + 1) {
         return { registrationId, isValid: false, isExpired: true };
       }
 
@@ -79,7 +85,8 @@ export class CheckinService {
         userName: "Unknown",
         scannedAt: new Date().toISOString(),
         latencyMs: Date.now() - start,
-        message: "QR code has expired. Please refresh the ticket.",
+        message:
+          "Rotating 30s QR window expired. Ask attendee to refresh pass.",
       };
     }
 
@@ -90,31 +97,35 @@ export class CheckinService {
         userName: "Unknown",
         scannedAt: new Date().toISOString(),
         latencyMs: Date.now() - start,
-        message: "Invalid or forged QR ticket.",
+        message: "Invalid or forged HMAC ticket signature.",
       };
     }
 
     const reg = registrationService.getRegistration(
       verification.registrationId,
     );
+    const firstName = reg?.userName?.split(" ")[0] || "Unknown";
+    const evt = reg ? eventsService.getEvent(reg.eventId) : undefined;
+
     if (!reg || reg.status !== "CONFIRMED") {
       return {
         status: "INVALID_TICKET",
         registrationId: verification.registrationId,
-        userName: reg?.userName || "Unknown",
+        userName: firstName,
+        eventTitle: evt?.title,
         scannedAt: new Date().toISOString(),
         latencyMs: Date.now() - start,
-        message: `Ticket status is ${reg?.status || "UNKNOWN"}, not CONFIRMED`,
+        message: `Pass status is ${reg?.status || "UNKNOWN"}, not CONFIRMED`,
       };
     }
 
-    // Idempotent duplicate check
     if (this.admittedCheckins.has(verification.registrationId)) {
       const prior = this.admittedCheckins.get(verification.registrationId)!;
       return {
         status: "ALREADY_CHECKED_IN",
         registrationId: verification.registrationId,
-        userName: reg.userName,
+        userName: prior.firstName,
+        eventTitle: prior.eventTitle,
         scannedAt: prior.scannedAt,
         latencyMs: Date.now() - start,
         message: `Attendee already admitted at ${prior.scannedAt}`,
@@ -122,27 +133,59 @@ export class CheckinService {
     }
 
     const scannedAt = new Date().toISOString();
+    const eventTitle = evt?.title || "Campus Event";
     this.admittedCheckins.set(verification.registrationId, {
       scannedBy: scannerSub,
       scannedAt,
+      firstName,
+      eventTitle,
     });
 
-    eventsService.awardXp(reg.userSub, 100, "Attended event via door check-in");
+    eventsService.awardXp(
+      reg.userSub,
+      100,
+      `Verified gate admission: ${eventTitle}`,
+    );
+
+    auditService.record({
+      action: "GATE_QR_ADMITTED",
+      actor: scannerSub,
+      target: reg.id,
+      details: `Verified HMAC gate admission for ${eventTitle}.`,
+    });
 
     streamHub.broadcast("checkin.verified", {
       registrationId: reg.id,
       eventId: reg.eventId,
-      userName: reg.userName,
+      userName: firstName,
       checkedInCount: this.admittedCheckins.size,
     });
 
     return {
       status: "ADMITTED",
       registrationId: verification.registrationId,
-      userName: reg.userName,
+      userName: firstName,
+      eventTitle,
       scannedAt,
       latencyMs: Date.now() - start,
-      message: `Verified and admitted: ${reg.userName}`,
+      message: `Verified and admitted: ${firstName}`,
+    };
+  }
+
+  getStats() {
+    const entries = Array.from(this.admittedCheckins.entries())
+      .map(([regId, info]) => ({
+        registrationId: regId,
+        firstName: info.firstName,
+        eventTitle: info.eventTitle,
+        scannedAt: info.scannedAt,
+      }))
+      .reverse()
+      .slice(0, 12);
+
+    return {
+      totalAdmitted: this.admittedCheckins.size,
+      recentAdmissions: entries,
     };
   }
 }
