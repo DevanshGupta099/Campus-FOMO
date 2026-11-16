@@ -18,17 +18,13 @@ import {
   Calendar,
   CloudRain,
   Coffee,
-  Compass,
   Film,
-  Flame,
   MapPin,
   Maximize2,
-  Radio,
   Search,
   ShieldCheck,
   Sparkles,
   Ticket,
-  Trophy,
   Users,
   X,
 } from "lucide-react";
@@ -76,16 +72,16 @@ const CampusPrecinct3DMap = lazy(() =>
 );
 
 const InstantHeroHeadingFallback: React.FC = () => (
-  <div className="flex h-[230px] w-full flex-col items-center justify-center px-1 text-center sm:h-[300px] lg:h-[350px]">
+  <div className="flex h-[230px] w-full flex-col items-center justify-center px-1 text-center sm:h-[295px] lg:h-[340px]">
     <h1 className="max-w-full">
-      <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-silver sm:text-[11px] sm:tracking-[0.26em]">
-        12.9345 N · 77.6060 E · ZERO-TRUST CAMPUS EVENT OPERATING SYSTEM
+      <span className="block font-mono text-[10px] uppercase tracking-[0.22em] text-silver sm:text-[11px]">
+        12.9345° N · 77.6060° E · ZERO-TRUST CAMPUS EVENT OPERATING SYSTEM
       </span>
-      <span className="mt-2 block font-display text-[2.25rem] font-extrabold leading-none tracking-tight text-bone sm:text-7xl lg:text-8xl">
+      <span className="mt-3 block font-display text-[2.85rem] font-bold leading-none tracking-[-0.045em] text-bone sm:text-7xl lg:text-[6.25rem]">
         CONCOURSE
       </span>
-      <span className="mt-2 block font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-gold sm:text-sm sm:tracking-[0.28em]">
-        CHRIST CENTRAL CAMPUS // BENGALURU
+      <span className="editorial-italic mt-2 block text-2xl text-gold sm:text-4xl">
+        Christ Central Campus — Bengaluru
       </span>
     </h1>
   </div>
@@ -125,8 +121,6 @@ export const LandingPage: React.FC = () => {
 
   const mapSectionRef = useRef<HTMLElement | null>(null);
 
-  // Progressive WebGL Hydration: Instant zero-CLS HTML/CSS paint first,
-  // upgrading to GPU Three.js SDF typography on first interaction or post-load idle.
   useEffect(() => {
     if (typeof window === "undefined" || import.meta.env.MODE === "test") {
       return;
@@ -155,7 +149,6 @@ export const LandingPage: React.FC = () => {
     };
   }, []);
 
-  // Auto-hydrate 9-Block 3D Precinct Twin before user reaches Section 02
   useEffect(() => {
     if (
       typeof window === "undefined" ||
@@ -179,7 +172,6 @@ export const LandingPage: React.FC = () => {
     return () => obs.disconnect();
   }, []);
 
-  // Keyboard Escape closes gallery lightbox
   useEffect(() => {
     if (!lightboxItem) return;
     const onKey = (e: KeyboardEvent) => {
@@ -189,7 +181,6 @@ export const LandingPage: React.FC = () => {
     return () => window.removeEventListener("keydown", onKey);
   }, [lightboxItem]);
 
-  // Smooth Awwwards Lenis Inertia Scroll (respects reduced-motion & test env)
   useEffect(() => {
     if (
       typeof window === "undefined" ||
@@ -203,7 +194,7 @@ export const LandingPage: React.FC = () => {
     let raf = 0;
     try {
       lenis = new Lenis({
-        duration: 1.05,
+        duration: 1.08,
         smoothWheel: true,
       });
       const loop = (time: number) => {
@@ -302,10 +293,10 @@ export const LandingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-void text-bone">
-      {/* Top Scroll-Depth Telemetry Hairline */}
+      {/* Subtle Champagne-to-Vermilion Scroll Progress Hairline */}
       <div
         aria-hidden="true"
-        className="fixed left-0 top-0 z-50 h-[2px] bg-gradient-to-r from-vermilion via-gold to-phosphor transition-all duration-150"
+        className="fixed left-0 top-0 z-50 h-[2px] bg-gradient-to-r from-gold via-vermilion to-phosphor transition-all duration-150"
         style={{ width: `${scrollProgress}%` }}
       />
 
@@ -313,7 +304,7 @@ export const LandingPage: React.FC = () => {
 
       <main id="main-content">
         {/* =====================================================================
-            HERO SECTION: AAA WebGL SDF Typography + Twilight Campus Cinema + Anchor
+            HERO SECTION: EDITORIAL LUXURY + 3D SDF TYPOGRAPHY + STUDIO ANCHOR
            ===================================================================== */}
         <section className="relative overflow-hidden border-b border-rule">
           <div
@@ -327,102 +318,139 @@ export const LandingPage: React.FC = () => {
               height={540}
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-cover opacity-28"
+              className="h-full w-full object-cover opacity-22"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-void/85 via-void/90 to-void" />
+            <div className="absolute inset-0 bg-gradient-to-b from-void/80 via-void/92 to-void" />
             <div className="absolute inset-0 bg-architectural-grid" />
+            <div className="absolute left-1/2 top-8 h-[360px] w-[780px] -translate-x-1/2 rounded-full bg-gold/[0.07] blur-[150px]" />
           </div>
 
-          <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-8 lg:pb-24 lg:pt-10">
-            {/* Constant-Height Live Campus Telemetry Pulse Strip (Zero CLS) */}
-            <div className="mb-6 flex min-h-[38px] items-center justify-between gap-3 rounded-lg border border-rule bg-carbon/80 px-4 py-2 font-mono text-[11px] backdrop-blur-md">
-              <span className="inline-flex shrink-0 items-center gap-2 font-bold uppercase tracking-widest text-phosphor">
-                <Radio className="h-3.5 w-3.5" />
-                <span>LIVE PRECINCT PULSE</span>
-              </span>
-              <span className="truncate text-bone">
-                {pulse[0]?.label ||
-                  "Main Auditorium & Central Quadrangle Telemetry Nominal"}
-              </span>
-              <span className="hidden shrink-0 text-gold md:inline">
-                {DESIGN_TOKENS.campus.name} · {DESIGN_TOKENS.campus.coordinates}
-              </span>
+          <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-8 lg:pb-24 lg:pt-12">
+            {/* Centered Delicate Live Campus Capsule (Zero CLS) */}
+            <div className="mb-4 flex justify-center">
+              <div className="inline-flex min-h-[34px] max-w-full items-center gap-2.5 rounded-full border border-rule-strong bg-carbon/80 px-4 py-1.5 text-xs backdrop-blur-xl">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-phosphor shadow-[0_0_8px_#34D399]" />
+                <span className="truncate font-medium text-bone">
+                  {pulse[0]?.label ||
+                    "Main Auditorium & Central Quadrangle Operational"}
+                </span>
+                <span className="hidden font-mono text-[11px] text-gold md:inline">
+                  · {DESIGN_TOKENS.campus.name}
+                </span>
+              </div>
             </div>
 
-            {/* AAA Game-Engine GPU SDF 3D Kinetic Typography */}
+            {/* Studio WebGL SDF 3D Kinetic Typography (Bricolage 800 + Instrument Serif Italic) */}
             {gpuReady ? (
               <Suspense fallback={<InstantHeroHeadingFallback />}>
                 <WebGLKineticHeroText
                   primaryLine="CONCOURSE"
-                  secondaryLine="CHRIST CENTRAL CAMPUS // BENGALURU"
-                  telemetryLine="12.9345 N · 77.6060 E · ZERO-TRUST CAMPUS EVENT OPERATING SYSTEM"
+                  secondaryLine="Christ Central Campus — Bengaluru"
+                  telemetryLine="12.9345° N · 77.6060° E · ZERO-TRUST CAMPUS EVENT OPERATING SYSTEM"
                 />
               </Suspense>
             ) : (
               <InstantHeroHeadingFallback />
             )}
 
-            {/* Editorial Subhead & Dual Tactical CTAs */}
-            <div className="mx-auto mt-2 max-w-3xl text-center">
-              <p className="text-sm leading-relaxed text-silver sm:text-base">
-                Engineered for{" "}
+            {/* Editorial Lead Copy & Sculpted Pill CTAs */}
+            <div className="mx-auto mt-3 max-w-2xl text-center">
+              <p className="text-base leading-relaxed text-silver sm:text-lg">
+                Designed for{" "}
                 <strong className="font-semibold text-bone">
                   {DESIGN_TOKENS.campus.name}
                 </strong>{" "}
-                (Hosur Road Precinct). Atomic PostgreSQL seat locking, sub-150ms
-                faculty clash verification, 30-second rotating HMAC gate passes,
-                and SHA-256 commit-reveal lucky draws across 8 permission-scoped
-                roles.
+                on Hosur Road. Atomic seat locking, instant faculty venue-clash
+                audits, 30-second rotating HMAC gate passes, and verifiable
+                commit-reveal draws across eight institutional roles.
               </p>
 
-              <div className="mt-7 flex flex-wrap items-center justify-center gap-3.5">
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
                 <Link
                   to={primaryCtaHref}
-                  className="inline-flex items-center gap-2 rounded-md bg-vermilion px-6 py-3.5 font-mono text-xs font-bold uppercase tracking-widest text-void shadow-glow transition hover:bg-vermilion-hover"
+                  className="inline-flex items-center gap-2 rounded-full bg-bone px-7 py-3.5 text-sm font-semibold text-void shadow-[0_12px_32px_-8px_rgba(245,242,235,0.35)] transition hover:bg-gold"
                 >
                   <span>
                     {isAuthenticated
-                      ? "Open PBAC Workspace"
-                      : "Launch Concourse Portal"}
+                      ? "Open Role Workspace"
+                      : "Enter Concourse Portal"}
                   </span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
 
                 <Link
                   to="/signup"
-                  className="inline-flex items-center gap-2 rounded-md border border-rule-strong bg-carbon/85 px-6 py-3.5 font-mono text-xs font-semibold uppercase tracking-widest text-bone backdrop-blur-md transition hover:border-gold hover:text-gold"
+                  className="inline-flex items-center gap-2 rounded-full border border-rule-strong bg-carbon/85 px-7 py-3.5 text-sm font-semibold text-bone backdrop-blur-xl transition hover:border-gold hover:text-gold"
                 >
-                  <span>Student &amp; External Guest Pass</span>
+                  <span>Student &amp; Visiting College Pass</span>
                   <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </div>
             </div>
 
-            {/* Interactive 3-Mode Visual / Media Anchor */}
-            <div className="mt-12">
+            {/* Double-Bezel Interactive Visual Showcase */}
+            <div className="mt-14">
               <HeroMediaAnchor
                 featuredEvent={featuredEvent}
                 onInspectEvent={(evt) => setSelectedEvent(evt)}
               />
             </div>
+
+            {/* 4-Column Swiss Hairline Institutional Scale Bar */}
+            <div className="mt-12 grid divide-y divide-rule rounded-3xl border border-rule bg-carbon/60 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
+              {[
+                {
+                  num: "09",
+                  unit: "Precinct Venues",
+                  sub: "Main Audi, KE Audi & Block Halls",
+                },
+                {
+                  num: "45",
+                  unit: "PBAC Permissions",
+                  sub: "Zero hardcoded role strings",
+                },
+                {
+                  num: "30s",
+                  unit: "Rotating HMAC QR",
+                  sub: "Anti-screenshot Gate-1 verification",
+                },
+                {
+                  num: "<3ms",
+                  unit: "Clash Engine SLA",
+                  sub: "Automated monsoon & exam checks",
+                },
+              ].map((item) => (
+                <div key={item.unit} className="px-6 py-5">
+                  <div className="flex items-baseline gap-2.5">
+                    <span className="font-display text-3xl font-bold tracking-tight text-bone">
+                      {item.num}
+                    </span>
+                    <span className="editorial-italic text-xl text-gold">
+                      {item.unit}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-silver">{item.sub}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
         {/* =====================================================================
-            WEBGL GLSL LIQUID-VELOCITY SHADER TYPOGRAPHY RIBBON
+            SILK WEBGL TYPOGRAPHY RIBBON
            ===================================================================== */}
         {gpuReady ? (
           <Suspense
             fallback={
-              <div className="overflow-hidden border-y border-rule bg-obsidian py-4">
-                <div className="animate-marquee flex w-max gap-10 whitespace-nowrap font-display text-xl font-extrabold uppercase tracking-wider text-bone sm:text-2xl">
+              <div className="overflow-hidden border-y border-rule bg-obsidian/90 py-4">
+                <div className="animate-marquee flex w-max gap-10 whitespace-nowrap font-display text-xl font-semibold tracking-tight text-bone/90 sm:text-2xl">
                   <span>
-                    CHRIST CENTRAL CAMPUS · ATOMIC SEAT LOCK · ROTATING HMAC QR
-                    · COMMIT-REVEAL DRAWS · ZERO-TRUST PBAC ·
+                    Christ Central Campus · Atomic Row-Locked Seats · 30s
+                    Rotating HMAC Gate Passes · SHA-256 Commit-Reveal Draws ·
                   </span>
-                  <span>
-                    CHRIST CENTRAL CAMPUS · ATOMIC SEAT LOCK · ROTATING HMAC QR
-                    · COMMIT-REVEAL DRAWS · ZERO-TRUST PBAC ·
+                  <span className="editorial-italic text-gold">
+                    Christ Central Campus · Atomic Row-Locked Seats · 30s
+                    Rotating HMAC Gate Passes · SHA-256 Commit-Reveal Draws ·
                   </span>
                 </div>
               </div>
@@ -431,22 +459,22 @@ export const LandingPage: React.FC = () => {
             <WebGLShaderMarquee />
           </Suspense>
         ) : (
-          <div className="overflow-hidden border-y border-rule bg-obsidian py-4">
-            <div className="animate-marquee flex w-max gap-10 whitespace-nowrap font-display text-xl font-extrabold uppercase tracking-wider text-bone sm:text-2xl">
+          <div className="overflow-hidden border-y border-rule bg-obsidian/90 py-4">
+            <div className="animate-marquee flex w-max gap-10 whitespace-nowrap font-display text-xl font-semibold tracking-tight text-bone/90 sm:text-2xl">
               <span>
-                CHRIST CENTRAL CAMPUS · ATOMIC SEAT LOCK · ROTATING HMAC QR ·
-                COMMIT-REVEAL DRAWS · ZERO-TRUST PBAC ·
+                Christ Central Campus · Atomic Row-Locked Seats · 30s Rotating
+                HMAC Gate Passes · SHA-256 Commit-Reveal Draws ·
               </span>
-              <span>
-                CHRIST CENTRAL CAMPUS · ATOMIC SEAT LOCK · ROTATING HMAC QR ·
-                COMMIT-REVEAL DRAWS · ZERO-TRUST PBAC ·
+              <span className="editorial-italic text-gold">
+                Christ Central Campus · Atomic Row-Locked Seats · 30s Rotating
+                HMAC Gate Passes · SHA-256 Commit-Reveal Draws ·
               </span>
             </div>
           </div>
         )}
 
         {/* =====================================================================
-            SECTION 01: ASYMMETRIC SPOTLIGHT DECK & BENTO CONCLAVE MATRIX
+            CHAPTER 01: CURATED CONCLAVE SEASON & MAGAZINE FEATURE GRID
            ===================================================================== */}
         <section
           id="conclaves"
@@ -454,77 +482,85 @@ export const LandingPage: React.FC = () => {
         >
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute right-0 top-16 h-[420px] w-[520px] rounded-full bg-gold/5 blur-[140px]"
+            className="pointer-events-none absolute right-0 top-20 h-[440px] w-[540px] rounded-full bg-gold/[0.05] blur-[150px]"
           />
 
           <div className="relative mx-auto max-w-7xl px-4 sm:px-8">
-            {/* Architectural Section Header + Live Search & Filter Console */}
-            <div className="flex flex-col gap-6 border-b border-rule pb-8 lg:flex-row lg:items-end lg:justify-between">
+            {/* Editorial Chapter Masthead */}
+            <div className="flex flex-col gap-6 border-b border-rule pb-10 lg:flex-row lg:items-end lg:justify-between">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-vermilion/40 bg-vermilion-soft px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-vermilion">
-                  <Flame className="h-3.5 w-3.5" />
-                  <span>01 // LIVE PRECINCT SCHEDULE (IST · UTC+05:30)</span>
+                <div className="flex items-baseline gap-3">
+                  <span className="editorial-italic text-3xl text-gold sm:text-4xl">
+                    01.
+                  </span>
+                  <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-silver">
+                    Live Campus Season · Asia/Kolkata (IST)
+                  </span>
                 </div>
-                <h2 className="mt-4 font-display text-4xl font-extrabold leading-[1.03] tracking-tight text-bone sm:text-6xl">
+                <h2 className="mt-3 font-display text-4xl font-bold leading-[1.02] tracking-tight text-bone sm:text-5xl lg:text-6xl">
                   Active Conclaves &amp;{" "}
-                  <span className="text-gold">Flagships.</span>
+                  <span className="editorial-italic font-normal text-gold">
+                    Campus Flagships.
+                  </span>
                 </h2>
               </div>
 
-              {/* Live Search & External Scope Toggle */}
+              {/* Clean Search & External Scope Capsule */}
               <div className="flex flex-wrap items-center gap-2.5">
-                <div className="relative min-w-[230px] flex-1 sm:w-72">
-                  <Search className="pointer-events-none absolute left-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-vermilion" />
+                <div className="relative min-w-[240px] flex-1 sm:w-72">
+                  <Search className="pointer-events-none absolute left-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gold" />
                   <input
                     type="search"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     aria-label="Filter campus conclaves"
-                    placeholder="Filter title, auditorium, or club..."
-                    className="w-full rounded-lg border border-rule-strong bg-carbon py-2.5 pl-9 pr-3.5 font-mono text-xs text-bone placeholder:text-ink-muted focus:border-vermilion focus:outline-none"
+                    placeholder="Search title, auditorium, or society..."
+                    className="w-full rounded-full border border-rule-strong bg-carbon py-2.5 pl-10 pr-4 text-xs text-bone placeholder:text-ink-muted focus:border-gold focus:outline-none"
                   />
                 </div>
                 <button
                   type="button"
                   aria-pressed={externalFilterOnly}
                   onClick={() => setExternalFilterOnly((p) => !p)}
-                  className={`rounded-lg border px-3.5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider transition ${
+                  className={`rounded-full border px-4 py-2.5 text-xs font-semibold transition ${
                     externalFilterOnly
                       ? "border-phosphor bg-phosphor text-void"
                       : "border-rule-strong bg-carbon text-silver hover:border-phosphor/60 hover:text-bone"
                   }`}
                 >
-                  External-Open
+                  External-Open Only
                 </button>
               </div>
             </div>
 
-            {/* Category Selector Ribbon */}
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap gap-1.5">
+            {/* Refined Pill Category Filter Bar */}
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap gap-2">
                 {DESIGN_TOKENS.categories.slice(0, 7).map((cat) => (
                   <button
                     key={cat}
                     type="button"
                     onClick={() => setActiveCategory(cat)}
-                    className={`rounded-md px-3.5 py-1.5 font-mono text-xs font-semibold uppercase transition ${
+                    className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
                       activeCategory === cat
-                        ? "bg-vermilion text-void shadow-glow"
-                        : "border border-rule bg-carbon text-silver hover:border-bone/40 hover:text-bone"
+                        ? "bg-bone text-void shadow-sm"
+                        : "border border-rule bg-carbon/80 text-silver hover:border-rule-strong hover:text-bone"
                     }`}
                   >
                     {cat}
                   </button>
                 ))}
               </div>
-              <span className="font-mono text-[11px] text-silver">
+              <span className="font-mono text-xs text-silver">
                 Showing{" "}
-                <strong className="text-bone">{filteredEvents.length}</strong>{" "}
-                sanctioned schedules
+                <strong className="font-semibold text-bone">
+                  {filteredEvents.length}
+                </strong>{" "}
+                published schedules
               </span>
             </div>
 
-            {/* Monumental Lead Spotlight Flagship Card */}
+            {/* Lead Magazine Feature Spread */}
             {spotlightConclave &&
               (() => {
                 const leadSeat = computeSeatState(spotlightConclave);
@@ -532,136 +568,139 @@ export const LandingPage: React.FC = () => {
                   CATEGORY_THUMBS[spotlightConclave.category] ||
                   "/media/fest-labyrinth-hackathon.jpg";
                 return (
-                  <article className="hud-frame glass-console mt-8 grid overflow-hidden rounded-2xl border border-rule-strong lg:grid-cols-12">
-                    <div className="relative min-h-[260px] overflow-hidden bg-void lg:col-span-7">
-                      <img
-                        src={leadImg}
-                        alt={spotlightConclave.title}
-                        width={1280}
-                        height={720}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-cover opacity-85 transition duration-700 hover:scale-105"
-                      />
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void via-void/35 to-transparent lg:bg-gradient-to-r lg:from-void/20 lg:via-transparent lg:to-carbon/90" />
+                  <div className="studio-bezel mt-10">
+                    <article className="grid overflow-hidden rounded-[20px] border border-rule bg-carbon lg:grid-cols-12">
+                      <div className="relative min-h-[280px] overflow-hidden bg-void lg:col-span-7">
+                        <img
+                          src={leadImg}
+                          alt={spotlightConclave.title}
+                          width={1280}
+                          height={720}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover opacity-85 transition duration-700 hover:scale-105"
+                        />
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void via-void/30 to-transparent lg:bg-gradient-to-r lg:from-void/15 lg:via-transparent lg:to-carbon/90" />
 
-                      <div className="absolute left-4 right-4 top-4 flex flex-wrap items-center justify-between gap-2">
-                        <span className="inline-flex items-center gap-1.5 rounded bg-vermilion px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-void shadow-glow">
-                          <Sparkles className="h-3 w-3" />
-                          <span>
-                            SPOTLIGHT CONCLAVE · {spotlightConclave.category}
+                        <div className="absolute left-5 right-5 top-5 flex flex-wrap items-center justify-between gap-2">
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-bone px-3.5 py-1 text-[11px] font-semibold text-void shadow-sm">
+                            <Sparkles className="h-3 w-3 text-vermilion" />
+                            <span>
+                              Featured Flagship · {spotlightConclave.category}
+                            </span>
                           </span>
-                        </span>
-                        {spotlightConclave.isExternalOpen ? (
-                          <span className="rounded border border-phosphor/50 bg-void/85 px-3 py-1 font-mono text-[10px] font-bold uppercase text-phosphor backdrop-blur-md">
-                            External Colleges Permitted
-                          </span>
-                        ) : (
-                          <span className="rounded border border-rule-strong bg-void/85 px-3 py-1 font-mono text-[10px] font-semibold uppercase text-gold backdrop-blur-md">
-                            CHRIST Central Internal
-                          </span>
+                          {spotlightConclave.isExternalOpen ? (
+                            <span className="rounded-full border border-phosphor/45 bg-void/80 px-3 py-1 text-[11px] font-medium text-phosphor backdrop-blur-md">
+                              Visiting Colleges Welcome
+                            </span>
+                          ) : (
+                            <span className="rounded-full border border-white/15 bg-void/80 px-3 py-1 text-[11px] font-medium text-gold backdrop-blur-md">
+                              CHRIST Central Internal
+                            </span>
+                          )}
+                        </div>
+
+                        {spotlightConclave.indoorBackupVenueName && (
+                          <div className="absolute bottom-5 left-5 inline-flex items-center gap-1.5 rounded-full border border-ochre/40 bg-void/85 px-3.5 py-1.5 text-xs text-ochre backdrop-blur-md">
+                            <CloudRain className="h-3.5 w-3.5" />
+                            <span>
+                              Monsoon Backup:{" "}
+                              {spotlightConclave.indoorBackupVenueName}
+                            </span>
+                          </div>
                         )}
                       </div>
 
-                      {spotlightConclave.indoorBackupVenueName && (
-                        <div className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-md border border-ochre/45 bg-void/85 px-3 py-1.5 font-mono text-[11px] text-ochre backdrop-blur-md">
-                          <CloudRain className="h-3.5 w-3.5" />
-                          <span>
-                            Monsoon Backup:{" "}
-                            {spotlightConclave.indoorBackupVenueName}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex flex-col justify-between p-6 sm:p-8 lg:col-span-5">
-                      <div>
-                        <div className="flex items-center justify-between font-mono text-xs">
-                          <span className="uppercase tracking-wider text-gold">
-                            {spotlightConclave.clubName ||
-                              spotlightConclave.department}
-                          </span>
-                          <span className="font-bold text-bone">
-                            {formatInr(spotlightConclave.fee)}
-                          </span>
-                        </div>
-
-                        <h3 className="mt-2 font-display text-2xl font-extrabold leading-tight text-bone sm:text-3xl">
-                          {spotlightConclave.title}
-                        </h3>
-
-                        <p className="mt-3 line-clamp-3 text-xs leading-relaxed text-silver sm:text-sm">
-                          {spotlightConclave.description}
-                        </p>
-
-                        <div className="mt-5 grid grid-cols-2 gap-3 rounded-xl border border-rule bg-void/85 p-3.5 font-mono text-xs">
-                          <div>
-                            <span className="block text-[10px] uppercase text-ink-muted">
-                              SCHEDULE (IST)
-                            </span>
-                            <span className="mt-0.5 block font-semibold text-bone">
-                              {formatIstDate(spotlightConclave.startsAt)}
-                            </span>
-                            <span className="text-[11px] text-silver">
-                              {formatIstTime(spotlightConclave.startsAt)}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="block text-[10px] uppercase text-ink-muted">
-                              PRECINCT VENUE
-                            </span>
-                            <span className="mt-0.5 block truncate font-semibold text-bone">
-                              {spotlightConclave.venueName}
-                            </span>
-                            <span className="text-[11px] text-gold">
-                              Cap {spotlightConclave.capacity} · Waitlist{" "}
-                              {spotlightConclave.waitlistCap}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-6 space-y-3 border-t border-rule pt-4">
+                      <div className="flex flex-col justify-between p-6 sm:p-8 lg:col-span-5">
                         <div>
-                          <div className="flex items-center justify-between font-mono text-xs">
-                            <span className="text-silver">
-                              Live Seat Telemetry
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="editorial-italic text-lg text-gold">
+                              {spotlightConclave.clubName ||
+                                spotlightConclave.department}
                             </span>
-                            <span
-                              className={`font-bold ${
-                                leadSeat.state === "CRITICAL"
-                                  ? "text-vermilion"
-                                  : leadSeat.state === "WAITLIST"
-                                    ? "text-ochre"
-                                    : "text-phosphor"
-                              }`}
-                            >
-                              {leadSeat.label}
+                            <span className="font-mono font-semibold text-bone">
+                              {formatInr(spotlightConclave.fee)}
                             </span>
                           </div>
-                          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-void">
-                            <div
-                              style={{ width: `${leadSeat.fillPercent}%` }}
-                              className="h-full bg-gradient-to-r from-gold via-vermilion to-vermilion"
-                            />
+
+                          <h3 className="mt-2 font-display text-2xl font-bold leading-tight tracking-tight text-bone sm:text-3xl">
+                            {spotlightConclave.title}
+                          </h3>
+
+                          <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-silver">
+                            {spotlightConclave.description}
+                          </p>
+
+                          <div className="mt-6 grid grid-cols-2 divide-x divide-rule rounded-2xl border border-rule bg-void/70 py-3.5">
+                            <div className="px-4">
+                              <span className="block text-[11px] text-ink-muted">
+                                Schedule (IST)
+                              </span>
+                              <span className="mt-0.5 block font-mono text-xs font-medium text-bone">
+                                {formatIstDate(spotlightConclave.startsAt)}
+                              </span>
+                              <span className="font-mono text-[11px] text-silver">
+                                {formatIstTime(spotlightConclave.startsAt)}
+                              </span>
+                            </div>
+                            <div className="px-4">
+                              <span className="block text-[11px] text-ink-muted">
+                                Precinct Venue
+                              </span>
+                              <span className="mt-0.5 block truncate text-xs font-semibold text-bone">
+                                {spotlightConclave.venueName}
+                              </span>
+                              <span className="font-mono text-[11px] text-gold">
+                                {spotlightConclave.capacity} seats ·{" "}
+                                {spotlightConclave.waitlistCap} waitlist
+                              </span>
+                            </div>
                           </div>
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => setSelectedEvent(spotlightConclave)}
-                          className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-vermilion px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-void shadow-glow transition hover:bg-vermilion-hover"
-                        >
-                          <Ticket className="h-4 w-4" />
-                          <span>Inspect &amp; Lock Atomic Seat</span>
-                        </button>
+                        <div className="mt-6 space-y-4 border-t border-rule pt-5">
+                          <div>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-silver">
+                                Live Seat Availability
+                              </span>
+                              <span
+                                className={`font-mono font-semibold ${
+                                  leadSeat.state === "CRITICAL"
+                                    ? "text-vermilion"
+                                    : leadSeat.state === "WAITLIST"
+                                      ? "text-ochre"
+                                      : "text-phosphor"
+                                }`}
+                              >
+                                {leadSeat.label}
+                              </span>
+                            </div>
+                            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-void">
+                              <div
+                                style={{ width: `${leadSeat.fillPercent}%` }}
+                                className="h-full rounded-full bg-gradient-to-r from-gold to-vermilion"
+                              />
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setSelectedEvent(spotlightConclave)}
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-bone px-6 py-3.5 text-xs font-semibold text-void transition hover:bg-gold"
+                          >
+                            <Ticket className="h-4 w-4" />
+                            <span>Inspect &amp; Lock Atomic Seat</span>
+                            <ArrowUpRight className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </article>
+                    </article>
+                  </div>
                 );
               })()}
 
-            {/* Numbered Kinetic Bento Conclave Grid */}
+            {/* Curated 3-Column Editorial Conclave Grid */}
             <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {bentoConclaves.map((evt, index) => {
                 const seat = computeSeatState(evt);
@@ -672,10 +711,10 @@ export const LandingPage: React.FC = () => {
                 return (
                   <article
                     key={evt.id}
-                    className="spotlight-card group flex flex-col justify-between overflow-hidden rounded-2xl border border-rule-strong transition duration-300 hover:-translate-y-1 hover:border-vermilion"
+                    className="spotlight-card group flex flex-col justify-between overflow-hidden rounded-3xl border border-rule transition duration-300 hover:-translate-y-1 hover:border-gold/45"
                   >
                     <div>
-                      <div className="relative h-48 w-full overflow-hidden bg-void">
+                      <div className="relative h-52 w-full overflow-hidden bg-void">
                         <img
                           src={coverImg}
                           alt={evt.title}
@@ -683,41 +722,41 @@ export const LandingPage: React.FC = () => {
                           height={720}
                           loading="lazy"
                           decoding="async"
-                          className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
+                          className="h-full w-full object-cover opacity-85 transition duration-700 group-hover:scale-105 group-hover:opacity-100"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-carbon via-carbon/30 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-carbon via-carbon/20 to-transparent" />
 
-                        <div className="absolute left-3.5 right-3.5 top-3.5 flex items-center justify-between">
-                          <div className="flex items-center gap-1.5">
-                            <span className="rounded bg-vermilion px-2 py-0.5 font-mono text-[10px] font-bold text-void">
-                              //{idxLabel}
+                        <div className="absolute left-4 right-4 top-4 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="editorial-italic rounded-full bg-void/85 px-2.5 py-0.5 text-sm text-gold backdrop-blur-md">
+                              {idxLabel}
                             </span>
-                            <span className="rounded bg-void/85 px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-bone backdrop-blur-md">
+                            <span className="rounded-full border border-white/10 bg-void/80 px-3 py-0.5 text-[11px] font-medium text-bone backdrop-blur-md">
                               {evt.category}
                             </span>
                           </div>
                           {evt.isExternalOpen ? (
-                            <span className="rounded border border-phosphor/45 bg-void/85 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-phosphor backdrop-blur-md">
+                            <span className="rounded-full border border-phosphor/40 bg-void/80 px-2.5 py-0.5 text-[10px] font-medium text-phosphor backdrop-blur-md">
                               External-Open
                             </span>
                           ) : (
-                            <span className="rounded border border-rule-strong bg-void/85 px-2.5 py-0.5 font-mono text-[10px] text-silver backdrop-blur-md">
-                              CHRIST Internal
+                            <span className="rounded-full border border-white/10 bg-void/80 px-2.5 py-0.5 text-[10px] text-silver backdrop-blur-md">
+                              Internal
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <div className="p-5">
-                        <p className="font-mono text-[11px] uppercase tracking-wider text-gold">
+                      <div className="p-6">
+                        <p className="text-xs font-medium text-gold">
                           {evt.clubName || evt.department}
                         </p>
-                        <h3 className="mt-1.5 font-serif text-xl font-bold leading-snug text-bone transition group-hover:text-vermilion">
+                        <h3 className="mt-1.5 font-display text-xl font-bold leading-snug tracking-tight text-bone transition group-hover:text-gold">
                           {evt.title}
                         </h3>
 
                         {evt.lastUpdateBanner && (
-                          <div className="mt-3 flex items-start gap-2 rounded-md border border-ochre/40 bg-ochre-soft px-3 py-2 text-[11px] text-bone">
+                          <div className="mt-3 flex items-start gap-2 rounded-xl border border-ochre/35 bg-ochre-soft px-3 py-2 text-xs text-bone">
                             <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ochre" />
                             <span className="line-clamp-2">
                               {evt.lastUpdateBanner}
@@ -725,17 +764,17 @@ export const LandingPage: React.FC = () => {
                           </div>
                         )}
 
-                        <div className="mt-4 space-y-1.5 border-t border-rule pt-3 font-mono text-xs text-silver">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-3.5 w-3.5 text-vermilion" />
+                        <div className="mt-4 space-y-1.5 border-t border-rule pt-3.5 text-xs text-silver">
+                          <div className="flex items-center gap-2 font-mono text-[11px]">
+                            <Calendar className="h-3.5 w-3.5 text-gold" />
                             <span>
                               {formatIstDate(evt.startsAt)} ·{" "}
                               {formatIstTime(evt.startsAt)}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Building2 className="h-3.5 w-3.5 text-gold" />
-                            <span className="truncate text-bone">
+                            <Building2 className="h-3.5 w-3.5 text-silver" />
+                            <span className="truncate text-bone/90">
                               {evt.venueName}
                             </span>
                           </div>
@@ -743,10 +782,10 @@ export const LandingPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="border-t border-rule bg-void/55 p-5">
-                      <div className="flex items-center justify-between font-mono text-xs">
+                    <div className="border-t border-rule bg-void/45 px-6 py-5">
+                      <div className="flex items-center justify-between text-xs">
                         <span
-                          className={`font-bold ${
+                          className={`font-mono font-medium ${
                             seat.state === "CRITICAL"
                               ? "text-vermilion"
                               : seat.state === "WAITLIST"
@@ -756,14 +795,14 @@ export const LandingPage: React.FC = () => {
                         >
                           {seat.label}
                         </span>
-                        <span className="font-bold text-bone">
+                        <span className="font-mono font-semibold text-bone">
                           {formatInr(evt.fee)}
                         </span>
                       </div>
                       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-void">
                         <div
                           style={{ width: `${seat.fillPercent}%` }}
-                          className={`h-full ${
+                          className={`h-full rounded-full ${
                             seat.state === "CRITICAL"
                               ? "bg-vermilion"
                               : seat.state === "WAITLIST"
@@ -776,7 +815,7 @@ export const LandingPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setSelectedEvent(evt)}
-                        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md border border-rule-strong bg-carbon px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-bone transition group-hover:border-vermilion group-hover:bg-vermilion group-hover:text-void"
+                        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border border-rule-strong bg-carbon px-4 py-2.5 text-xs font-semibold text-bone transition group-hover:border-bone group-hover:bg-bone group-hover:text-void"
                       >
                         <Ticket className="h-3.5 w-3.5" />
                         <span>Inspect &amp; Reserve Pass</span>
@@ -790,7 +829,7 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* =====================================================================
-            SECTION 01B: INTERACTIVE FEST ITINERARY & TEMPORAL CLASH PLANNER
+            CHAPTER 02: INTERACTIVE PERSONAL FEST ITINERARY & CLASH PLANNER
            ===================================================================== */}
         <ConclaveItineraryPlanner
           events={events}
@@ -798,7 +837,7 @@ export const LandingPage: React.FC = () => {
         />
 
         {/* =====================================================================
-            SECTION 02: INTERACTIVE 3D CHRIST CENTRAL PRECINCT DIGITAL TWIN
+            CHAPTER 03: INTERACTIVE 9-BLOCK 3D PRECINCT DIGITAL TWIN
            ===================================================================== */}
         <section
           ref={mapSectionRef}
@@ -811,128 +850,131 @@ export const LandingPage: React.FC = () => {
           />
 
           <div className="relative mx-auto max-w-7xl px-4 sm:px-8">
-            <div className="flex flex-wrap items-end justify-between gap-6 border-b border-rule pb-8">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold-soft px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-gold">
-                  <Compass className="h-3.5 w-3.5 text-vermilion" />
-                  <span>02 // SPATIAL CAMPUS TOPOLOGY</span>
+            <div className="grid items-end gap-6 border-b border-rule pb-10 lg:grid-cols-12">
+              <div className="lg:col-span-8">
+                <div className="flex items-baseline gap-3">
+                  <span className="editorial-italic text-3xl text-gold sm:text-4xl">
+                    03.
+                  </span>
+                  <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-silver">
+                    Spatial Campus Topology · Three.js CAD
+                  </span>
                 </div>
-                <h2 className="mt-4 font-display text-4xl font-extrabold leading-[1.03] tracking-tight text-bone sm:text-6xl">
-                  9-Block 3D Precinct{" "}
-                  <span className="text-vermilion">Digital Twin.</span>
+                <h2 className="mt-3 font-display text-4xl font-bold leading-[1.02] tracking-tight text-bone sm:text-5xl lg:text-6xl">
+                  9-Block Precinct{" "}
+                  <span className="editorial-italic font-normal text-gold">
+                    Digital Twin.
+                  </span>
                 </h2>
               </div>
-              <p className="max-w-md text-xs leading-relaxed text-silver sm:text-sm">
-                Click any auditorium, quadrangle, or floodlit turf block in the
-                Three.js spatial CAD model to inspect certified seating, monsoon
-                indoor backups, and live schedules.
+              <p className="text-sm leading-relaxed text-silver lg:col-span-4">
+                Select any auditorium, quadrangle, or floodlit turf block inside
+                the interactive Three.js spatial model to inspect seating
+                capacity, monsoon indoor backups, and live schedules.
               </p>
             </div>
 
-            {/* 4 Spatial Telemetry Metrics */}
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Swiss Hairline Spatial Metrics Ledger */}
+            <div className="mt-10 grid divide-y divide-rule rounded-3xl border border-rule bg-carbon/80 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
               {[
                 {
-                  label: "MAPPED CAMPUS BLOCKS",
+                  label: "Mapped Campus Blocks",
                   val: `${venues.length || 9} Venues`,
                   sub: "Hosur Road Central Precinct",
                   accent: "text-bone",
                 },
                 {
-                  label: "CERTIFIED CAPACITY",
+                  label: "Certified Seating",
                   val: "3,450+ Seats",
-                  sub: "Main Audi, KE Audi & Halls",
+                  sub: "Main Audi, KE Audi & Seminar Halls",
                   accent: "text-gold",
                 },
                 {
-                  label: "MONSOON CONTINGENCY",
-                  val: "100% Backed",
-                  sub: "Outdoor -> Indoor Auto-Link",
+                  label: "Monsoon Contingency",
+                  val: "100% Linked",
+                  sub: "Outdoor -> Indoor Auto-Fallback",
                   accent: "text-phosphor",
                 },
                 {
-                  label: "TEMPORAL CLASH ENGINE",
-                  val: "<3ms SLA",
-                  sub: "Zero Double-Booked Slots",
-                  accent: "text-vermilion",
+                  label: "Venue Clash SLA",
+                  val: "<3ms p95",
+                  sub: "Zero Double-Booked Auditoriums",
+                  accent: "text-bone",
                 },
               ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="spotlight-card rounded-xl border border-rule-strong p-4"
-                >
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-ink-muted">
+                <div key={stat.label} className="px-6 py-5">
+                  <span className="text-xs font-medium text-ink-muted">
                     {stat.label}
                   </span>
                   <p
-                    className={`mt-1.5 font-display text-2xl font-extrabold ${stat.accent}`}
+                    className={`mt-1.5 font-display text-2xl font-bold tracking-tight ${stat.accent}`}
                   >
                     {stat.val}
                   </p>
-                  <p className="mt-0.5 font-mono text-[11px] text-silver">
-                    {stat.sub}
-                  </p>
+                  <p className="mt-0.5 text-xs text-silver">{stat.sub}</p>
                 </div>
               ))}
             </div>
 
-            <div className="hud-frame mt-8 rounded-2xl">
-              {gpuReady || mapInView ? (
-                <Suspense
-                  fallback={
-                    <div className="flex h-[440px] items-center justify-center rounded-2xl border border-rule-strong bg-carbon font-mono text-xs uppercase tracking-widest text-silver">
-                      Streaming 9-Block 3D Precinct Twin...
+            <div className="studio-bezel mt-8">
+              <div className="overflow-hidden rounded-[20px]">
+                {gpuReady || mapInView ? (
+                  <Suspense
+                    fallback={
+                      <div className="flex h-[440px] items-center justify-center bg-carbon font-mono text-xs text-silver">
+                        Streaming 9-Block 3D Precinct Twin...
+                      </div>
+                    }
+                  >
+                    <CampusPrecinct3DMap
+                      venues={venues}
+                      events={events}
+                      onSelectEvent={(ev) => setSelectedEvent(ev)}
+                    />
+                  </Suspense>
+                ) : (
+                  <div className="relative flex h-[380px] flex-col items-center justify-center overflow-hidden bg-carbon p-6 text-center sm:h-[440px]">
+                    <img
+                      src="/media/campus-skyview-atrium.jpg"
+                      alt="CHRIST Central Campus Hosur Road Precinct Aerial Overview"
+                      width={1280}
+                      height={720}
+                      loading="lazy"
+                      decoding="async"
+                      className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-25"
+                    />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void via-void/70 to-void/80" />
+                    <div className="relative z-10 max-w-lg space-y-4">
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/35 bg-void/80 px-3.5 py-1 font-mono text-[10px] uppercase tracking-widest text-gold">
+                        9 Mapped Architectural Blocks · WebGL Spatial Twin
+                      </span>
+                      <h3 className="font-display text-2xl font-bold tracking-tight text-bone sm:text-3xl">
+                        Central Block, K.E. Auditorium &amp; Birds Park
+                        Amphitheatre
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => setMapInView(true)}
+                        className="inline-flex items-center gap-2 rounded-full bg-bone px-6 py-3 text-xs font-semibold text-void transition hover:bg-gold"
+                      >
+                        <span>Activate 3D Precinct Twin</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </button>
                     </div>
-                  }
-                >
-                  <CampusPrecinct3DMap
-                    venues={venues}
-                    events={events}
-                    onSelectEvent={(ev) => setSelectedEvent(ev)}
-                  />
-                </Suspense>
-              ) : (
-                <div className="relative flex h-[380px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-rule-strong bg-carbon p-6 text-center sm:h-[440px]">
-                  <img
-                    src="/media/campus-skyview-atrium.jpg"
-                    alt="CHRIST Central Campus Hosur Road Precinct Aerial Overview"
-                    width={1280}
-                    height={720}
-                    loading="lazy"
-                    decoding="async"
-                    className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-25"
-                  />
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void via-void/70 to-void/80" />
-                  <div className="relative z-10 max-w-lg space-y-3">
-                    <span className="inline-flex items-center gap-1.5 rounded border border-gold/40 bg-void/80 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-gold">
-                      9 MAPPED ARCHITECTURAL BLOCKS · WEBGL SPATIAL TWIN
-                    </span>
-                    <h3 className="font-display text-2xl font-extrabold text-bone sm:text-3xl">
-                      Central Block, K.E. Auditorium &amp; Birds Park
-                      Amphitheatre
-                    </h3>
-                    <button
-                      type="button"
-                      onClick={() => setMapInView(true)}
-                      className="inline-flex items-center gap-2 rounded-md bg-vermilion px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-void transition hover:bg-vermilion-hover"
-                    >
-                      <span>Activate 3D Precinct Twin</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </button>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </section>
 
         {/* =====================================================================
-            SECTION 03: ZERO-TRUST GOVERNANCE, 8-PERSONA PBAC & CONCURRENCY LAB
+            CHAPTER 04: ZERO-TRUST ARCHITECTURE & 8-PERSONA PBAC STUDIO
            ===================================================================== */}
         <GovernanceCommandConsole />
 
         {/* =====================================================================
-            SECTION 04: CHAMPIONSHIP DEANERY & STUDENT APPEND-ONLY XP LEAGUE
+            CHAPTER 05: INTER-DEANERY PODIUM & APPEND-ONLY XP STANDINGS
            ===================================================================== */}
         {leaderboard && (
           <section
@@ -941,75 +983,88 @@ export const LandingPage: React.FC = () => {
           >
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute left-0 top-20 h-[360px] w-[480px] rounded-full bg-phosphor/5 blur-[130px]"
+              className="pointer-events-none absolute left-0 top-20 h-[360px] w-[480px] rounded-full bg-phosphor/[0.04] blur-[140px]"
             />
 
             <div className="relative mx-auto max-w-7xl px-4 sm:px-8">
-              <div className="flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-8">
+              <div className="flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-10">
                 <div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-phosphor/40 bg-phosphor-soft px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-phosphor">
-                    <Trophy className="h-3.5 w-3.5" />
-                    <span>04 // GAMIFIED PARTICIPATION LEDGER (ST-06)</span>
+                  <div className="flex items-baseline gap-3">
+                    <span className="editorial-italic text-3xl text-gold sm:text-4xl">
+                      05.
+                    </span>
+                    <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-silver">
+                      Append-Only Participation Ledger · ST-06
+                    </span>
                   </div>
-                  <h2 className="mt-4 font-display text-4xl font-extrabold leading-[1.03] tracking-tight text-bone sm:text-6xl">
+                  <h2 className="mt-3 font-display text-4xl font-bold leading-[1.02] tracking-tight text-bone sm:text-5xl lg:text-6xl">
                     Inter-Deanery{" "}
-                    <span className="text-gold">Season Standings.</span>
+                    <span className="editorial-italic font-normal text-gold">
+                      Season Standings.
+                    </span>
                   </h2>
                 </div>
-                <div className="rounded-lg border border-rule-strong bg-carbon px-4 py-2.5 font-mono text-xs text-silver">
-                  <span className="text-phosphor">+10 XP</span> Seat Confirmed ·{" "}
-                  <span className="text-gold">+50 XP</span> Gate QR Verified
+                <div className="rounded-full border border-rule-strong bg-carbon px-4 py-2 text-xs text-silver">
+                  <span className="font-mono font-semibold text-phosphor">
+                    +10 XP
+                  </span>{" "}
+                  Seat Reserved ·{" "}
+                  <span className="font-mono font-semibold text-gold">
+                    +50 XP
+                  </span>{" "}
+                  Gate-1 Verified
                 </div>
               </div>
 
-              <div className="mt-10 grid gap-6 lg:grid-cols-12">
-                {/* Left: Deanery Championship Telemetry Bars */}
+              <div className="mt-12 grid gap-8 lg:grid-cols-12">
+                {/* Left: Deanery Championship Standings */}
                 <div className="space-y-4 lg:col-span-7">
                   {leaderboard.deaneries.map((d) => {
                     const barPct = Math.max(
                       18,
                       Math.round((d.totalXp / maxDeaneryXp) * 100),
                     );
-                    const medalStyle =
+                    const rankBadge =
                       d.rank === 1
-                        ? "border-gold bg-gold text-void"
+                        ? "border-gold/60 bg-gold/15 text-gold"
                         : d.rank === 2
-                          ? "border-bone/60 bg-bone text-void"
+                          ? "border-bone/40 bg-white/10 text-bone"
                           : d.rank === 3
-                            ? "border-vermilion bg-vermilion text-void"
-                            : "border-rule-strong bg-gunmetal text-silver";
+                            ? "border-vermilion/45 bg-vermilion-soft text-vermilion"
+                            : "border-rule bg-void text-silver";
                     return (
                       <div
                         key={d.deanery}
-                        className="spotlight-card rounded-2xl border border-rule-strong p-5"
+                        className="spotlight-card rounded-3xl border border-rule p-6"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-4">
                           <div className="flex items-center gap-4">
                             <span
-                              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border font-mono text-sm font-extrabold ${medalStyle}`}
+                              className={`editorial-italic flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border text-2xl ${rankBadge}`}
                             >
                               0{d.rank}
                             </span>
                             <div>
-                              <h3 className="font-serif text-lg font-bold text-bone">
+                              <h3 className="font-display text-lg font-bold tracking-tight text-bone">
                                 {d.deanery}
                               </h3>
-                              <p className="font-mono text-[11px] text-gold">
-                                {d.badge} · {d.activePasses} verified passes
+                              <p className="mt-0.5 text-xs text-silver">
+                                <span className="text-gold">{d.badge}</span> ·{" "}
+                                {d.activePasses} verified passes
                               </p>
                             </div>
                           </div>
-                          <div className="text-right font-mono">
-                            <span className="text-xl font-extrabold text-phosphor">
+                          <div className="text-right">
+                            <span className="font-mono text-2xl font-semibold text-bone">
                               {d.totalXp.toLocaleString("en-IN")}
                             </span>
-                            <span className="block text-[10px] uppercase tracking-wider text-silver">
-                              DEANERY XP
+                            <span className="block font-mono text-[10px] uppercase tracking-wider text-ink-muted">
+                              Deanery XP
                             </span>
                           </div>
                         </div>
 
-                        <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-void">
+                        <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-void">
                           <div
                             style={{ width: `${barPct}%` }}
                             className={`h-full rounded-full ${
@@ -1026,56 +1081,60 @@ export const LandingPage: React.FC = () => {
                   })}
                 </div>
 
-                {/* Right: Top Concourse Laureates HUD */}
-                <div className="hud-frame glass-console flex flex-col justify-between rounded-2xl border border-rule-strong p-6 lg:col-span-5">
-                  <div>
-                    <div className="flex items-center justify-between border-b border-rule pb-4">
-                      <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-gold">
-                        <Award className="h-4 w-4 text-vermilion" />
-                        <span>Top Concourse Laureates</span>
-                      </div>
-                      <span className="rounded border border-phosphor/40 bg-phosphor-soft px-2 py-0.5 font-mono text-[10px] text-phosphor">
-                        PII Masked
-                      </span>
-                    </div>
-
-                    <div className="mt-4 space-y-3">
-                      {leaderboard.topParticipants.map((p) => (
-                        <div
-                          key={p.displayName}
-                          className="flex items-center justify-between rounded-xl border border-rule bg-void/80 px-4 py-3.5 transition hover:border-gold/50"
-                        >
-                          <div className="flex items-center gap-3">
-                            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gunmetal font-mono text-xs font-bold text-vermilion">
-                              #{p.rank}
-                            </span>
-                            <div>
-                              <p className="text-sm font-bold text-bone">
-                                {p.displayName}
-                              </p>
-                              <p className="font-mono text-[11px] text-silver">
-                                {p.department} · {p.badgesCount} badges
-                              </p>
-                            </div>
+                {/* Right: Double-Bezel Top Concourse Laureates */}
+                <div className="lg:col-span-5">
+                  <div className="studio-bezel h-full">
+                    <div className="flex h-full flex-col justify-between rounded-[20px] border border-rule bg-carbon p-6 sm:p-7">
+                      <div>
+                        <div className="flex items-center justify-between border-b border-rule pb-4">
+                          <div className="flex items-center gap-2 text-xs font-semibold text-bone">
+                            <Award className="h-4 w-4 text-gold" />
+                            <span>Top Concourse Laureates</span>
                           </div>
-                          <span className="font-mono text-sm font-extrabold text-gold">
-                            {p.xp} XP
+                          <span className="rounded-full border border-phosphor/35 bg-phosphor-soft px-2.5 py-0.5 font-mono text-[10px] text-phosphor">
+                            Surnames Masked
                           </span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
 
-                  <div className="mt-6 rounded-xl border border-rule bg-carbon p-4">
-                    <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase text-bone">
-                      <Users className="h-3.5 w-3.5 text-phosphor" />
-                      <span>Immutable Append-Only XP Ledger</span>
+                        <div className="mt-4 divide-y divide-rule">
+                          {leaderboard.topParticipants.map((p) => (
+                            <div
+                              key={p.displayName}
+                              className="flex items-center justify-between py-3.5"
+                            >
+                              <div className="flex items-center gap-3.5">
+                                <span className="editorial-italic flex h-8 w-8 items-center justify-center rounded-full border border-rule bg-void text-base text-gold">
+                                  {p.rank}
+                                </span>
+                                <div>
+                                  <p className="text-sm font-semibold text-bone">
+                                    {p.displayName}
+                                  </p>
+                                  <p className="text-xs text-silver">
+                                    {p.department} · {p.badgesCount} badges
+                                  </p>
+                                </div>
+                              </div>
+                              <span className="font-mono text-sm font-semibold text-gold">
+                                {p.xp} XP
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="mt-6 rounded-2xl border border-rule bg-void/70 p-4">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-bone">
+                          <Users className="h-3.5 w-3.5 text-phosphor" />
+                          <span>Immutable Append-Only XP Ledger</span>
+                        </div>
+                        <p className="mt-1 text-xs leading-relaxed text-silver">
+                          XP entries are written atomically upon confirmed seat
+                          registration and auditorium gate scan — never editable
+                          or publicly tied to student register numbers.
+                        </p>
+                      </div>
                     </div>
-                    <p className="mt-1 text-xs leading-relaxed text-silver">
-                      XP entries are written atomically upon confirmed seat
-                      registration and auditorium gate scan — never editable or
-                      publicly tied to student register numbers.
-                    </p>
                   </div>
                 </div>
               </div>
@@ -1084,58 +1143,66 @@ export const LandingPage: React.FC = () => {
         )}
 
         {/* =====================================================================
-            SECTION 05: CINEMA SHOWREELS, BENTO MOSAIC & PARTNER BOARDING PASS
+            CHAPTER 06: CINEMA SHOWREELS, EDITORIAL PHOTO ESSAY & PARTNER PASS
            ===================================================================== */}
         <section id="chronicle" className="relative py-24 lg:py-32">
           <div className="mx-auto max-w-7xl px-4 sm:px-8">
-            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-8">
+            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-10">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-vermilion/40 bg-vermilion-soft px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-vermilion">
-                  <Film className="h-3.5 w-3.5" />
-                  <span>
-                    05 // CINEMA SHOWREEL &amp; CLS-ZERO VISUAL ARCHIVE
+                <div className="flex items-baseline gap-3">
+                  <span className="editorial-italic text-3xl text-gold sm:text-4xl">
+                    06.
+                  </span>
+                  <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-silver">
+                    Cinema Showreel &amp; CLS-Zero Visual Archive
                   </span>
                 </div>
-                <h2 className="mt-4 font-display text-4xl font-extrabold leading-[1.03] tracking-tight text-bone sm:text-6xl">
+                <h2 className="mt-3 font-display text-4xl font-bold leading-[1.02] tracking-tight text-bone sm:text-5xl lg:text-6xl">
                   Central Campus{" "}
-                  <span className="text-vermilion">Fest Chronicle.</span>
+                  <span className="editorial-italic font-normal text-gold">
+                    Fest Chronicle.
+                  </span>
                 </h2>
               </div>
               <Link
                 to="/login?redirect=/app/gallery"
-                className="inline-flex items-center gap-2 rounded-md border border-rule-strong bg-carbon px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-gold transition hover:border-gold"
+                className="inline-flex items-center gap-2 rounded-full border border-rule-strong bg-carbon px-5 py-2.5 text-xs font-semibold text-bone transition hover:border-gold hover:text-gold"
               >
-                <Film className="h-3.5 w-3.5 text-vermilion" />
+                <Film className="h-3.5 w-3.5 text-gold" />
                 <span>Open Full Media Archive →</span>
               </Link>
             </div>
 
-            {/* Dual-Channel Looping H.264 Campus Cinema Showreel */}
-            <div className="mt-10 grid gap-5 lg:grid-cols-12">
-              <div className="hud-frame overflow-hidden rounded-2xl border border-rule-strong bg-carbon shadow-editorial lg:col-span-7">
-                <CinemaVideoFrame
-                  src="/media/christ-concourse-reel.mp4"
-                  poster="/media/hero-central-campus.jpg"
-                  alt="CHRIST Central Campus 4-Stage Flagship Showreel — Block IV Twilight, Labyrinth Hackathon, Blossoms & Magnovite"
-                  badgeLabel="SHOWREEL 01 · FLAGSHIP CONCLAVES"
-                  caption="Block IV Concourse · Labyrinth 24-Hr Systems Arena · Magnovite Robotics"
-                  className="aspect-video w-full"
-                />
+            {/* Dual-Channel Looping H.264 Campus Cinema Showreels */}
+            <div className="mt-12 grid gap-6 lg:grid-cols-12">
+              <div className="studio-bezel lg:col-span-7">
+                <div className="overflow-hidden rounded-[20px] border border-rule bg-carbon">
+                  <CinemaVideoFrame
+                    src="/media/christ-concourse-reel.mp4"
+                    poster="/media/hero-central-campus.jpg"
+                    alt="CHRIST Central Campus 4-Stage Flagship Showreel — Block IV Twilight, Labyrinth Hackathon, Blossoms & Magnovite"
+                    badgeLabel="SHOWREEL 01 · FLAGSHIP CONCLAVES"
+                    caption="Block IV Concourse · Labyrinth 24-Hr Systems Arena · Magnovite Robotics"
+                    className="aspect-video w-full"
+                  />
+                </div>
               </div>
 
-              <div className="hud-frame overflow-hidden rounded-2xl border border-rule-strong bg-carbon shadow-editorial lg:col-span-5">
-                <CinemaVideoFrame
-                  src="/media/blossoms-stage-loop.mp4"
-                  poster="/media/fest-blossoms-stage.jpg"
-                  alt="Blossoms Quadrangle Mainstage, Birds Park Skyview Atrium & Third Wave Campus Roastery Reel"
-                  badgeLabel="SHOWREEL 02 · CULTURAL & PRECINCT LIFE"
-                  caption="Blossoms Stage · Skyview Atrium · Central Block Roastery"
-                  className="aspect-video w-full lg:h-full"
-                />
+              <div className="studio-bezel lg:col-span-5">
+                <div className="h-full overflow-hidden rounded-[20px] border border-rule bg-carbon">
+                  <CinemaVideoFrame
+                    src="/media/blossoms-stage-loop.mp4"
+                    poster="/media/fest-blossoms-stage.jpg"
+                    alt="Blossoms Quadrangle Mainstage, Birds Park Skyview Atrium & Third Wave Campus Roastery Reel"
+                    badgeLabel="SHOWREEL 02 · CULTURAL & PRECINCT LIFE"
+                    caption="Blossoms Stage · Skyview Atrium · Central Block Roastery"
+                    className="aspect-video w-full lg:h-full"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Asymmetric Bento Photographic Mosaic with Fullscreen Lightbox */}
+            {/* Asymmetric Editorial Photo Essay Grid */}
             <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-12">
               {gallery.slice(0, 6).map((item, idx) => {
                 const spanClass =
@@ -1154,7 +1221,7 @@ export const LandingPage: React.FC = () => {
                   <figure
                     key={item.id}
                     onClick={() => setLightboxItem(item)}
-                    className={`spotlight-card group relative cursor-pointer overflow-hidden rounded-2xl border border-rule-strong ${spanClass}`}
+                    className={`spotlight-card group relative cursor-pointer overflow-hidden rounded-3xl border border-rule ${spanClass}`}
                   >
                     <div
                       className={`w-full overflow-hidden bg-void ${
@@ -1180,17 +1247,21 @@ export const LandingPage: React.FC = () => {
                         e.stopPropagation();
                         setLightboxItem(item);
                       }}
-                      className="absolute right-3.5 top-3.5 rounded-lg border border-white/20 bg-void/80 p-2 text-bone backdrop-blur-md transition hover:border-vermilion hover:text-vermilion"
+                      className="absolute right-4 top-4 rounded-full border border-white/15 bg-void/80 p-2 text-bone backdrop-blur-md transition hover:border-gold hover:text-gold"
                     >
                       <Maximize2 className="h-3.5 w-3.5" />
                     </button>
 
-                    <figcaption className="absolute inset-x-0 bottom-0 p-5">
-                      <div className="flex items-center justify-between font-mono text-[10px] font-bold uppercase tracking-wider text-gold">
-                        <span>{item.festName || item.category}</span>
-                        <span>{item.venueName}</span>
+                    <figcaption className="absolute inset-x-0 bottom-0 p-6">
+                      <div className="flex items-center justify-between text-xs text-gold">
+                        <span className="editorial-italic text-base">
+                          {item.festName || item.category}
+                        </span>
+                        <span className="font-mono text-[11px] text-silver">
+                          {item.venueName}
+                        </span>
                       </div>
-                      <p className="mt-1 font-serif text-lg font-bold text-bone sm:text-xl">
+                      <p className="mt-0.5 font-display text-lg font-bold tracking-tight text-bone sm:text-xl">
                         {item.title}
                       </p>
                     </figcaption>
@@ -1199,68 +1270,72 @@ export const LandingPage: React.FC = () => {
               })}
             </div>
 
-            {/* Perforated Third Wave Coffee Campus Partner Voucher Pass */}
+            {/* Perforated Third Wave Coffee Campus Partner Boarding Pass */}
             {sponsor && (
-              <div className="hud-frame glass-console mt-16 grid overflow-hidden rounded-2xl border border-rule-strong lg:grid-cols-12">
-                <div className="relative min-h-[260px] lg:col-span-5">
-                  <img
-                    src="/media/thirdwave-roastery-lounge.jpg"
-                    alt="Third Wave Coffee Central Block Roastery Lounge"
-                    width={1280}
-                    height={720}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-obsidian/90" />
-                  <div className="absolute bottom-4 left-4 rounded-md border border-gold/50 bg-void/85 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-gold backdrop-blur-md">
-                    CENTRAL BLOCK · GROUND FLOOR
+              <div className="studio-bezel mt-16">
+                <div className="grid overflow-hidden rounded-[20px] border border-rule bg-carbon lg:grid-cols-12">
+                  <div className="relative min-h-[260px] lg:col-span-5">
+                    <img
+                      src="/media/thirdwave-roastery-lounge.jpg"
+                      alt="Third Wave Coffee Central Block Roastery Lounge"
+                      width={1280}
+                      height={720}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-carbon/90" />
+                    <div className="absolute bottom-5 left-5 rounded-full border border-gold/40 bg-void/85 px-3.5 py-1 font-mono text-[10px] uppercase tracking-widest text-gold backdrop-blur-md">
+                      Central Block · Ground Floor
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex flex-col justify-between p-6 sm:p-8 lg:col-span-7">
-                  <div>
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-gold">
-                        <Coffee className="h-4 w-4 text-vermilion" />
-                        <span>OFFICIAL CAMPUS ROASTERY PARTNER</span>
+                  <div className="flex flex-col justify-between p-6 sm:p-8 lg:col-span-7">
+                    <div>
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="inline-flex items-center gap-2 text-xs font-semibold text-gold">
+                          <Coffee className="h-4 w-4" />
+                          <span>Official Campus Roastery Partner</span>
+                        </div>
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-phosphor/35 bg-phosphor-soft px-3 py-0.5 font-mono text-[10px] font-medium text-phosphor">
+                          <ShieldCheck className="h-3 w-3" />
+                          <span>Zero Student PII Shared</span>
+                        </span>
                       </div>
-                      <span className="inline-flex items-center gap-1 rounded border border-phosphor/40 bg-phosphor-soft px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase text-phosphor">
-                        <ShieldCheck className="h-3 w-3" />
-                        <span>Zero Student PII Shared</span>
-                      </span>
+
+                      <h3 className="mt-3 font-display text-3xl font-bold tracking-tight text-bone sm:text-4xl">
+                        {sponsor.brand}
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-silver">
+                        {sponsor.location} ({sponsor.hours}).{" "}
+                        <strong className="font-semibold text-bone">
+                          {sponsor.studentPerk}
+                        </strong>
+                      </p>
                     </div>
 
-                    <h3 className="mt-3 font-display text-3xl font-extrabold text-bone sm:text-4xl">
-                      {sponsor.brand}
-                    </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-silver">
-                      {sponsor.location} ({sponsor.hours}).{" "}
-                      <strong className="text-bone">
-                        {sponsor.studentPerk}
-                      </strong>
-                    </p>
-                  </div>
+                    <div className="pass-perforation my-6 h-[2px] w-full" />
 
-                  <div className="pass-perforation my-5 h-[2px] w-full" />
-
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    {sponsor.menuHighlights.map((m) => (
-                      <div
-                        key={m.name}
-                        className="rounded-xl border border-rule-strong bg-void/85 p-3.5"
-                      >
-                        <p className="text-xs font-bold text-bone">{m.name}</p>
-                        <div className="mt-1.5 flex items-baseline gap-2 font-mono text-xs">
-                          <span className="text-sm font-extrabold text-phosphor">
-                            INR {m.studentPrice}
-                          </span>
-                          <span className="text-ink-muted line-through">
-                            INR {m.price}
-                          </span>
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {sponsor.menuHighlights.map((m) => (
+                        <div
+                          key={m.name}
+                          className="rounded-2xl border border-rule bg-void/75 p-4"
+                        >
+                          <p className="text-xs font-semibold text-bone">
+                            {m.name}
+                          </p>
+                          <div className="mt-1.5 flex items-baseline gap-2 font-mono text-xs">
+                            <span className="text-sm font-semibold text-phosphor">
+                              INR {m.studentPrice}
+                            </span>
+                            <span className="text-ink-muted line-through">
+                              INR {m.price}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1269,7 +1344,7 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* =====================================================================
-            SECTION 06: CAMPUS SOCIETY VOICES & ZERO-TRUST PROTOCOL FAQ
+            CHAPTER 07: EDITORIAL VOICES & INSTITUTIONAL PROTOCOL BRIEFING
            ===================================================================== */}
         <CampusVoicesAndFaqSection />
       </main>
@@ -1279,16 +1354,15 @@ export const LandingPage: React.FC = () => {
          ===================================================================== */}
       <footer className="relative overflow-hidden border-t border-rule bg-obsidian pb-12 pt-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-8">
-          {/* Top 4-Column Institutional Directory */}
           <div className="grid gap-10 border-b border-rule pb-12 sm:grid-cols-2 lg:grid-cols-12">
             <div className="space-y-4 lg:col-span-5">
               <div className="flex items-center gap-3.5">
                 <ChristCrestMark className="h-11 w-11" tone="light" />
                 <div>
-                  <p className="font-display text-lg font-extrabold tracking-tight text-bone">
-                    CONCOURSE // CHRIST CENTRAL
+                  <p className="font-display text-lg font-bold tracking-tight text-bone">
+                    Concourse · Christ Central
                   </p>
-                  <p className="font-mono text-[11px] uppercase tracking-widest text-gold">
+                  <p className="editorial-italic text-base text-gold">
                     {DESIGN_TOKENS.campus.name}
                   </p>
                 </div>
@@ -1298,52 +1372,50 @@ export const LandingPage: React.FC = () => {
                 row-locked seat allocations, 30-second rotating HMAC gate
                 credentials, and spatial 3D venue telemetry.
               </p>
-              <div className="inline-flex items-center gap-2 rounded-full border border-phosphor/35 bg-phosphor-soft px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-phosphor">
+              <div className="inline-flex items-center gap-2 rounded-full border border-phosphor/30 bg-phosphor-soft px-3.5 py-1 font-mono text-[10px] font-medium text-phosphor">
                 <Activity className="h-3 w-3" />
                 <span>APISIX · KEYCLOAK 26 · FASTIFY PBAC · NOMINAL</span>
               </div>
             </div>
 
-            <div className="space-y-2.5 lg:col-span-2">
-              <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-gold">
-                Concourse
-              </p>
-              <ul className="space-y-2 font-mono text-xs text-silver">
+            <div className="space-y-3 lg:col-span-2">
+              <p className="text-xs font-semibold text-bone">Chapters</p>
+              <ul className="space-y-2 text-xs text-silver">
                 <li>
-                  <a href="#conclaves" className="hover:text-bone">
+                  <a href="#conclaves" className="transition hover:text-bone">
                     Live Schedule
                   </a>
                 </li>
                 <li>
-                  <a href="#precinct-3d" className="hover:text-bone">
+                  <a href="#precinct-3d" className="transition hover:text-bone">
                     9-Block 3D Twin
                   </a>
                 </li>
                 <li>
-                  <a href="#governance" className="hover:text-bone">
-                    PBAC Matrix
+                  <a href="#governance" className="transition hover:text-bone">
+                    PBAC Architecture
                   </a>
                 </li>
                 <li>
-                  <a href="#league" className="hover:text-bone">
-                    Deanery League
+                  <a href="#league" className="transition hover:text-bone">
+                    Deanery Standings
                   </a>
                 </li>
               </ul>
             </div>
 
-            <div className="space-y-2.5 lg:col-span-2">
-              <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-gold">
+            <div className="space-y-3 lg:col-span-2">
+              <p className="text-xs font-semibold text-bone">
                 Identity &amp; Access
               </p>
-              <ul className="space-y-2 font-mono text-xs text-silver">
+              <ul className="space-y-2 text-xs text-silver">
                 <li>
-                  <Link to="/login" className="hover:text-vermilion">
+                  <Link to="/login" className="transition hover:text-gold">
                     Portal Sign In
                   </Link>
                 </li>
                 <li>
-                  <Link to="/signup" className="hover:text-vermilion">
+                  <Link to="/signup" className="transition hover:text-gold">
                     Student &amp; Guest Pass
                   </Link>
                 </li>
@@ -1351,20 +1423,20 @@ export const LandingPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={dispatchOpenCommandPalette}
-                    className="hover:text-vermilion"
+                    className="transition hover:text-gold"
                   >
-                    Command Palette (Ctrl+K)
+                    Quick Find (Ctrl+K)
                   </button>
                 </li>
               </ul>
             </div>
 
-            <div className="space-y-2.5 lg:col-span-3">
-              <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-gold">
+            <div className="space-y-3 lg:col-span-3">
+              <p className="text-xs font-semibold text-bone">
                 Precinct Coordinates
               </p>
               <p className="flex items-start gap-2 text-xs leading-relaxed text-silver">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-vermilion" />
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
                 <span>
                   Hosur Road, Bhavani Nagar, S.G. Palya, Bengaluru, Karnataka
                   560029 · Gate-1 Admission Corridor
@@ -1378,23 +1450,23 @@ export const LandingPage: React.FC = () => {
 
           {/* Architectural Colonnade Vector & Monumental Outline Watermark */}
           <div className="mt-8">
-            <ColonnadeMotifSvg className="h-10 w-full opacity-75" />
+            <ColonnadeMotifSvg className="h-10 w-full opacity-70" />
             <svg
-              viewBox="0 0 1200 170"
+              viewBox="0 0 1200 165"
               aria-hidden="true"
               className="mt-4 h-auto w-full select-none"
             >
               <text
                 x="600"
-                y="142"
+                y="138"
                 textAnchor="middle"
                 fill="none"
-                stroke="rgba(244,240,230,0.12)"
-                strokeWidth="1.5"
-                fontFamily="Syne Variable, Syne, sans-serif"
+                stroke="rgba(245,242,235,0.11)"
+                strokeWidth="1.4"
+                fontFamily="Bricolage Grotesque Variable, Plus Jakarta Sans Variable, sans-serif"
                 fontWeight="800"
-                fontSize="162"
-                letterSpacing="-4"
+                fontSize="158"
+                letterSpacing="-5"
               >
                 CONCOURSE
               </text>
@@ -1410,48 +1482,50 @@ export const LandingPage: React.FC = () => {
           aria-modal="true"
           aria-label={lightboxItem.title}
           onClick={() => setLightboxItem(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-void/90 p-4 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-void/90 p-4 backdrop-blur-xl"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="hud-frame glass-console w-full max-w-4xl overflow-hidden rounded-2xl border border-rule-strong"
+            className="studio-bezel w-full max-w-4xl"
           >
-            <div className="relative aspect-video w-full bg-void">
-              <img
-                src={lightboxItem.imageUrl}
-                alt={lightboxItem.title}
-                className="h-full w-full object-cover"
-              />
-              <button
-                type="button"
-                onClick={() => setLightboxItem(null)}
-                aria-label="Close media preview"
-                className="absolute right-4 top-4 rounded-lg border border-white/20 bg-void/85 p-2 text-bone hover:border-vermilion hover:text-vermilion"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="flex flex-wrap items-center justify-between gap-4 p-6">
-              <div>
-                <p className="font-mono text-xs font-bold uppercase tracking-widest text-gold">
-                  {lightboxItem.festName || lightboxItem.category} ·{" "}
-                  {lightboxItem.venueName}
-                </p>
-                <h3 className="mt-1 font-display text-2xl font-bold text-bone">
-                  {lightboxItem.title}
-                </h3>
-                {lightboxItem.caption && (
-                  <p className="mt-1 text-xs text-silver">
-                    {lightboxItem.caption}
-                  </p>
-                )}
+            <div className="overflow-hidden rounded-[20px] border border-rule bg-carbon">
+              <div className="relative aspect-video w-full bg-void">
+                <img
+                  src={lightboxItem.imageUrl}
+                  alt={lightboxItem.title}
+                  className="h-full w-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => setLightboxItem(null)}
+                  aria-label="Close media preview"
+                  className="absolute right-4 top-4 rounded-full border border-white/20 bg-void/85 p-2 text-bone transition hover:border-gold hover:text-gold"
+                >
+                  <X className="h-4 w-4" />
+                </button>
               </div>
-              <Link
-                to="/login?redirect=/app/gallery"
-                className="rounded-md bg-vermilion px-4 py-2.5 font-mono text-xs font-bold uppercase text-void hover:bg-vermilion-hover"
-              >
-                Explore Full Archive
-              </Link>
+              <div className="flex flex-wrap items-center justify-between gap-4 p-6">
+                <div>
+                  <p className="editorial-italic text-lg text-gold">
+                    {lightboxItem.festName || lightboxItem.category} ·{" "}
+                    {lightboxItem.venueName}
+                  </p>
+                  <h3 className="font-display text-2xl font-bold tracking-tight text-bone">
+                    {lightboxItem.title}
+                  </h3>
+                  {lightboxItem.caption && (
+                    <p className="mt-1 text-xs text-silver">
+                      {lightboxItem.caption}
+                    </p>
+                  )}
+                </div>
+                <Link
+                  to="/login?redirect=/app/gallery"
+                  className="rounded-full bg-bone px-5 py-2.5 text-xs font-semibold text-void transition hover:bg-gold"
+                >
+                  Explore Full Archive
+                </Link>
+              </div>
             </div>
           </div>
         </div>

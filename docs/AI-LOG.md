@@ -716,3 +716,28 @@
 - **Follow-ups**: Commit and push cleanly to `origin/dev`.
 
 ---
+
+## Entry #REDESIGN-V4-EDITORIAL-TYPOGRAPHY-AND-SECTIONS
+
+- **Date**: 2026-11-16
+- **Prompt summary**: Fix the typography across the entire project and redesign the frontend sections, navigation, hero showcase, auth studios, and workspace UI to an Awwwards editorial standard.
+- **Tools used**: Antigravity (Gemini)
+- **Files touched**:
+  - `frontend/package.json`, `pnpm-lock.yaml`, `frontend/public/fonts/*` — Removed bloated `Syne` and sci-fi `Chakra Petch` packages/WOFFs; verified and installed `@fontsource-variable/bricolage-grotesque`, `@fontsource/bricolage-grotesque`, `@fontsource/instrument-serif`, `@fontsource-variable/plus-jakarta-sans`, and `@fontsource/ibm-plex-mono`, copying WOFF1 assets (`bricolage-700.woff`, `bricolage-800.woff`, `instrument-serif.woff`, `instrument-serif-italic.woff`) for WebGL SDF rendering.
+  - `frontend/src/main.tsx`, `frontend/tailwind.config.ts`, `frontend/src/index.css` — Replaced global font stack (`display`: Bricolage Grotesque, `editorial`: Instrument Serif italic/upright, `sans`: Plus Jakarta Sans, `mono`: IBM Plex Mono `tabular-nums`), removed gaudy `.hud-frame` corner brackets, and introduced `.studio-bezel` double-bezel specular frames.
+  - `frontend/src/components/webgl/WebGLKineticHeroText.tsx`, `frontend/src/components/webgl/WebGLShaderMarquee.tsx` — Upgraded Three.js SDF hero typography to Bricolage 800 + Instrument Serif Italic with warm platinum & champagne-gold PBR lighting and silky chromatic marquee dispersion.
+  - `frontend/src/components/PublicNavbar.tsx`, `frontend/src/components/HeroMediaAnchor.tsx` — Redesigned header into a floating glassmorphic capsule pill and wrapped the 3-mode hero showcase in double-bezel studio window chrome.
+  - `frontend/src/pages/LandingPage.tsx`, `frontend/src/components/ConclaveItineraryPlanner.tsx`, `frontend/src/components/GovernanceCommandConsole.tsx`, `frontend/src/components/CampusVoicesAndFaqSection.tsx` — Redesigned all 7 landing chapters with distinct Swiss-editorial layouts (4-column scale bar, magazine flagship spread, chronological vertical time-rail + pass wallet, connected 4-stage pipeline ledger, 8-persona studio bezel, deanery podium standings, cinema showreels, and Instrument Serif pull-quotes).
+  - `frontend/src/pages/LoginPage.tsx`, `frontend/src/pages/SignupPage.tsx`, `frontend/src/components/WorkspaceShell.tsx`, `frontend/src/pages/workspace/DiscoverView.tsx`, `docs/DESIGN-SYSTEM.md` — Unified auth dual-panels, workspace sidebar, and Discover feed with editorial typography and warm-ivory pill controls.
+- **Verification run**:
+  - `pnpm verify` → PASS (All 8 verification pipeline gates passed)
+  - `ts.createProgram` audit across all tracked files → `0` diagnostics
+- **Decisions & assumptions**:
+  - Paired tight neo-grotesque display (`Bricolage Grotesque`) with genuine high-contrast italic serif (`Instrument Serif`) and clean geometric-humanist UI sans (`Plus Jakarta Sans`) while restricting `IBM Plex Mono` strictly to numerical/cryptographic telemetry.
+- **Tests**:
+  - Verified all 53 backend tests and all 7 frontend end-to-end UI/PBAC/zero-emoji tests pass with zero warnings.
+- **[AI-WRONG] mistakes found**:
+  - `[AI-WRONG]` Earlier v3 typography relied on `Syne 800` (whose ultra-wide display glyphs distorted multi-word section headings) and `Chakra Petch` mapped to `font-mono` across 400+ UI labels/buttons, creating a repetitive sci-fi box look; completely replaced across DOM and WebGL SDF layers.
+- **Follow-ups**: Commit and push v4 editorial redesign to `origin/dev`.
+
+---

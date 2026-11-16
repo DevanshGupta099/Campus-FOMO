@@ -284,11 +284,11 @@ export const WorkspaceShell: React.FC = () => {
           <Link to="/" className="flex items-center gap-3">
             <ChristCrestMark className="h-9 w-9" tone="light" />
             <div>
-              <p className="font-display text-xs font-extrabold uppercase tracking-[0.2em] text-bone">
-                CONCOURSE
+              <p className="font-display text-sm font-bold tracking-tight text-bone">
+                Concourse
               </p>
-              <p className="font-mono text-[10px] uppercase tracking-wider text-gold">
-                CHRIST Central
+              <p className="editorial-italic text-sm text-gold">
+                Christ Central · BLR
               </p>
             </div>
           </Link>
@@ -305,7 +305,7 @@ export const WorkspaceShell: React.FC = () => {
         <nav aria-label="Workspace navigation" className="space-y-5 p-4">
           {groupedScreens.map((group) => (
             <div key={group.section}>
-              <p className="px-2.5 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
+              <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
                 {group.label}
               </p>
               <ul className="mt-1.5 space-y-1">
@@ -315,9 +315,9 @@ export const WorkspaceShell: React.FC = () => {
                       to={toWorkspaceHref(screen)}
                       onClick={() => setMobileNavOpen(false)}
                       className={({ isActive }) =>
-                        `flex items-center gap-2.5 rounded-md px-3 py-2 text-xs font-semibold transition ${
+                        `flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-xs font-semibold transition ${
                           isActive
-                            ? "bg-vermilion text-void shadow-glow"
+                            ? "bg-bone text-void shadow-sm"
                             : "text-paper-deep hover:bg-obsidian-surface hover:text-bone"
                         }`
                       }

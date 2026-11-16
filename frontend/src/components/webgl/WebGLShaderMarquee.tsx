@@ -16,10 +16,10 @@ function supportsShaderBanner(): boolean {
 }
 
 const BANNER_COPY =
-  "CONCOURSE // ATOMIC SEATS // 30S ROTATING HMAC QR // SHA-256 COMMIT-REVEAL DRAWS // ZERO-TRUST PBAC // CHRIST CENTRAL BLR // ";
+  "Christ Central Campus  ·  Atomic Row-Locked Seats  ·  30s Rotating HMAC Gate Passes  ·  SHA-256 Commit-Reveal Draws  ·  Zero-Trust PBAC  ·  ";
 
 /**
- * Interactive WebGL GLSL Velocity-Shear & RGB Chromatic Typography Ribbon.
+ * Interactive WebGL GLSL Silk Velocity-Shear Editorial Typography Ribbon.
  */
 export const WebGLShaderMarquee: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -29,22 +29,22 @@ export const WebGLShaderMarquee: React.FC = () => {
     if (!enabled || !containerRef.current) return;
     const host = containerRef.current;
 
-    // 1. Render ultra-sharp offscreen typography atlas on 2D canvas
     const texCanvas = document.createElement("canvas");
     texCanvas.width = 2048;
-    texCanvas.height = 256;
+    texCanvas.height = 220;
     const ctx = texCanvas.getContext("2d");
     if (!ctx) {
       setEnabled(false);
       return;
     }
 
-    ctx.fillStyle = "#07090D";
+    ctx.fillStyle = "#06080C";
     ctx.fillRect(0, 0, texCanvas.width, texCanvas.height);
-    ctx.font = '800 84px "Syne Variable", "Space Grotesk Variable", sans-serif';
+    ctx.font =
+      '600 66px "Bricolage Grotesque Variable", "Plus Jakarta Sans Variable", sans-serif';
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#F4F0E6";
-    ctx.fillText(BANNER_COPY, 24, 132);
+    ctx.fillStyle = "#F5F2EB";
+    ctx.fillText(BANNER_COPY, 24, 112);
 
     let renderer: THREE.WebGLRenderer;
     try {
@@ -55,7 +55,7 @@ export const WebGLShaderMarquee: React.FC = () => {
     }
 
     const w = Math.max(host.clientWidth, 320);
-    const h = Math.max(host.clientHeight, 84);
+    const h = Math.max(host.clientHeight, 72);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(w, h);
     host.innerHTML = "";
@@ -74,7 +74,7 @@ export const WebGLShaderMarquee: React.FC = () => {
       uTime: { value: 0 },
       uHover: { value: 0 },
       uMouseX: { value: 0.5 },
-      uRepeatX: { value: Math.max(0.45, w / 1500) },
+      uRepeatX: { value: Math.max(0.45, w / 1650) },
     };
 
     const material = new THREE.ShaderMaterial({
@@ -95,17 +95,17 @@ export const WebGLShaderMarquee: React.FC = () => {
         varying vec2 vUv;
 
         void main() {
-          vec2 uv = vec2(vUv.x * uRepeatX + uTime * 0.055, vUv.y);
+          vec2 uv = vec2(vUv.x * uRepeatX + uTime * 0.042, vUv.y);
           float dist = abs(vUv.x - uMouseX);
-          float wave = sin(vUv.y * 14.0 + uTime * 6.0) * 0.012 * uHover * smoothstep(0.35, 0.0, dist);
-          float shift = 0.0045 * uHover + 0.001;
+          float wave = sin(vUv.y * 12.0 + uTime * 5.0) * 0.009 * uHover * smoothstep(0.35, 0.0, dist);
+          float shift = 0.003 * uHover + 0.0005;
 
           float r = texture2D(uTex, uv + vec2(wave + shift, 0.0)).r;
           float g = texture2D(uTex, uv + vec2(wave, 0.0)).g;
           float b = texture2D(uTex, uv + vec2(wave - shift, 0.0)).b;
 
-          vec3 col = vec3(r, g * 0.96, b * 0.90);
-          col += vec3(1.0, 0.30, 0.11) * max(0.0, r - g) * 1.4;
+          vec3 col = vec3(r * 0.96, g * 0.94, b * 0.90);
+          col += vec3(0.90, 0.73, 0.42) * max(0.0, r - g) * 1.25;
           gl_FragColor = vec4(col, 1.0);
         }
       `,
@@ -137,9 +137,9 @@ export const WebGLShaderMarquee: React.FC = () => {
             const entry = entries[0];
             if (!entry) return;
             const nw = Math.max(entry.contentRect.width, 280);
-            const nh = Math.max(entry.contentRect.height, 72);
+            const nh = Math.max(entry.contentRect.height, 68);
             renderer.setSize(nw, nh);
-            uniforms.uRepeatX.value = Math.max(0.45, nw / 1500);
+            uniforms.uRepeatX.value = Math.max(0.45, nw / 1650);
           })
         : null;
     ro?.observe(host);
@@ -173,10 +173,10 @@ export const WebGLShaderMarquee: React.FC = () => {
 
   if (!enabled) {
     return (
-      <div className="overflow-hidden border-y border-rule bg-void py-4">
-        <div className="animate-marquee whitespace-nowrap font-display text-2xl font-extrabold tracking-tight text-bone sm:text-4xl">
+      <div className="overflow-hidden border-y border-rule bg-obsidian/90 py-4">
+        <div className="animate-marquee whitespace-nowrap font-display text-xl font-semibold tracking-tight text-bone/90 sm:text-2xl">
           <span className="mx-6">{BANNER_COPY}</span>
-          <span className="mx-6 text-vermilion">{BANNER_COPY}</span>
+          <span className="editorial-italic mx-6 text-gold">{BANNER_COPY}</span>
         </div>
       </div>
     );
@@ -186,7 +186,7 @@ export const WebGLShaderMarquee: React.FC = () => {
     <div
       ref={containerRef}
       aria-label={BANNER_COPY}
-      className="h-20 w-full cursor-ew-resize overflow-hidden border-y border-rule bg-void sm:h-24"
+      className="h-16 w-full cursor-ew-resize overflow-hidden border-y border-rule bg-void sm:h-20"
     />
   );
 };

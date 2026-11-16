@@ -231,12 +231,12 @@ export const SignupPage: React.FC = () => {
               </div>
             </div>
 
-            <h1 className="mt-5 font-display text-3xl font-extrabold leading-[1.04] tracking-tight text-bone sm:text-5xl">
+            <h1 className="mt-5 font-display text-3xl font-bold leading-[1.03] tracking-tight text-bone sm:text-5xl">
               Enroll Your{" "}
               <span
-                className={
-                  track === "student" ? "text-vermilion" : "text-phosphor"
-                }
+                className={`editorial-italic font-normal ${
+                  track === "student" ? "text-gold" : "text-phosphor"
+                }`}
               >
                 Campus Pass.
               </span>
@@ -333,22 +333,22 @@ export const SignupPage: React.FC = () => {
           {/* Top Dual-Page Switcher */}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-vermilion">
-                02 // IDENTITY PROVISIONING
+              <p className="editorial-italic text-lg text-gold">
+                02. Identity Provisioning
               </p>
-              <h2 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-bone sm:text-4xl">
+              <h2 className="font-display text-3xl font-bold tracking-tight text-bone sm:text-4xl">
                 Create Concourse Pass
               </h2>
             </div>
 
-            <div className="inline-flex rounded-lg border border-rule-strong bg-obsidian p-1 font-mono text-xs">
+            <div className="inline-flex rounded-full border border-rule-strong bg-obsidian p-1 text-xs">
               <Link
                 to="/login"
-                className="rounded-md px-3 py-1.5 font-semibold uppercase text-silver transition hover:text-bone"
+                className="rounded-full px-3.5 py-1.5 font-medium text-silver transition hover:text-bone"
               >
                 Sign In
               </Link>
-              <span className="rounded-md bg-vermilion px-3 py-1.5 font-bold uppercase text-void">
+              <span className="rounded-full bg-bone px-3.5 py-1.5 font-semibold text-void">
                 Create Pass
               </span>
             </div>

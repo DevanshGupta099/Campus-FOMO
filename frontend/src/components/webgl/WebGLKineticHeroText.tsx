@@ -23,14 +23,14 @@ function canUseWebGL(): boolean {
 }
 
 /**
- * AAA Game-Engine Signed Distance Field (SDF) 3D WebGL Typography.
- * Uses troika-three-text + custom GLSL vertex wave displacement + 3D parallax
- * depth layers, with an automatic accessible non-WebGL / reduced-motion fallback.
+ * Studio-Grade Signed Distance Field (SDF) 3D WebGL Typography.
+ * Pairs Bricolage Grotesque 800 Display with Instrument Serif Italic in Three.js
+ * with brushed warm-ivory & champagne-gold PBR lighting and an accessible fallback.
  */
 export const WebGLKineticHeroText: React.FC<WebGLKineticHeroTextProps> = ({
   primaryLine = "CONCOURSE",
-  secondaryLine = "CHRIST CENTRAL // BLR",
-  telemetryLine = "12.9345 N · 77.6060 E · ZERO-TRUST EVENT OS",
+  secondaryLine = "Christ Central Campus — Bengaluru",
+  telemetryLine = "12.9345° N · 77.6060° E · ZERO-TRUST CAMPUS EVENT OPERATING SYSTEM",
 }) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const [webglActive, setWebglActive] = useState<boolean>(() => canUseWebGL());
@@ -61,51 +61,52 @@ export const WebGLKineticHeroText: React.FC<WebGLKineticHeroTextProps> = ({
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 50);
-    camera.position.set(0, 0, 7.2);
+    const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 50);
+    camera.position.set(0, 0, 7.1);
 
-    // Studio AAA Lighting Rig
-    const ambient = new THREE.AmbientLight(0xf4f0e6, 1.35);
+    // Sculpted Warm Platinum & Champagne Studio Lighting Rig
+    const ambient = new THREE.AmbientLight(0xf5f2eb, 1.55);
     scene.add(ambient);
 
-    const keyLight = new THREE.DirectionalLight(0xfff6e5, 2.2);
-    keyLight.position.set(3, 4, 5);
+    const keyLight = new THREE.DirectionalLight(0xfffaf0, 2.4);
+    keyLight.position.set(2.8, 4.2, 5.5);
     scene.add(keyLight);
 
-    const vermilionPoint = new THREE.PointLight(0xff4d1c, 4.5, 14);
-    vermilionPoint.position.set(-3.2, -1.2, 3.2);
-    scene.add(vermilionPoint);
+    const champagneRim = new THREE.PointLight(0xe5ba6b, 3.8, 15);
+    champagneRim.position.set(3.2, 1.6, 3.0);
+    scene.add(champagneRim);
 
-    const goldRim = new THREE.PointLight(0xe2b45a, 3.2, 14);
-    goldRim.position.set(3.4, 1.8, 2.6);
-    scene.add(goldRim);
+    const warmVermilionFill = new THREE.PointLight(0xff5224, 2.6, 14);
+    warmVermilionFill.position.set(-3.4, -1.4, 2.8);
+    scene.add(warmVermilionFill);
 
     const rootGroup = new THREE.Group();
     scene.add(rootGroup);
 
-    // Gyroscopic Anodized Telemetry Rings behind SDF Typography
-    const ringGeoOuter = new THREE.TorusGeometry(2.35, 0.009, 12, 120);
+    // Subtle Precision Astrolabe Arcs behind SDF Typography
+    const ringGeoOuter = new THREE.TorusGeometry(2.45, 0.0055, 12, 140);
     const ringMatOuter = new THREE.MeshBasicMaterial({
-      color: 0xff4d1c,
+      color: 0xe5ba6b,
       transparent: true,
-      opacity: 0.34,
+      opacity: 0.22,
     });
     const outerRing = new THREE.Mesh(ringGeoOuter, ringMatOuter);
-    outerRing.position.set(0, 0.05, -1.15);
+    outerRing.position.set(0, 0.04, -1.2);
+    outerRing.rotation.x = 0.35;
     rootGroup.add(outerRing);
 
-    const ringGeoInner = new THREE.TorusGeometry(1.75, 0.007, 12, 96);
+    const ringGeoInner = new THREE.TorusGeometry(1.82, 0.0045, 12, 110);
     const ringMatInner = new THREE.MeshBasicMaterial({
-      color: 0xe2b45a,
+      color: 0xf5f2eb,
       transparent: true,
-      opacity: 0.26,
+      opacity: 0.12,
     });
     const innerRing = new THREE.Mesh(ringGeoInner, ringMatInner);
-    innerRing.position.set(0, 0.05, -0.95);
-    innerRing.rotation.x = 0.55;
+    innerRing.position.set(0, 0.04, -0.95);
+    innerRing.rotation.x = -0.48;
     rootGroup.add(innerRing);
 
-    // Custom GLSL Uniforms for GPU Kinetic Vertex Distortion
+    // Custom GLSL Uniforms for Silky GPU Kinetic Vertex Motion
     const shaderUniforms = {
       uTime: { value: 0 },
       uPointer: { value: new THREE.Vector2(0, 0) },
@@ -113,9 +114,9 @@ export const WebGLKineticHeroText: React.FC<WebGLKineticHeroTextProps> = ({
     };
 
     const heroMaterial = new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#F4F0E6"),
-      roughness: 0.24,
-      metalness: 0.52,
+      color: new THREE.Color("#F5F2EB"),
+      roughness: 0.28,
+      metalness: 0.38,
     });
 
     heroMaterial.onBeforeCompile = (shader) => {
@@ -134,80 +135,77 @@ export const WebGLKineticHeroText: React.FC<WebGLKineticHeroTextProps> = ({
           `
           #include <begin_vertex>
           float distToCursor = distance(transformed.xy, uPointer * vec2(3.6, 1.4));
-          float proximity = smoothstep(2.1, 0.0, distToCursor);
-          float wave = sin(transformed.x * 2.4 - uTime * 3.1) * 0.035;
-          transformed.z += proximity * (0.28 + uVelocity * 0.35) + wave;
-          transformed.y += proximity * uVelocity * 0.08 * sin(transformed.x * 4.0 + uTime * 5.0);
+          float proximity = smoothstep(2.0, 0.0, distToCursor);
+          float wave = sin(transformed.x * 2.1 - uTime * 2.4) * 0.024;
+          transformed.z += proximity * (0.22 + uVelocity * 0.26) + wave;
+          transformed.y += proximity * uVelocity * 0.05 * sin(transformed.x * 3.6 + uTime * 4.2);
           `,
         );
     };
 
-    // Layer 1: Primary Monumental SDF Headline
+    // Layer 1: Primary Monumental SDF Headline (Crisp Bricolage Grotesque 800)
     const mainText = new Text();
     mainText.text = primaryLine;
-    mainText.font = "/fonts/syne-800.woff";
+    mainText.font = "/fonts/bricolage-800.woff";
     mainText.anchorX = "center";
     mainText.anchorY = "middle";
-    mainText.letterSpacing = -0.045;
+    mainText.letterSpacing = -0.038;
     mainText.material = heroMaterial;
-    mainText.outlineWidth = "2%";
-    mainText.outlineColor = "#FF4D1C";
-    mainText.outlineOpacity = 0.28;
-    mainText.position.set(0, 0.14, 0.12);
+    mainText.position.set(0, 0.16, 0.14);
     rootGroup.add(mainText);
 
-    // Layer 2: Deep Parallax Wireframe Ghost Echo (-Z)
+    // Layer 2: Subtle Champagne-Gold Depth Shadow (-Z)
     const echoText = new Text();
     echoText.text = primaryLine;
-    echoText.font = "/fonts/syne-800.woff";
+    echoText.font = "/fonts/bricolage-800.woff";
     echoText.anchorX = "center";
     echoText.anchorY = "middle";
-    echoText.letterSpacing = -0.04;
-    echoText.color = "#FF4D1C";
-    echoText.fillOpacity = 0.06;
-    echoText.strokeWidth = "1.4%";
-    echoText.strokeColor = "#FF4D1C";
-    echoText.strokeOpacity = 0.45;
-    echoText.position.set(0, 0.18, -0.42);
+    echoText.letterSpacing = -0.038;
+    echoText.color = "#E5BA6B";
+    echoText.fillOpacity = 0.04;
+    echoText.strokeWidth = "0.9%";
+    echoText.strokeColor = "#E5BA6B";
+    echoText.strokeOpacity = 0.24;
+    echoText.position.set(0, 0.18, -0.34);
     rootGroup.add(echoText);
 
-    // Layer 3: Sharp Sub-Headline SDF Tag
+    // Layer 3: Editorial Luxury Subtitle in Instrument Serif Italic!
     const subText = new Text();
     subText.text = secondaryLine;
-    subText.font = "/fonts/space-grotesk-700.woff";
+    subText.font = "/fonts/instrument-serif-italic.woff";
     subText.anchorX = "center";
     subText.anchorY = "middle";
-    subText.letterSpacing = 0.18;
-    subText.color = "#E2B45A";
+    subText.letterSpacing = 0.01;
+    subText.color = "#E5BA6B";
     subText.position.set(0, -0.68, 0.18);
     rootGroup.add(subText);
 
-    // Layer 4: Top HUD Coordinate SDF Tag
+    // Layer 4: Precision Coordinate Overline
     const topTag = new Text();
     topTag.text = telemetryLine;
     topTag.font = "/fonts/space-grotesk-700.woff";
     topTag.anchorX = "center";
     topTag.anchorY = "middle";
-    topTag.letterSpacing = 0.14;
-    topTag.color = "#9DA8B8";
+    topTag.letterSpacing = 0.16;
+    topTag.color = "#9BA6B8";
     topTag.position.set(0, 0.96, 0.08);
     rootGroup.add(topTag);
 
-    // Floating Instanced Coordinate Particles
-    const particleCount = 65;
+    // Delicate Floating Starlight Dust
+    const particleCount = 44;
     const pGeo = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 9.5;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 3.8;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 2.4 - 0.5;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 3.6;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 2.2 - 0.6;
     }
     pGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     const pMat = new THREE.PointsMaterial({
-      color: 0xe2b45a,
-      size: 0.032,
+      color: 0xe5ba6b,
+      size: 0.026,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.42,
     });
     const particles = new THREE.Points(pGeo, pMat);
     rootGroup.add(particles);
@@ -221,27 +219,27 @@ export const WebGLKineticHeroText: React.FC<WebGLKineticHeroTextProps> = ({
       const visibleHeight = 2 * Math.tan(vFovRad / 2) * camera.position.z;
       const visibleWidth = visibleHeight * camera.aspect;
 
-      // Guarantee "CONCOURSE" (~6.4 width-to-em ratio in Syne 800) fits cleanly
+      // Bricolage 800 has clean, balanced proportions (~5.6 width-to-em for CONCOURSE)
       const targetFontSize = THREE.MathUtils.clamp(
-        (visibleWidth * 0.86) / 6.3,
-        0.42,
-        1.18,
+        (visibleWidth * 0.84) / 5.7,
+        0.48,
+        1.28,
       );
       mainText.fontSize = targetFontSize;
-      echoText.fontSize = targetFontSize * 1.03;
+      echoText.fontSize = targetFontSize * 1.015;
       subText.fontSize = THREE.MathUtils.clamp(
-        targetFontSize * 0.2,
-        0.11,
-        0.22,
+        targetFontSize * 0.34,
+        0.18,
+        0.38,
       );
       topTag.fontSize = THREE.MathUtils.clamp(
-        targetFontSize * 0.14,
-        0.085,
-        0.15,
+        targetFontSize * 0.115,
+        0.075,
+        0.125,
       );
 
-      subText.position.y = -targetFontSize * 0.74;
-      topTag.position.y = targetFontSize * 0.92;
+      subText.position.y = -targetFontSize * 0.68;
+      topTag.position.y = targetFontSize * 0.84;
 
       mainText.sync();
       echoText.sync();
@@ -263,7 +261,7 @@ export const WebGLKineticHeroText: React.FC<WebGLKineticHeroTextProps> = ({
       const ny = -(((e.clientY - rect.top) / Math.max(rect.height, 1)) * 2 - 1);
       const dx = nx - lastX;
       const dy = ny - lastY;
-      velocity = Math.min(1.4, velocity + Math.hypot(dx, dy) * 1.8);
+      velocity = Math.min(1.2, velocity + Math.hypot(dx, dy) * 1.5);
       lastX = nx;
       lastY = ny;
       targetPointer.set(
@@ -295,26 +293,24 @@ export const WebGLKineticHeroText: React.FC<WebGLKineticHeroTextProps> = ({
       rafId = window.requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
-      currentPointer.lerp(targetPointer, 0.08);
+      currentPointer.lerp(targetPointer, 0.07);
       velocity = THREE.MathUtils.lerp(velocity, 0, 0.06);
 
       shaderUniforms.uTime.value = elapsed;
       shaderUniforms.uPointer.value.copy(currentPointer);
       shaderUniforms.uVelocity.value = velocity;
 
-      // Subtle AAA HUD camera & parallax tilt
-      rootGroup.rotation.y = currentPointer.x * 0.14;
-      rootGroup.rotation.x = -currentPointer.y * 0.09;
+      rootGroup.rotation.y = currentPointer.x * 0.11;
+      rootGroup.rotation.x = -currentPointer.y * 0.07;
 
-      echoText.position.x = -currentPointer.x * 0.22;
-      echoText.position.y = 0.18 - currentPointer.y * 0.14;
+      echoText.position.x = -currentPointer.x * 0.16;
+      echoText.position.y = 0.18 - currentPointer.y * 0.1;
 
-      outerRing.rotation.z = elapsed * 0.12;
-      outerRing.rotation.y = Math.sin(elapsed * 0.4) * 0.22;
-      innerRing.rotation.z = -elapsed * 0.18;
+      outerRing.rotation.z = elapsed * 0.08;
+      innerRing.rotation.z = -elapsed * 0.11;
 
-      vermilionPoint.position.x = currentPointer.x * 3.5;
-      vermilionPoint.position.y = currentPointer.y * 1.8;
+      champagneRim.position.x = 2.2 + currentPointer.x * 2.4;
+      champagneRim.position.y = 1.2 + currentPointer.y * 1.5;
 
       renderer.render(scene, camera);
     };
@@ -342,19 +338,18 @@ export const WebGLKineticHeroText: React.FC<WebGLKineticHeroTextProps> = ({
 
   return (
     <div className="relative w-full">
-      {/* Accessible Primary Document Heading */}
       <h1 className={webglActive ? "sr-only" : "text-center"}>
         {webglActive ? (
           `${primaryLine} — ${DESIGN_TOKENS_FALLBACK} ${secondaryLine}`
         ) : (
           <span className="block py-4">
-            <span className="block font-mono text-[11px] uppercase tracking-[0.26em] text-silver">
+            <span className="block font-mono text-[10px] uppercase tracking-[0.22em] text-silver sm:text-[11px]">
               {telemetryLine}
             </span>
-            <span className="mt-2 block font-display text-5xl font-extrabold tracking-tight text-bone sm:text-7xl lg:text-8xl">
+            <span className="mt-3 block font-display text-5xl font-bold tracking-[-0.045em] text-bone sm:text-7xl lg:text-[6.25rem]">
               {primaryLine}
             </span>
-            <span className="mt-2 block font-mono text-xs font-semibold uppercase tracking-[0.28em] text-gold sm:text-sm">
+            <span className="editorial-italic mt-2 block text-2xl text-gold sm:text-4xl">
               {secondaryLine}
             </span>
           </span>
@@ -365,7 +360,7 @@ export const WebGLKineticHeroText: React.FC<WebGLKineticHeroTextProps> = ({
         <div
           ref={mountRef}
           aria-hidden="true"
-          className="h-[230px] w-full cursor-crosshair select-none sm:h-[300px] lg:h-[350px]"
+          className="h-[230px] w-full select-none sm:h-[295px] lg:h-[340px]"
         />
       )}
     </div>

@@ -152,11 +152,14 @@ export const DiscoverView: React.FC = () => {
       {/* Editorial Section Header */}
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-5">
         <div>
-          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-vermilion">
-            Central Campus Schedule · IST
+          <p className="editorial-italic text-lg text-gold">
+            Central Campus Schedule · Asia/Kolkata (IST)
           </p>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-bone sm:text-4xl">
-            Discover Campus Events &amp; Conclaves
+          <h1 className="font-display text-3xl font-bold tracking-tight text-bone sm:text-4xl">
+            Discover Campus Events &amp;{" "}
+            <span className="editorial-italic font-normal text-gold">
+              Conclaves
+            </span>
           </h1>
           {isExternalScopedGuest && (
             <p className="mt-1 font-mono text-xs text-phosphor">
@@ -387,10 +390,10 @@ export const DiscoverView: React.FC = () => {
               key={cat}
               type="button"
               onClick={() => setCategory(cat)}
-              className={`rounded-md px-3 py-1 font-mono text-[11px] font-semibold transition ${
+              className={`rounded-full px-3.5 py-1 text-xs font-semibold transition ${
                 category === cat
-                  ? "bg-vermilion text-void"
-                  : "border border-rule bg-paper text-ink-secondary hover:border-vermilion/60 hover:text-bone"
+                  ? "bg-bone text-void shadow-sm"
+                  : "border border-rule bg-paper text-ink-secondary hover:border-rule-strong hover:text-bone"
               }`}
             >
               {cat}
@@ -561,7 +564,7 @@ export const DiscoverView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedEvent(evt)}
-                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md border border-rule-strong bg-steel px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-bone transition hover:border-vermilion hover:bg-vermilion hover:text-void"
+                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border border-rule-strong bg-paper-elevated px-4 py-2.5 text-xs font-semibold text-bone transition group-hover:border-bone group-hover:bg-bone group-hover:text-void"
                   >
                     <Ticket className="h-3.5 w-3.5" />
                     <span>Inspect Schedule &amp; Reserve</span>

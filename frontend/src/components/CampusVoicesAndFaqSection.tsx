@@ -1,31 +1,25 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  ChevronDown,
-  HelpCircle,
-  MessageSquareQuote,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowRight, ChevronDown, ShieldCheck } from "lucide-react";
 
 const SOCIETY_VOICES = [
   {
     quote:
-      "During Labyrinth registration peaks we used to reconcile duplicate Google Form spreadsheets manually. Atomic row locking capped our 50-seat lab sprint cleanly with automatic waitlist promotion.",
+      "During Labyrinth registration peaks we used to reconcile duplicate spreadsheet entries by hand. Atomic row locking capped our 50-seat lab sprint cleanly with instant waitlist promotion.",
     author: "Rohan Kulkarni",
     role: "Student Event Head · ASCII Computer Science Association",
     metric: "0 Overbooked Seats / 50-Way Burst",
   },
   {
     quote:
-      "Bengaluru monsoon showers used to stall outdoor Central Quadrangle events. Having K.E. Auditorium linked at proposal stage and broadcasting venue switchovers live over SSE saved In-Bloom.",
+      "Bengaluru monsoon showers used to stall Central Quadrangle stages. Linking K.E. Auditorium at proposal submission and pushing venue switchovers live over SSE transformed In-Bloom.",
     author: "Dr. Lakshmi Nair",
     role: "Faculty Coordinator · Stage-1 Departmental Endorsements",
     metric: "3ms Automated Venue Clash Check",
   },
   {
     quote:
-      "Gate-1 marshals scan 30-second rotating HMAC QR passes in under 180 milliseconds while seeing only the attendee's first name. Forwarded WhatsApp screenshots are rejected on the spot.",
+      "Gate-1 marshals scan 30-second rotating HMAC passes in under 180 milliseconds while seeing only the attendee's first name. Forwarded WhatsApp screenshots fail on the spot.",
     author: "OITS & SWO Gate Marshal Corps",
     role: "Hosur Road Gate-1 & Main Auditorium Operations",
     metric: "<180ms p95 Optical Verification",
@@ -47,7 +41,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How are permissions enforced across the 8 campus roles?",
-    a: "Zero role-string checks exist in backend routes or frontend screens. Apache APISIX validates OIDC Bearer tokens at the gateway perimeter, and Fastify re-verifies JWT claims against 44 granular permissions (such as event:approve:dept or checkin:scan:own-event) plus resource ownership.",
+    a: "Zero role-string checks exist in backend routes or frontend screens. Apache APISIX validates OIDC Bearer tokens at the gateway perimeter, and Fastify re-verifies JWT claims against 45 granular permissions (such as event:approve:dept or checkin:scan:own-event) plus resource ownership.",
   },
   {
     q: "Can students verify that Third Wave lucky draws are unrigged?",
@@ -67,83 +61,84 @@ export const CampusVoicesAndFaqSection: React.FC = () => {
       id="faq"
       className="relative overflow-hidden border-t border-rule bg-void py-24 lg:py-32"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-architectural-grid opacity-50"
-      />
-
       <div className="relative mx-auto max-w-7xl px-4 sm:px-8">
-        {/* Part 1: Campus Society & Faculty Operational Voices */}
-        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-8">
+        {/* Editorial Chapter Masthead */}
+        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-10">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold-soft px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-gold">
-              <MessageSquareQuote className="h-3.5 w-3.5 text-vermilion" />
-              <span>06 // PRECINCT FIELD TELEMETRY &amp; FAQ</span>
+            <div className="flex items-baseline gap-3">
+              <span className="editorial-italic text-3xl text-gold sm:text-4xl">
+                07.
+              </span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-silver">
+                Field Voices &amp; Institutional Protocol Briefing
+              </span>
             </div>
-            <h2 className="mt-4 font-display text-4xl font-extrabold leading-[1.03] tracking-tight text-bone sm:text-6xl">
-              Built for Real{" "}
-              <span className="text-vermilion">Campus Contention.</span>
+            <h2 className="mt-3 font-display text-4xl font-bold leading-[1.02] tracking-tight text-bone sm:text-5xl lg:text-6xl">
+              Proven Under Real{" "}
+              <span className="editorial-italic font-normal text-gold">
+                Campus Contention.
+              </span>
             </h2>
           </div>
-          <span className="font-mono text-xs text-silver">
+          <span className="text-xs font-medium text-silver">
             CHRIST (Deemed to be University) · Central Campus Societies
           </span>
         </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
-          {SOCIETY_VOICES.map((v) => (
+        {/* Editorial Magazine Pull-Quotes Divided by Swiss Hairlines */}
+        <div className="grid divide-y divide-rule border-b border-rule lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+          {SOCIETY_VOICES.map((v, idx) => (
             <blockquote
               key={v.author}
-              className="spotlight-card flex flex-col justify-between rounded-2xl border border-rule-strong p-6"
+              className={`flex flex-col justify-between py-8 ${
+                idx === 0 ? "lg:pr-8" : idx === 1 ? "lg:px-8" : "lg:pl-8"
+              }`}
             >
               <div>
-                <span className="inline-flex items-center gap-1.5 rounded border border-phosphor/40 bg-phosphor-soft px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-phosphor">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-phosphor/30 bg-phosphor-soft px-3 py-1 font-mono text-[10px] font-medium text-phosphor">
                   <ShieldCheck className="h-3 w-3" />
                   <span>{v.metric}</span>
                 </span>
-                <p className="mt-4 text-sm leading-relaxed text-bone/95">
+                <p className="editorial-upright mt-5 text-2xl leading-[1.32] text-bone sm:text-[1.65rem]">
                   &ldquo;{v.quote}&rdquo;
                 </p>
               </div>
-              <footer className="mt-6 border-t border-rule pt-4">
-                <p className="font-serif text-sm font-bold text-bone">
-                  {v.author}
-                </p>
-                <p className="font-mono text-[11px] text-gold">{v.role}</p>
+              <footer className="mt-6 pt-4">
+                <p className="text-sm font-semibold text-bone">{v.author}</p>
+                <p className="mt-0.5 text-xs text-gold">{v.role}</p>
               </footer>
             </blockquote>
           ))}
         </div>
 
-        {/* Part 2: Interactive Zero-Trust & Gate-1 FAQ Console */}
-        <div className="hud-frame glass-console mt-14 grid gap-8 rounded-2xl border border-rule-strong p-6 sm:p-8 lg:grid-cols-12">
+        {/* Two-Column Hairline Protocol Briefing & FAQ */}
+        <div className="mt-16 grid gap-10 lg:grid-cols-12">
           <div className="flex flex-col justify-between lg:col-span-5">
             <div>
-              <div className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-vermilion">
-                <HelpCircle className="h-4 w-4" />
-                <span>INSTITUTIONAL PROTOCOL BRIEFING</span>
-              </div>
-              <h3 className="mt-3 font-display text-3xl font-extrabold leading-tight text-bone">
+              <p className="editorial-italic text-xl text-gold">
+                Institutional Protocol Briefing
+              </p>
+              <h3 className="mt-1 font-display text-3xl font-bold leading-tight tracking-tight text-bone sm:text-4xl">
                 Gate-1 Entry, Security &amp; Pass Mechanics
               </h3>
-              <p className="mt-3 text-xs leading-relaxed text-silver sm:text-sm">
-                Everything CHRIST Central students, visiting college delegates,
-                and faculty reviewers need before locking seats or running
-                auditorium doors.
+              <p className="mt-3 text-sm leading-relaxed text-silver">
+                Essential guidance for CHRIST Central students, visiting
+                inter-collegiate delegates, and faculty reviewers before locking
+                seats or operating auditorium doors.
               </p>
             </div>
 
-            <div className="mt-6 rounded-xl border border-rule bg-void/85 p-4">
-              <p className="font-mono text-xs font-bold text-bone">
-                Ready to inspect all 8 PBAC workspaces?
+            <div className="mt-8 rounded-3xl border border-rule bg-carbon/85 p-6">
+              <p className="font-display text-lg font-bold text-bone">
+                Ready to explore all 8 role workspaces?
               </p>
-              <p className="mt-1 text-xs text-silver">
-                Hydrate Student, Guest, Event Head, Marshal, Faculty, Dean,
-                Sponsor, or Admin in one click.
+              <p className="mt-1.5 text-xs leading-relaxed text-silver">
+                Launch Student, Guest, Event Head, Gate Marshal, Faculty, Dean,
+                Sponsor, or Admin in a single click.
               </p>
               <Link
                 to="/login"
-                className="mt-3 inline-flex items-center gap-2 rounded-lg bg-vermilion px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-void transition hover:bg-vermilion-hover"
+                className="mt-5 inline-flex items-center gap-2 rounded-full bg-bone px-5 py-2.5 text-xs font-semibold text-void transition hover:bg-gold"
               >
                 <span>Open Concourse Portal</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -151,37 +146,30 @@ export const CampusVoicesAndFaqSection: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-2.5 lg:col-span-7">
+          <div className="divide-y divide-rule rounded-3xl border border-rule bg-carbon/60 px-6 lg:col-span-7">
             {FAQ_ITEMS.map((item, idx) => {
               const isOpen = openIdx === idx;
               return (
-                <div
-                  key={item.q}
-                  className={`rounded-xl border transition ${
-                    isOpen
-                      ? "border-vermilion bg-void/90"
-                      : "border-rule bg-carbon/80 hover:border-rule-strong"
-                  }`}
-                >
+                <div key={item.q} className="py-5">
                   <button
                     type="button"
                     aria-expanded={isOpen}
                     onClick={() => setOpenIdx(isOpen ? -1 : idx)}
-                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                    className="flex w-full items-center justify-between gap-4 text-left"
                   >
-                    <span className="font-serif text-sm font-bold text-bone sm:text-base">
+                    <span className="font-display text-base font-semibold tracking-tight text-bone sm:text-lg">
                       {item.q}
                     </span>
                     <ChevronDown
-                      className={`h-4 w-4 shrink-0 text-vermilion transition-transform duration-200 ${
+                      className={`h-4 w-4 shrink-0 text-gold transition-transform duration-200 ${
                         isOpen ? "rotate-180" : ""
                       }`}
                     />
                   </button>
                   {isOpen && (
-                    <div className="border-t border-rule px-5 py-3.5 text-xs leading-relaxed text-silver sm:text-sm">
+                    <p className="mt-3 pr-6 text-sm leading-relaxed text-silver">
                       {item.a}
-                    </div>
+                    </p>
                   )}
                 </div>
               );
