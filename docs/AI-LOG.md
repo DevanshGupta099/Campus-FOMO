@@ -688,3 +688,31 @@
 - **Follow-ups**: Commit and push to `origin/dev` and launch clean Fastify (`:3001`) + Vite (`:5173`) dev servers using native `pnpm`.
 
 ---
+
+## Entry #FIX-IDE-PROBLEMS-AND-BUFFER-SYNC
+
+- **Date**: 2026-11-16
+- **Prompt summary**: Fix all JSX/TypeScript corruption in `LandingPage.tsx` and eliminate IDE Problems-panel diagnostics across all repository files (`access-sync.ts`, `generate-openapi.ts`, `vite.config.ts`, `tailwind.config.ts`, `tsconfig.base.json`, `EventDetailModal.tsx`, `index.css`, `docker-compose.yml`, and CI workflows).
+- **Tools used**: Antigravity (Gemini)
+- **Files touched**:
+  - `frontend/src/pages/LandingPage.tsx` — Overwrote complete clean JSX buffer via native `write_file` to purge 4 orphan diff-hunk artifacts (`TS17002`, `TS1381`, `TS2304`) and restore balanced `<section>`, `<main>`, and `<footer>` structure.
+  - `frontend/src/components/EventDetailModal.tsx` — Overwrote clean modal buffer removing duplicated `feedback` Attendee Takeaways JSX block.
+  - `tsconfig.base.json` — Added `"files": []` so standalone IDE scans of the base config never glob monorepo `.tsx` files without JSX flags.
+  - `backend/tsconfig.json`, `backend/tsconfig.build.json`, `backend/package.json` — Included `scripts/**/*` in `backend/tsconfig.json` (`noEmit: true`) for zero-error IDE editing of `access-sync.ts` and `generate-openapi.ts`, while delegating `dist/` emission to `tsconfig.build.json`.
+  - `frontend/tsconfig.json`, `frontend/vite.config.ts` — Included `vite.config.ts` and `tailwind.config.ts` in `frontend/tsconfig.json`, removed redundant root-fragile `compilerOptions.types` (`TS2688`), and imported `defineConfig` from `vitest/config`.
+  - `.vscode/settings.json` — Added `css.lint.unknownAtRules: "ignore"` for `@tailwind` directives and removed unverified `esbenp.prettier-vscode` `formatOnSave` fallback that fought Prettier.
+  - `infra/docker-compose.yml`, `infra/smoke-test.mjs`, `scripts/check-ai-log.mjs`, `.github/workflows/ci.yml`, `.github/workflows/nightly.yml` — Removed obsolete Compose `version: "3.8"`, unused JS imports/catch bindings, and duplicate `pnpm/action-setup` `version: 12` keys.
+- **Verification run**:
+  - `pnpm verify` → PASS (All 8 verification pipeline gates passed)
+  - `npx tsc --noEmit -p tsconfig.json` → PASS
+  - `npx vitest run tests/pipeline.test.ts e2e/smoke.spec.ts` → PASS
+  - Full `ts.createProgram` audit across all 202 tracked files → `0` unowned `.ts`/`.tsx` files and `0` diagnostics
+- **Decisions & assumptions**:
+  - Used native `write_file` (`Overwrite: true`) rather than shell `git checkout` so the IDE language host (`extHost1`) synchronizes open buffers immediately without re-saving stale diff hunks.
+- **Tests**:
+  - Verified all 53 backend tests, 9 frontend UI/PBAC/zero-emoji tests, pipeline contract sanity test, and E2E smoke test pass with zero warnings.
+- **[AI-WRONG] mistakes found**:
+  - `[AI-WRONG]` Previously running `git checkout HEAD -- .` via shell bypassed the IDE's in-memory diff-hunk tracker (`extHost1`), causing stale half-reverted JSX fragments in `LandingPage.tsx` and `EventDetailModal.tsx` to re-persist on buffer save; fixed permanently by overwriting full files via `write_file` and disabling conflicting IDE `formatOnSave`.
+- **Follow-ups**: Commit and push cleanly to `origin/dev`.
+
+---

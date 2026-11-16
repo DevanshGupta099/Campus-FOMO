@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import http from 'node:http';
 
 console.log("=== Campus FOMO: Infrastructure Smoke Test Suite ===");
 

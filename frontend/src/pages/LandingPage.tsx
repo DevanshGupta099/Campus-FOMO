@@ -21,8 +21,8 @@ import {
   Compass,
   Film,
   Flame,
-  Maximize2,
   MapPin,
+  Maximize2,
   Radio,
   Search,
   ShieldCheck,
@@ -316,7 +316,6 @@ export const LandingPage: React.FC = () => {
             HERO SECTION: AAA WebGL SDF Typography + Twilight Campus Cinema + Anchor
            ===================================================================== */}
         <section className="relative overflow-hidden border-b border-rule">
-          {/* Atmospheric Architectural Photography Backdrop */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
@@ -1186,7 +1185,7 @@ export const LandingPage: React.FC = () => {
                       <Maximize2 className="h-3.5 w-3.5" />
                     </button>
 
-                    <figcaption className="absolute bottom-0 inset-x-0 p-5">
+                    <figcaption className="absolute inset-x-0 bottom-0 p-5">
                       <div className="flex items-center justify-between font-mono text-[10px] font-bold uppercase tracking-wider text-gold">
                         <span>{item.festName || item.category}</span>
                         <span>{item.venueName}</span>
@@ -1278,7 +1277,7 @@ export const LandingPage: React.FC = () => {
       {/* =====================================================================
           MONUMENTAL ARCHITECTURAL FOOTER
          ===================================================================== */}
-      <footer className="relative overflow-hidden border-t border-rule bg-obsidian pt-16 pb-12">
+      <footer className="relative overflow-hidden border-t border-rule bg-obsidian pb-12 pt-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-8">
           {/* Top 4-Column Institutional Directory */}
           <div className="grid gap-10 border-b border-rule pb-12 sm:grid-cols-2 lg:grid-cols-12">
