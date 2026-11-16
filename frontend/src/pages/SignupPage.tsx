@@ -5,13 +5,30 @@ import {
   ArrowRight,
   Building2,
   CheckCircle2,
+  Eye,
+  EyeOff,
   GraduationCap,
+  Hash,
+  Lock,
+  Mail,
+  Phone,
   Shield,
-  Users,
+  ShieldCheck,
+  Sparkles,
+  User,
 } from "lucide-react";
 import { resolveDefaultWorkspacePath, useAuth } from "../auth/AuthContext";
 import { ChristCrestMark, ColonnadeMotifSvg } from "../components/BrandMarks";
+import { QrMatrixCanvas } from "../components/QrMatrixCanvas";
 import { DESIGN_TOKENS } from "../tokens";
+
+const STRENGTH_LABELS = [
+  "Enter 10+ chars",
+  "Fair Entropy",
+  "Good Entropy",
+  "Strong Passphrase",
+  "Institutional Grade",
+];
 
 export const SignupPage: React.FC = () => {
   const { signupAccount } = useAuth();
@@ -21,6 +38,7 @@ export const SignupPage: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [phone, setPhone] = useState("");
   const [registerNumber, setRegisterNumber] = useState("");
   const [department, setDepartment] = useState<string>(
@@ -40,6 +58,14 @@ export const SignupPage: React.FC = () => {
     if (/[^A-Za-z0-9]/.test(password)) score += 1;
     return score;
   }, [password]);
+
+  const maskedPhonePreview = useMemo(() => {
+    const clean = phone.trim();
+    if (clean.length >= 4) {
+      return `+91******${clean.slice(-2)}`;
+    }
+    return "+91******42";
+  }, [phone]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,134 +145,220 @@ export const SignupPage: React.FC = () => {
     }
   };
 
+  const liveDisplayName = name.trim() || "Rohan Kulkarni";
+  const liveEmail =
+    email.trim() ||
+    (track === "student"
+      ? "rohan.k@christuniversity.in"
+      : "delegate@sju.edu.in");
+  const liveAffiliation =
+    track === "student"
+      ? `${department} · Year ${year}`
+      : institution.trim() || "Visiting College Delegation";
+  const liveBadgeCode =
+    track === "student"
+      ? `REG #${registerNumber.trim() || "2341109"}`
+      : "GATE-1 VISITOR";
+
   return (
-    <div className="min-h-screen bg-paper text-ink lg:grid lg:grid-cols-12">
-      {/* Left Architectural Explainer with Ambient Cinema Loop & Campus Poster */}
-      <aside className="relative flex flex-col justify-between overflow-hidden border-b border-obsidian-rule bg-obsidian px-6 py-10 text-bone lg:col-span-5 lg:border-b-0 lg:border-r lg:px-12 lg:py-12">
-        {import.meta.env.MODE !== "test" && (
-          <video
-            src="/media/christ-concourse-reel.mp4"
-            poster="/media/hero-central-campus.jpg"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
+    <div className="min-h-screen bg-void text-bone lg:grid lg:grid-cols-12">
+      {/* =====================================================================
+          LEFT DUAL PANEL (50%): STICKY CINEMA VIEWPORT & LIVE HOLOGRAPHIC PASS
+         ===================================================================== */}
+      <aside className="p-3 sm:p-5 lg:col-span-6 lg:sticky lg:top-0 lg:h-screen">
+        <div className="hud-frame relative flex h-full min-h-[500px] flex-col justify-between overflow-hidden rounded-2xl border border-rule-strong bg-obsidian p-6 shadow-anchor sm:p-10">
+          {import.meta.env.MODE !== "test" && (
+            <video
+              src="/media/christ-concourse-reel.mp4"
+              poster="/media/hero-central-campus.jpg"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-32 mix-blend-luminosity motion-reduce:hidden"
+            />
+          )}
+          <img
+            src="/media/hero-central-campus.jpg"
+            alt=""
+            width={1280}
+            height={720}
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-28 mix-blend-luminosity motion-reduce:hidden"
+            className="pointer-events-none absolute inset-0 hidden h-full w-full object-cover opacity-28 mix-blend-luminosity motion-reduce:block"
           />
-        )}
-        <img
-          src="/media/hero-central-campus.jpg"
-          alt=""
-          width={1280}
-          height={720}
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 hidden h-full w-full object-cover opacity-26 mix-blend-luminosity motion-reduce:block"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-void/85 via-void/90 to-void"
-        />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-void/80 via-void/85 to-void/95"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-architectural-grid opacity-65"
+          />
+          <div
+            aria-hidden="true"
+            className={`pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full blur-[115px] transition-colors duration-500 ${
+              track === "student" ? "bg-vermilion/25" : "bg-phosphor/20"
+            }`}
+          />
 
-        <div className="relative z-10">
-          <div className="flex items-center justify-between">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-paper-deep transition hover:text-bone"
+          {/* Top Bar */}
+          <div className="relative z-10">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 rounded-lg border border-rule-strong bg-void/80 px-3 py-1.5 font-mono text-xs uppercase tracking-wider text-silver backdrop-blur-md transition hover:border-vermilion hover:text-bone"
+              >
+                <ArrowLeft className="h-3.5 w-3.5 text-vermilion" />
+                <span>Central Concourse</span>
+              </Link>
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-gold/40 bg-void/85 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-gold backdrop-blur-md">
+                <Sparkles className="h-3.5 w-3.5 text-vermilion" />
+                <span>DUAL-TRACK ONBOARDING</span>
+              </span>
+            </div>
+
+            <div className="mt-7 flex items-center gap-3.5">
+              <ChristCrestMark className="h-11 w-11" tone="light" />
+              <div>
+                <p className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-gold">
+                  {DESIGN_TOKENS.campus.shortCode}
+                </p>
+                <p className="text-xs font-medium text-silver sm:text-sm">
+                  Hosur Road Precinct · Gate-1 Admission
+                </p>
+              </div>
+            </div>
+
+            <h1 className="mt-5 font-display text-3xl font-extrabold leading-[1.04] tracking-tight text-bone sm:text-5xl">
+              Enroll Your{" "}
+              <span
+                className={
+                  track === "student" ? "text-vermilion" : "text-phosphor"
+                }
+              >
+                Campus Pass.
+              </span>
+            </h1>
+          </div>
+
+          {/* LIVE INTERACTIVE BOARDING CREDENTIAL PREVIEW */}
+          <div className="relative z-10 my-5 overflow-hidden rounded-2xl border border-rule-strong bg-void/90 shadow-editorial backdrop-blur-xl">
+            <div
+              className={`flex items-center justify-between px-5 py-3 font-mono text-[10px] font-bold uppercase tracking-widest ${
+                track === "student"
+                  ? "bg-vermilion text-void"
+                  : "bg-phosphor text-void"
+              }`}
             >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Central Concourse</span>
-            </Link>
-            <span className="rounded border border-obsidian-rule bg-obsidian-surface/90 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-gold">
-              Dual-Track Onboarding
-            </span>
-          </div>
-
-          <div className="mt-10 flex items-center gap-3.5">
-            <ChristCrestMark className="h-11 w-11" tone="light" />
-            <div>
-              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-gold">
-                {DESIGN_TOKENS.campus.shortCode}
-              </p>
-              <p className="text-sm font-medium text-paper-deep">
-                Hosur Road Precinct · Gate-1 Admission
-              </p>
+              <span>
+                {track === "student"
+                  ? "TRACK A · CHRIST CENTRAL STUDENT CREDENTIAL"
+                  : "TRACK B · VISITING DELEGATION GATE-1 PASS"}
+              </span>
+              <span>{liveBadgeCode}</span>
             </div>
-          </div>
 
-          <h1 className="mt-8 font-display text-4xl font-extrabold leading-[1.04] tracking-tight text-bone sm:text-5xl">
-            Enroll Your <span className="text-vermilion">Campus Pass.</span>
-          </h1>
-
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-paper-deep/85">
-            Choose the institutional track matching your affiliation.
-            Permissions and event visibility boundaries are provisioned
-            automatically at creation.
-          </p>
-
-          <div className="mt-8 space-y-4 border-t border-obsidian-rule pt-6">
-            <div className="rounded-lg border border-obsidian-rule bg-obsidian-surface/90 p-4 backdrop-blur-xs">
-              <div className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-wider text-gold">
-                <GraduationCap className="h-4 w-4" />
-                <span>Track A · CHRIST Central Student</span>
+            <div className="grid items-center gap-4 p-5 sm:grid-cols-12">
+              <div className="space-y-2 sm:col-span-8">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
+                  LIVE CREDENTIAL PREVIEW
+                </p>
+                <h2 className="truncate font-display text-2xl font-extrabold text-bone">
+                  {liveDisplayName}
+                </h2>
+                <p className="truncate font-mono text-xs text-silver">
+                  {liveAffiliation}
+                </p>
+                <div className="flex flex-wrap gap-2 pt-1 font-mono text-[10px] text-silver">
+                  <span className="rounded border border-rule bg-carbon px-2 py-0.5">
+                    {liveEmail}
+                  </span>
+                  <span className="rounded border border-rule bg-carbon px-2 py-0.5 text-phosphor">
+                    {maskedPhonePreview}
+                  </span>
+                </div>
               </div>
-              <p className="mt-1.5 text-xs leading-relaxed text-paper-deep/85">
-                Requires verified <code>@christuniversity.in</code> address and
-                7-digit Register Number. Unlocks internal department seminars,
-                Blossoms, Labyrinth, and append-only XP milestones.
-              </p>
+
+              <div className="flex justify-center sm:col-span-4">
+                <QrMatrixCanvas
+                  value={`concourse-${track}-${liveEmail}-${liveBadgeCode}`}
+                  size={104}
+                  darkColor="#07090D"
+                  lightColor="#F4F0E6"
+                />
+              </div>
             </div>
 
-            <div className="rounded-lg border border-obsidian-rule bg-obsidian-surface/90 p-4 backdrop-blur-xs">
-              <div className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-wider text-phosphor">
-                <Users className="h-4 w-4" />
-                <span>Track B · External Fest Guest</span>
-              </div>
-              <p className="mt-1.5 text-xs leading-relaxed text-paper-deep/85">
-                For visiting college delegations attending inter-collegiate
-                conclaves (Magnovite, In-Bloom, Futsal Cup). Scoped strictly to
-                External-Open events with Gate-1 rotating QR entry.
-              </p>
+            <div className="pass-perforation h-[2px] w-full" />
+
+            <div className="flex flex-wrap items-center justify-between gap-2 bg-carbon/80 px-5 py-3 font-mono text-[10px]">
+              <span className="text-silver">
+                {track === "student"
+                  ? "Unlocks: All Internal Seminars + Inter-Collegiate Fests + XP League"
+                  : "Unlocks: External-Open Fests (Internal Events Strictly Filtered)"}
+              </span>
+              <span className="inline-flex items-center gap-1 font-bold text-gold">
+                <ShieldCheck className="h-3 w-3 text-phosphor" />
+                <span>30s HMAC</span>
+              </span>
             </div>
           </div>
-        </div>
 
-        <div className="relative z-10 mt-10 pt-6">
-          <ColonnadeMotifSvg className="h-12 w-full opacity-80" />
-          <div className="mt-3 flex items-center gap-2 font-mono text-[11px] text-paper-deep/75">
-            <Shield className="h-3.5 w-3.5 text-phosphor" />
-            <span>Phones stored masked · Zero PII shared with sponsors</span>
+          {/* Bottom Privacy Guarantee */}
+          <div className="relative z-10 border-t border-rule pt-4">
+            <ColonnadeMotifSvg className="h-9 w-full opacity-75" />
+            <div className="mt-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-silver">
+              <Shield className="h-3.5 w-3.5 text-phosphor" />
+              <span>
+                E.164 phones stored masked · Zero student PII shared with
+                sponsors
+              </span>
+            </div>
           </div>
         </div>
       </aside>
 
-      {/* Right Registration Form */}
-      <main className="flex flex-col justify-center px-6 py-10 sm:px-12 lg:col-span-7 lg:px-16">
-        <div className="mx-auto w-full max-w-xl">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
+      {/* =====================================================================
+          RIGHT DUAL PANEL (50%): ENROLLMENT STUDIO & DUAL-TRACK FORM
+         ===================================================================== */}
+      <main className="relative flex flex-col justify-center bg-carbon/55 px-4 py-8 sm:px-10 lg:col-span-6 lg:px-12 lg:py-10">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 h-80 w-80 rounded-full bg-vermilion/5 blur-[120px]"
+        />
+
+        <div className="relative z-10 mx-auto w-full max-w-xl">
+          {/* Top Dual-Page Switcher */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-vermilion">
-                Identity Provisioning
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-vermilion">
+                02 // IDENTITY PROVISIONING
               </p>
-              <h2 className="mt-1 font-display text-3xl font-bold text-bone">
-                Create Concourse Account
+              <h2 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-bone sm:text-4xl">
+                Create Concourse Pass
               </h2>
             </div>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-1 font-mono text-xs font-semibold text-vermilion underline-offset-4 hover:underline"
-            >
-              <span>Already registered? Sign In</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+
+            <div className="inline-flex rounded-lg border border-rule-strong bg-obsidian p-1 font-mono text-xs">
+              <Link
+                to="/login"
+                className="rounded-md px-3 py-1.5 font-semibold uppercase text-silver transition hover:text-bone"
+              >
+                Sign In
+              </Link>
+              <span className="rounded-md bg-vermilion px-3 py-1.5 font-bold uppercase text-void">
+                Create Pass
+              </span>
+            </div>
           </div>
 
-          {/* Dual Track Selector */}
+          {/* Dual Track Selector Cards (Preserves exact ARIA tab roles & names) */}
           <div
             role="tablist"
             aria-label="Account affiliation track"
-            className="mt-6 grid grid-cols-2 rounded-lg border border-rule bg-paper-recessed p-1"
+            className="mt-5 grid grid-cols-2 gap-3"
           >
             <button
               type="button"
@@ -256,15 +368,30 @@ export const SignupPage: React.FC = () => {
                 setTrack("student");
                 setErrorMsg(null);
               }}
-              className={`flex items-center justify-center gap-2 rounded-md py-2.5 text-xs font-semibold transition ${
+              className={`flex flex-col items-start rounded-xl border p-3.5 text-left transition ${
                 track === "student"
-                  ? "bg-paper-elevated text-bone shadow-sm"
-                  : "text-ink-secondary hover:text-bone"
+                  ? "border-vermilion bg-gunmetal shadow-glow"
+                  : "border-rule-strong bg-obsidian/80 text-silver hover:border-bone/40 hover:text-bone"
               }`}
             >
-              <GraduationCap className="h-4 w-4" />
-              <span>CHRIST University Student</span>
+              <div className="flex w-full items-center justify-between">
+                <GraduationCap
+                  className={`h-4 w-4 ${
+                    track === "student" ? "text-vermilion" : "text-silver"
+                  }`}
+                />
+                <span className="font-mono text-[10px] font-bold uppercase text-gold">
+                  TRACK A
+                </span>
+              </div>
+              <span className="mt-2 font-serif text-sm font-bold text-bone">
+                CHRIST University Student
+              </span>
+              <span className="mt-0.5 font-mono text-[10px] text-silver">
+                @christuniversity.in + 7-Digit Reg
+              </span>
             </button>
+
             <button
               type="button"
               role="tab"
@@ -273,62 +400,83 @@ export const SignupPage: React.FC = () => {
                 setTrack("guest");
                 setErrorMsg(null);
               }}
-              className={`flex items-center justify-center gap-2 rounded-md py-2.5 text-xs font-semibold transition ${
+              className={`flex flex-col items-start rounded-xl border p-3.5 text-left transition ${
                 track === "guest"
-                  ? "bg-paper-elevated text-bone shadow-sm"
-                  : "text-ink-secondary hover:text-bone"
+                  ? "border-phosphor bg-gunmetal shadow-[0_0_28px_-8px_rgba(46,229,157,0.35)]"
+                  : "border-rule-strong bg-obsidian/80 text-silver hover:border-bone/40 hover:text-bone"
               }`}
             >
-              <Building2 className="h-4 w-4" />
-              <span>External Fest Guest</span>
+              <div className="flex w-full items-center justify-between">
+                <Building2
+                  className={`h-4 w-4 ${
+                    track === "guest" ? "text-phosphor" : "text-silver"
+                  }`}
+                />
+                <span className="font-mono text-[10px] font-bold uppercase text-phosphor">
+                  TRACK B
+                </span>
+              </div>
+              <span className="mt-2 font-serif text-sm font-bold text-bone">
+                External Fest Guest
+              </span>
+              <span className="mt-0.5 font-mono text-[10px] text-silver">
+                Visiting College Delegation
+              </span>
             </button>
           </div>
 
+          {/* Anodized Registration Form */}
           <form
             onSubmit={handleSubmit}
-            className="mt-4 space-y-4 rounded-xl border border-rule-strong bg-paper-elevated p-6 shadow-editorial"
+            className="hud-frame glass-console mt-4 space-y-4 rounded-2xl border border-rule-strong p-6 sm:p-7"
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label
                   htmlFor="signup-name"
-                  className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-ink-secondary"
+                  className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-silver"
                 >
                   Full Official Name
                 </label>
-                <input
-                  id="signup-name"
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Rohan Kulkarni"
-                  className="mt-1.5 w-full rounded-md border border-rule-strong bg-paper px-3.5 py-2.5 text-sm text-bone focus:border-vermilion focus:outline-none"
-                />
+                <div className="relative mt-1.5">
+                  <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" />
+                  <input
+                    id="signup-name"
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Rohan Kulkarni"
+                    className="w-full rounded-lg border border-rule-strong bg-void py-2.5 pl-10 pr-3.5 text-sm text-bone placeholder:text-ink-muted focus:border-vermilion focus:outline-none"
+                  />
+                </div>
               </div>
 
               <div>
                 <label
                   htmlFor="signup-email"
-                  className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-ink-secondary"
+                  className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-silver"
                 >
                   {track === "student"
                     ? "CHRIST Institutional Email"
                     : "Visiting College Email"}
                 </label>
-                <input
-                  id="signup-email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={
-                    track === "student"
-                      ? "rohan.k@christuniversity.in"
-                      : "delegate@rvce.edu.in"
-                  }
-                  className="mt-1.5 w-full rounded-md border border-rule-strong bg-paper px-3.5 py-2.5 text-sm text-bone focus:border-vermilion focus:outline-none"
-                />
+                <div className="relative mt-1.5">
+                  <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" />
+                  <input
+                    id="signup-email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={
+                      track === "student"
+                        ? "rohan.k@christuniversity.in"
+                        : "delegate@rvce.edu.in"
+                    }
+                    className="w-full rounded-lg border border-rule-strong bg-void py-2.5 pl-10 pr-3.5 text-sm text-bone placeholder:text-ink-muted focus:border-vermilion focus:outline-none"
+                  />
+                </div>
               </div>
             </div>
 
@@ -337,28 +485,31 @@ export const SignupPage: React.FC = () => {
                 <div>
                   <label
                     htmlFor="signup-regno"
-                    className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-ink-secondary"
+                    className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-silver"
                   >
                     7-Digit Reg No.
                   </label>
-                  <input
-                    id="signup-regno"
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={7}
-                    required
-                    value={registerNumber}
-                    onChange={(e) =>
-                      setRegisterNumber(e.target.value.replace(/\D/g, ""))
-                    }
-                    placeholder="2341109"
-                    className="mt-1.5 w-full rounded-md border border-rule-strong bg-paper px-3.5 py-2.5 font-mono text-sm text-bone focus:border-vermilion focus:outline-none"
-                  />
+                  <div className="relative mt-1.5">
+                    <Hash className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-muted" />
+                    <input
+                      id="signup-regno"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={7}
+                      required
+                      value={registerNumber}
+                      onChange={(e) =>
+                        setRegisterNumber(e.target.value.replace(/\D/g, ""))
+                      }
+                      placeholder="2341109"
+                      className="w-full rounded-lg border border-rule-strong bg-void py-2.5 pl-8 pr-3 font-mono text-sm text-bone focus:border-vermilion focus:outline-none"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label
                     htmlFor="signup-dept"
-                    className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-ink-secondary"
+                    className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-silver"
                   >
                     Department
                   </label>
@@ -366,7 +517,7 @@ export const SignupPage: React.FC = () => {
                     id="signup-dept"
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    className="mt-1.5 w-full rounded-md border border-rule-strong bg-paper px-3 py-2.5 text-sm text-bone focus:border-vermilion focus:outline-none"
+                    className="mt-1.5 w-full rounded-lg border border-rule-strong bg-void px-3 py-2.5 text-sm text-bone focus:border-vermilion focus:outline-none"
                   >
                     {DESIGN_TOKENS.departments.map((d) => (
                       <option key={d} value={d}>
@@ -378,7 +529,7 @@ export const SignupPage: React.FC = () => {
                 <div>
                   <label
                     htmlFor="signup-year"
-                    className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-ink-secondary"
+                    className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-silver"
                   >
                     Year of Study
                   </label>
@@ -386,7 +537,7 @@ export const SignupPage: React.FC = () => {
                     id="signup-year"
                     value={year}
                     onChange={(e) => setYear(Number(e.target.value))}
-                    className="mt-1.5 w-full rounded-md border border-rule-strong bg-paper px-3 py-2.5 text-sm text-bone focus:border-vermilion focus:outline-none"
+                    className="mt-1.5 w-full rounded-lg border border-rule-strong bg-void px-3 py-2.5 text-sm text-bone focus:border-vermilion focus:outline-none"
                   >
                     {[1, 2, 3, 4, 5].map((y) => (
                       <option key={y} value={y}>
@@ -400,19 +551,22 @@ export const SignupPage: React.FC = () => {
               <div>
                 <label
                   htmlFor="signup-institution"
-                  className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-ink-secondary"
+                  className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-silver"
                 >
                   Visiting College / University Name
                 </label>
-                <input
-                  id="signup-institution"
-                  type="text"
-                  required
-                  value={institution}
-                  onChange={(e) => setInstitution(e.target.value)}
-                  placeholder="St. Joseph's University, Bengaluru"
-                  className="mt-1.5 w-full rounded-md border border-rule-strong bg-paper px-3.5 py-2.5 text-sm text-bone focus:border-vermilion focus:outline-none"
-                />
+                <div className="relative mt-1.5">
+                  <Building2 className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" />
+                  <input
+                    id="signup-institution"
+                    type="text"
+                    required
+                    value={institution}
+                    onChange={(e) => setInstitution(e.target.value)}
+                    placeholder="St. Joseph's University, Bengaluru"
+                    className="w-full rounded-lg border border-rule-strong bg-void py-2.5 pl-10 pr-3.5 text-sm text-bone placeholder:text-ink-muted focus:border-vermilion focus:outline-none"
+                  />
+                </div>
               </div>
             )}
 
@@ -420,69 +574,93 @@ export const SignupPage: React.FC = () => {
               <div>
                 <label
                   htmlFor="signup-phone"
-                  className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-ink-secondary"
+                  className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-silver"
                 >
                   Mobile Number (E.164 Optional)
                 </label>
-                <input
-                  id="signup-phone"
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+919845012345"
-                  className="mt-1.5 w-full rounded-md border border-rule-strong bg-paper px-3.5 py-2.5 font-mono text-sm text-bone focus:border-vermilion focus:outline-none"
-                />
+                <div className="relative mt-1.5">
+                  <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" />
+                  <input
+                    id="signup-phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+919845012345"
+                    className="w-full rounded-lg border border-rule-strong bg-void py-2.5 pl-10 pr-3.5 font-mono text-sm text-bone placeholder:text-ink-muted focus:border-vermilion focus:outline-none"
+                  />
+                </div>
               </div>
 
               <div>
                 <label
                   htmlFor="signup-password"
-                  className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-ink-secondary"
+                  className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-silver"
                 >
                   Password (Min 10 Characters)
                 </label>
-                <input
-                  id="signup-password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  minLength={10}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Strong passphrase"
-                  className="mt-1.5 w-full rounded-md border border-rule-strong bg-paper px-3.5 py-2.5 text-sm text-bone focus:border-vermilion focus:outline-none"
-                />
-                <div
-                  aria-hidden="true"
-                  className="mt-1.5 grid grid-cols-4 gap-1"
-                >
-                  {[1, 2, 3, 4].map((step) => (
-                    <span
-                      key={step}
-                      className={`h-1 rounded-full ${
-                        passwordScore >= step
-                          ? "bg-phosphor"
-                          : "bg-paper-recessed"
-                      }`}
-                    />
-                  ))}
+                <div className="relative mt-1.5">
+                  <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" />
+                  <input
+                    id="signup-password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    required
+                    minLength={10}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Strong passphrase"
+                    className="w-full rounded-lg border border-rule-strong bg-void py-2.5 pl-10 pr-10 text-sm text-bone placeholder:text-ink-muted focus:border-vermilion focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((p) => !p)}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                    className="absolute inset-y-0 right-1 flex w-9 items-center justify-center text-ink-muted hover:text-bone"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+                <div className="mt-2">
+                  <div aria-hidden="true" className="grid grid-cols-4 gap-1">
+                    {[1, 2, 3, 4].map((step) => (
+                      <span
+                        key={step}
+                        className={`h-1.5 rounded-full transition-colors ${
+                          passwordScore >= step
+                            ? passwordScore >= 3
+                              ? "bg-phosphor"
+                              : "bg-gold"
+                            : "bg-gunmetal"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-silver">
+                    Security: {STRENGTH_LABELS[passwordScore]}
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-start gap-2 rounded-lg border border-rule bg-paper px-3.5 py-2.5 text-xs text-ink-secondary">
+            <div className="flex items-start gap-2.5 rounded-xl border border-rule bg-void/80 px-3.5 py-2.5 text-xs text-silver">
               <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-phosphor" />
               <span>
                 {track === "student"
-                  ? "Provisioned permissions: event:read:public, registration:create, registration:cancel:own, luckydraw:enter, gamification:read:own, gallery:read."
-                  : "Provisioned permissions: event:read:public (External-Open scoped), registration:create, registration:cancel:own, luckydraw:enter, gallery:read."}
+                  ? "Provisioned grants: event:read:public, registration:create, registration:cancel:own, luckydraw:enter, gamification:read:own, gallery:read."
+                  : "Provisioned grants: event:read:public (External-Open scoped), registration:create, registration:cancel:own, luckydraw:enter, gallery:read."}
               </span>
             </div>
 
             {errorMsg && (
               <div
                 role="alert"
-                className="rounded-md border border-vermilion/40 bg-vermilion-soft px-3.5 py-2.5 text-xs font-medium text-vermilion"
+                className="rounded-lg border border-vermilion/45 bg-vermilion-soft px-3.5 py-2.5 text-xs font-medium text-vermilion"
               >
                 {errorMsg}
               </div>
@@ -491,13 +669,17 @@ export const SignupPage: React.FC = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-vermilion px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-void shadow-glow transition hover:bg-vermilion-hover disabled:opacity-50"
+              className={`inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-widest text-void transition disabled:opacity-50 ${
+                track === "student"
+                  ? "bg-vermilion shadow-glow hover:bg-vermilion-hover"
+                  : "bg-phosphor hover:opacity-90"
+              }`}
             >
               <span>
                 {submitting
-                  ? "Provisioning Campus Identity..."
+                  ? "Provisioning PBAC Credentials..."
                   : track === "student"
-                    ? "Activate CHRIST Student Account"
+                    ? "Issue CHRIST Student Concourse Pass"
                     : "Issue External Fest Guest Account"}
               </span>
               <ArrowRight className="h-4 w-4" />

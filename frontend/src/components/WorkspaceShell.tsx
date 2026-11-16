@@ -381,13 +381,13 @@ export const WorkspaceShell: React.FC = () => {
               type="button"
               aria-label="Close backdrop"
               onClick={() => setMobileNavOpen(false)}
-              className="flex-1 bg-void/75 backdrop-blur-xs"
+              className="flex-1 bg-void/75 backdrop-blur-sm"
             />
           </div>
         )}
 
         {/* Main Workspace Column */}
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col bg-architectural-grid">
           {/* Top Architectural Telemetry Bar */}
           <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-3 border-b border-rule bg-paper-elevated/92 px-4 py-3 backdrop-blur-md sm:px-8">
             <div className="flex items-center gap-3">
@@ -510,7 +510,7 @@ export const WorkspaceShell: React.FC = () => {
             role="dialog"
             aria-modal="true"
             aria-labelledby="xp-drawer-title"
-            className="fixed inset-0 z-50 flex justify-end bg-void/75 backdrop-blur-xs"
+            className="fixed inset-0 z-50 flex justify-end bg-void/75 backdrop-blur-sm"
           >
             <div className="flex h-full w-full max-w-md flex-col border-l border-rule-strong bg-paper-elevated shadow-anchor">
               <div className="flex items-center justify-between border-b border-obsidian-rule bg-obsidian px-6 py-5 text-bone">

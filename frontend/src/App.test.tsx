@@ -201,4 +201,38 @@ describe("CHRIST Central Concourse v3 — WebGL Kinetic Editorial & PBAC Workspa
       ).toBeInTheDocument();
     });
   });
+
+  // covers: ST-01, SP-02, AD-01, GU-01
+  it("interacts with the Landing Governance Command Console and live Dual-Panel Signup credential preview", async () => {
+    const { unmount } = renderAt("/");
+
+    // Switch persona on the 8-Role PBAC Split Console
+    const marshalTab = await screen.findByRole("tab", {
+      name: /Gate QR Marshal/i,
+    });
+    fireEvent.click(marshalTab);
+    expect(marshalTab).toHaveAttribute("aria-selected", "true");
+    expect(
+      screen.getByText(/Sub-300ms Optical & HMAC Token Gate Terminal/i),
+    ).toBeInTheDocument();
+
+    // Trigger the 50-Way Last-Seat Burst Simulator
+    const burstBtn = screen.getByRole("button", {
+      name: /Fire 50-Request Burst/i,
+    });
+    fireEvent.click(burstBtn);
+
+    unmount();
+
+    // Verify Dual-Panel Signup live credential preview updates as user types
+    renderAt("/signup");
+    expect(
+      await screen.findByText(/LIVE CREDENTIAL PREVIEW/i),
+    ).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText(/Full Official Name/i), {
+      target: { value: "Devansh Gupta" },
+    });
+    expect(screen.getByText("Devansh Gupta")).toBeInTheDocument();
+  });
 });

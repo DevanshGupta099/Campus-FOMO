@@ -1056,6 +1056,36 @@ export class EventsService {
         caption:
           "Specialty pour-over bar and midnight hackathon fuel station adjacent to Main Auditorium.",
       },
+      {
+        id: "gal-07",
+        title: "Main Auditorium Flagship Symposium & Parliamentary Conclave",
+        festName: "Blossoms & MUN",
+        venueName: "Main Auditorium — Audi Block",
+        year: 2026,
+        imageUrl: "/media/auditorium-keynote-conclave.jpg",
+        thumbnailUrl: "/media/auditorium-keynote-conclave.jpg",
+        category: "Theatre",
+        aspectRatio: "16:9",
+        sizeKb: 54,
+        accentColor: "#FF4D1C",
+        caption:
+          "Tungsten stage illumination inside the 1,800-seat Main Auditorium during inter-deanery finals.",
+      },
+      {
+        id: "gal-08",
+        title: "South Gate Floodlit Inter-Deanery Futsal Championship",
+        festName: "Chancellor's Shield",
+        venueName: "Central Campus Floodlit Turf & Arena",
+        year: 2026,
+        imageUrl: "/media/southgate-floodlit-futsal.jpg",
+        thumbnailUrl: "/media/southgate-floodlit-futsal.jpg",
+        category: "Sports",
+        aspectRatio: "16:9",
+        sizeKb: 111,
+        accentColor: "#2EE59D",
+        caption:
+          "Knockout 5-a-side futsal action under the South Gate stadium floodlights.",
+      },
     ];
 
     if (category && category !== "All") {

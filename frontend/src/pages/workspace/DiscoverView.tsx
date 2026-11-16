@@ -7,7 +7,6 @@ import {
   Bookmark,
   Building2,
   Calendar,
-  Clock,
   Coffee,
   Compass,
   Filter,
@@ -32,6 +31,17 @@ import {
   formatIstDate,
   formatIstTime,
 } from "../../utils/format";
+
+const CATEGORY_MEDIA: Record<string, string> = {
+  Hackathon: "/media/fest-labyrinth-hackathon.jpg",
+  Technical: "/media/fest-magnovite-robotics.jpg",
+  Workshop: "/media/campus-skyview-atrium.jpg",
+  Cultural: "/media/fest-blossoms-stage.jpg",
+  Competition: "/media/auditorium-keynote-conclave.jpg",
+  "Guest Lecture": "/media/auditorium-keynote-conclave.jpg",
+  Placement: "/media/campus-skyview-atrium.jpg",
+  Sports: "/media/southgate-floodlit-futsal.jpg",
+};
 
 export const DiscoverView: React.FC = () => {
   const { hasPerm } = useAuth();
@@ -412,90 +422,112 @@ export const DiscoverView: React.FC = () => {
         </div>
       ) : (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {filteredEvents.map((evt) => {
+          {filteredEvents.map((evt, index) => {
             const seat = computeSeatState(evt);
             const isSaved = savedIds.has(evt.id);
+            const coverImg =
+              CATEGORY_MEDIA[evt.category] || "/media/hero-central-campus.jpg";
             return (
               <article
                 key={evt.id}
-                className="group flex flex-col justify-between rounded-xl border border-rule-strong bg-paper-elevated p-5 shadow-editorial transition hover:-translate-y-0.5 hover:border-vermilion/60"
+                className="spotlight-card group flex flex-col justify-between overflow-hidden rounded-2xl border border-rule-strong transition duration-300 hover:-translate-y-1 hover:border-vermilion/70"
               >
                 <div>
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="rounded bg-paper-recessed px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-bone">
-                      {evt.category}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      {evt.isExternalOpen ? (
-                        <span className="rounded border border-phosphor/40 bg-phosphor-soft px-2 py-0.5 font-mono text-[10px] font-semibold text-phosphor">
-                          External-Open
+                  {/* Photographic Cinema Header */}
+                  <div className="relative h-44 w-full overflow-hidden bg-void">
+                    <img
+                      src={coverImg}
+                      alt={evt.title}
+                      width={1280}
+                      height={720}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-carbon via-carbon/30 to-transparent" />
+                    <div className="absolute left-3.5 right-3.5 top-3.5 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="rounded bg-vermilion px-2 py-0.5 font-mono text-[10px] font-bold text-void">
+                          //{String(index + 1).padStart(2, "0")}
                         </span>
-                      ) : (
-                        <span className="rounded border border-rule px-2 py-0.5 font-mono text-[10px] text-ink-muted">
-                          CHRIST Internal
+                        <span className="rounded bg-void/85 px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-bone backdrop-blur-md">
+                          {evt.category}
                         </span>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => handleToggleBookmark(evt)}
-                        aria-label={
-                          isSaved
-                            ? `Remove ${evt.title} from watchlist`
-                            : `Save ${evt.title} to watchlist`
-                        }
-                        className={`rounded border p-1 transition ${
-                          isSaved
-                            ? "border-gold bg-gold-soft text-gold"
-                            : "border-rule bg-paper text-ink-muted hover:border-gold/60 hover:text-gold"
-                        }`}
-                      >
-                        <Bookmark
-                          className="h-3.5 w-3.5"
-                          fill={isSaved ? "currentColor" : "none"}
-                        />
-                      </button>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        {evt.isExternalOpen ? (
+                          <span className="rounded border border-phosphor/45 bg-void/85 px-2 py-0.5 font-mono text-[10px] font-semibold text-phosphor backdrop-blur-md">
+                            External-Open
+                          </span>
+                        ) : (
+                          <span className="rounded border border-rule-strong bg-void/85 px-2 py-0.5 font-mono text-[10px] text-silver backdrop-blur-md">
+                            CHRIST Internal
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleToggleBookmark(evt)}
+                          aria-label={
+                            isSaved
+                              ? `Remove ${evt.title} from watchlist`
+                              : `Save ${evt.title} to watchlist`
+                          }
+                          className={`rounded border p-1.5 backdrop-blur-md transition ${
+                            isSaved
+                              ? "border-gold bg-void/90 text-gold"
+                              : "border-rule-strong bg-void/85 text-silver hover:border-gold/60 hover:text-gold"
+                          }`}
+                        >
+                          <Bookmark
+                            className="h-3.5 w-3.5"
+                            fill={isSaved ? "currentColor" : "none"}
+                          />
+                        </button>
+                      </div>
                     </div>
                   </div>
 
-                  <h2 className="mt-3 font-display text-xl font-bold leading-snug text-bone transition group-hover:text-vermilion">
-                    {evt.title}
-                  </h2>
-                  <p className="mt-1 font-mono text-[11px] text-ink-muted">
-                    {evt.clubName || evt.department}
-                  </p>
+                  <div className="p-5 pb-0">
+                    <p className="font-mono text-[11px] uppercase tracking-wider text-gold">
+                      {evt.clubName || evt.department}
+                    </p>
+                    <h2 className="mt-1.5 font-display text-xl font-bold leading-snug text-bone transition group-hover:text-vermilion">
+                      {evt.title}
+                    </h2>
 
-                  {evt.lastUpdateBanner && (
-                    <div className="mt-3 flex items-start gap-2 rounded-md border border-ochre/40 bg-ochre-soft px-2.5 py-2 text-[11px] text-bone">
-                      <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ochre" />
-                      <span className="line-clamp-2">
-                        {evt.lastUpdateBanner}
-                      </span>
-                    </div>
-                  )}
+                    {evt.lastUpdateBanner && (
+                      <div className="mt-3 flex items-start gap-2 rounded-md border border-ochre/40 bg-ochre-soft px-2.5 py-2 text-[11px] text-bone">
+                        <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ochre" />
+                        <span className="line-clamp-2">
+                          {evt.lastUpdateBanner}
+                        </span>
+                      </div>
+                    )}
 
-                  <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-ink-secondary">
-                    {evt.description}
-                  </p>
+                    <p className="mt-2.5 line-clamp-2 text-xs leading-relaxed text-ink-secondary">
+                      {evt.description}
+                    </p>
 
-                  <div className="mt-4 space-y-1.5 border-t border-rule pt-3 text-xs text-ink-secondary">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-3.5 w-3.5 shrink-0 text-vermilion" />
-                      <span>{formatIstDate(evt.startsAt)}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-3.5 w-3.5 shrink-0 text-vermilion" />
-                      <span>{formatIstTime(evt.startsAt)}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Building2 className="h-3.5 w-3.5 shrink-0 text-vermilion" />
-                      <span className="truncate font-medium text-bone">
-                        {evt.venueName}
-                      </span>
+                    <div className="mt-4 space-y-1.5 border-t border-rule pt-3 font-mono text-xs text-ink-secondary">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-3.5 w-3.5 shrink-0 text-vermilion" />
+                        <span>
+                          {formatIstDate(evt.startsAt)} ·{" "}
+                          {formatIstTime(evt.startsAt)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Building2 className="h-3.5 w-3.5 shrink-0 text-gold" />
+                        <span className="truncate font-medium text-bone">
+                          {evt.venueName}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-5 pt-2">
+                <div className="p-5 pt-4">
                   {/* Seat Scarcity Bar */}
                   <div className="flex items-center justify-between font-mono text-[11px]">
                     <span

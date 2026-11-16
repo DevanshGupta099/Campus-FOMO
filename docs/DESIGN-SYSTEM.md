@@ -54,7 +54,10 @@ Inspired by Swiss Brutalist event posters, industrial obsidian hardware consoles
    - Interactive Three.js raycasted map of _Central Block_, _Main Auditorium_, _K.E. Auditorium (Block IV)_, _Central Quadrangle_, _Birds Park Amphitheatre_, _Block II Computing Lab_, _Floodlit Turf_, _Devadan Block_, and _Third Wave Roastery_, surfacing live event counts and monsoon indoor backups.
 5. **Bespoke Campus Photography & Seamless H.264 Cinema Showreels (`frontend/public/media/`)**:
    - **2 Local Faststart H.264 `.mp4` Loops**: `christ-concourse-reel.mp4` (8s 4-stage flagship reel) and `blossoms-stage-loop.mp4` (6s cultural & roastery reel), embedded via `<CinemaVideoFrame>` on the Landing Hero, Fest Chronicle section, Auth split panels, and `/app/gallery`.
-   - **6 High-Resolution Campus Photographs (`1408x768`)**: `hero-central-campus.jpg`, `fest-labyrinth-hackathon.jpg`, `fest-blossoms-stage.jpg`, `fest-magnovite-robotics.jpg`, `campus-skyview-atrium.jpg`, `thirdwave-roastery-lounge.jpg`.
+   - **8 High-Resolution Campus Photographs (`1280x720`)**: `hero-central-campus.jpg`, `fest-labyrinth-hackathon.jpg`, `fest-blossoms-stage.jpg`, `fest-magnovite-robotics.jpg`, `campus-skyview-atrium.jpg`, `thirdwave-roastery-lounge.jpg`, `auditorium-keynote-conclave.jpg`, and `southgate-floodlit-futsal.jpg`.
+6. **Interactive Governance Command Console (`GovernanceCommandConsole.tsx`) & 50/50 Dual-Panel Auth Studios (`LoginPage.tsx`, `SignupPage.tsx`)**:
+   - **Landing Section 03**: Interactive 4-stage pipeline inspector, 8-persona PBAC split-console, live 50-way last-seat concurrency burst visualizer, and SHA-256 commit-reveal proof verifier.
+   - **Dual-Panel `/login` & `/signup`**: Viewport-locked `lg:col-span-6` sticky cinema HUD panel on the left (featuring a live-updating PBAC Session Blueprint on `/login` and a real-time keystroke-reactive Holographic Campus Boarding Pass with QR matrix on `/signup`) paired with an anodized glass form studio on the right.
 
 ---
 

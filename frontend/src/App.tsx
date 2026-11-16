@@ -73,7 +73,7 @@ const AuditLogsView = lazy(() =>
 );
 
 const RouteLoadingFallback: React.FC = () => (
-  <div className="flex min-h-[40vh] items-center justify-center bg-void font-mono text-xs uppercase tracking-widest text-silver">
+  <div className="flex min-h-screen items-center justify-center bg-void font-mono text-xs uppercase tracking-widest text-silver">
     Loading Concourse Surface...
   </div>
 );

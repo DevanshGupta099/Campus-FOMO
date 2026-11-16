@@ -614,3 +614,39 @@
 - **Follow-ups**: Keep local dev servers running (`:3001` and `:5173`) after `git push origin dev`.
 
 ---
+
+### [2026-11-16 13:47 IST] HERO-GRADE-SECTIONS-AND-DUAL-PANEL-AUTH — Hero-Caliber Landing Sections, Interactive Governance Console & 50/50 Dual-Panel Login/Signup
+
+- **Prompt**: Keep the loved Hero section intact while reworking and elevating the remaining Landing sections to match the Hero's craft, and properly implement the Dual-Panel Login and Signup pages.
+- **Hat**: Creative Director, Principal UI Systems Engineer & Accessibility Auditor
+- **What I did**:
+  - **Unified Anodized Console Primitives (`frontend/src/index.css`)**: Added `.glass-console`, `.spotlight-card`, `.section-beam`, enhanced `.hud-frame` corner reticles, and `.pass-perforation` boarding-pass dividers; generated & compressed 2 additional CHRIST Central Campus cinema photographs (`frontend/public/media/auditorium-keynote-conclave.jpg` `54 KB` and `southgate-floodlit-futsal.jpg` `111 KB`) and wired them into `events.service.ts` and `mockStore.ts`.
+  - **Reworked Landing Sections 01–05 + Monumental Footer (`frontend/src/pages/LandingPage.tsx` & `GovernanceCommandConsole.tsx`)**:
+    - **Section 01 (`#conclaves`)**: Added live search + `External-Open` scope toggle, a monumental `7/5` Asymmetric Spotlight Flagship Deck (`hud-frame glass-console`), and numbered (`//01`..`//06`) `.spotlight-card` Bento cards with distinct category photography.
+    - **Section 02 (`#precinct-3d`)**: Added 4 spatial telemetry metric cards and `IntersectionObserver` (`rootMargin: "650px"`) auto-hydration for the 9-Block Three.js Digital Twin.
+    - **Section 03 (`#governance`)**: Replaced the flat beige block with `GovernanceCommandConsole.tsx` — featuring an interactive 4-stage lifecycle pipeline inspector, an 8-persona PBAC split-console (`?persona=` deep-link hydration), a live 50-way Last-Seat concurrency burst visualizer, and a SHA-256 commit-reveal proof verifier.
+    - **Section 04 (`#league`)**: Upgraded Inter-Deanery standings with proportional XP progress bars, rank medallions, and a glass Top Concourse Laureates board.
+    - **Section 05 (`#chronicle`) & Footer**: Built an Asymmetric Bento Fest Mosaic with click-to-expand Fullscreen Lightbox, a perforated Third Wave Partner Voucher Pass, and a 4-column Monumental Architectural Footer with SVG outline watermark.
+  - **True 50/50 Viewport-Locked Dual-Panel `/login` & `/signup` (`LoginPage.tsx`, `SignupPage.tsx`)**:
+    - **Left Sticky HUD Cinema Viewport (`lg:col-span-6 lg:sticky lg:top-0 lg:h-screen`)**: Looping H.264 cinema reel + live-updating **PBAC Session Blueprint Card** on `/login` (reacting to persona hover/focus or typed email) and a real-time keystroke-reactive **Holographic Campus Boarding Pass + QR Matrix** on `/signup` (switching dynamically between Track A Student Vermilion/Gold and Track B Guest Phosphor).
+    - **Right Anodized Studio (`lg:col-span-6`)**: Distinct surface contrast, top `Sign In` / `Create Pass` route pill, icon-adorned inputs, 36px WCAG 2.2 AA touch targets, labeled 4-stage password entropy meter, and compact `2x4` Evaluator Persona matrix.
+  - **Authenticated Workspace Polish (`WorkspaceShell.tsx`, `DiscoverView.tsx`, `EventDetailModal.tsx`)**: Replaced invalid Tailwind v4 `backdrop-blur-xs` with `backdrop-blur-sm`, added photographic cinema headers to `/app/discover` cards, and added cinema banners to `EventDetailModal.tsx`.
+- **Files changed**:
+  - `frontend/public/media/{auditorium-keynote-conclave.jpg,southgate-floodlit-futsal.jpg}`, `backend/src/domain/events/events.service.ts`, `frontend/src/api/mockStore.ts` — New bespoke campus cinema photography and gallery entries.
+  - `frontend/src/index.css`, `frontend/src/App.tsx`, `frontend/src/components/{GovernanceCommandConsole.tsx,WorkspaceShell.tsx,EventDetailModal.tsx}`, `frontend/src/pages/{LandingPage.tsx,LoginPage.tsx,SignupPage.tsx}`, `frontend/src/pages/workspace/DiscoverView.tsx`, `frontend/src/App.test.tsx` — Hero-grade section overhaul, Dual-Panel Login/Signup, workspace photography polish, and new unit test.
+  - `docs/{DESIGN-SYSTEM.md,STATUS.md,AI-LOG.md}` — Updated design system, status, and append-only log.
+- **Commands run + results**:
+  - `corepack pnpm typecheck` → PASS
+  - `corepack pnpm test:unit` → PASS (46/46 backend tests, 7/7 frontend tests)
+  - `corepack pnpm build` → PASS
+  - Headless Chrome viewport overflow check (`360x800`, `768x1024`, `1440x900` on `/`, `/login`, `/signup`) → PASS (`0px` overflow across all 9 checks)
+- **Decisions & assumptions**:
+  - Preserved the Hero section 100% intact per user feedback while extending its `.hud-frame` / `.glass-console` anodized carbon design grammar across every section and auth surface.
+- **Tests**:
+  - Added end-to-end interaction test in `frontend/src/App.test.tsx` covering `GovernanceCommandConsole` 8-role tab switching, 50-request concurrency burst trigger, and live Dual-Panel `/signup` credential preview (`// covers: ST-01, SP-02, AD-01, GU-01`).
+- **[AI-WRONG] mistakes found**:
+  - `[AI-WRONG]` Found Tailwind v4 `backdrop-blur-xs` classes in `WorkspaceShell.tsx` and old `SignupPage.tsx` that compiled to no-ops in Tailwind v3.4; replaced with `backdrop-blur-sm`.
+  - `[AI-WRONG]` Initial Lighthouse run on the new `/login` & `/signup` flagged `16px` width on the `Show password` button (`WCAG 2.2 AA target-size < 24px`), skipped `<h2>` heading order in `/signup` aside, and `0.378` CLS from `min-h-[40vh]` `<Suspense>` fallback in `App.tsx`; fixed all three (`w-9`, `<h2>`, `min-h-screen`).
+- **Follow-ups**: Push updated `dev` commit to `origin/dev` and keep `:3001` + `:5173` live servers running.
+
+---

@@ -30,6 +30,16 @@ interface EventDetailModalProps {
   onBooked?: (message: string, isWaitlisted: boolean) => void;
 }
 
+const MODAL_COVERS: Record<string, string> = {
+  Hackathon: "/media/fest-labyrinth-hackathon.jpg",
+  Technical: "/media/fest-magnovite-robotics.jpg",
+  Workshop: "/media/campus-skyview-atrium.jpg",
+  Cultural: "/media/fest-blossoms-stage.jpg",
+  Competition: "/media/auditorium-keynote-conclave.jpg",
+  "Guest Lecture": "/media/auditorium-keynote-conclave.jpg",
+  Sports: "/media/southgate-floodlit-futsal.jpg",
+};
+
 export const EventDetailModal: React.FC<EventDetailModalProps> = ({
   event,
   onClose,
@@ -101,10 +111,22 @@ export const EventDetailModal: React.FC<EventDetailModalProps> = ({
       aria-labelledby="event-modal-title"
       className="fixed inset-0 z-50 flex items-center justify-center bg-void/80 p-4 backdrop-blur-sm"
     >
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-rule-strong bg-paper-elevated shadow-anchor">
-        {/* Top dark header */}
-        <div className="border-b border-obsidian-rule bg-obsidian px-6 py-5 text-bone">
-          <div className="flex items-start justify-between gap-4">
+      <div className="hud-frame glass-console max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-rule-strong shadow-anchor">
+        {/* Top Cinema Banner + Dark Header */}
+        <div className="relative overflow-hidden border-b border-obsidian-rule bg-obsidian px-6 py-6 text-bone">
+          <img
+            src={
+              MODAL_COVERS[event.category] || "/media/hero-central-campus.jpg"
+            }
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/80 to-obsidian/65"
+          />
+          <div className="relative z-10 flex items-start justify-between gap-4">
             <div>
               <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-wider">
                 <span className="rounded bg-vermilion px-2 py-0.5 font-bold text-void">
