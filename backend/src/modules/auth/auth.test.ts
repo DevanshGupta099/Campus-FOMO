@@ -315,4 +315,51 @@ describe("Authentication, Signup, Zero-Trust Revocation & Security Hardening", (
     expect(badRole.statusCode).toBe(400);
     expect(badRole.json().code).toBe("INVALID_ROLE_PAYLOAD");
   });
+
+  // covers: ST-06, GU-07
+  it("issues SHA-256 participation certificates with anti-IDOR protection and masks attendee feedback names", async () => {
+    // Owner Asha retrieves her confirmed workshop certificate
+    const certRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/registrations/reg-seed-asha-workshop/certificate",
+      headers: {
+        authorization:
+          "Bearer test-token:STUDENT:01927500-0001-7000-8000-000000000001:Computer Science",
+      },
+    });
+    expect(certRes.statusCode).toBe(200);
+    const cert = certRes.json();
+    expect(cert.certificateId).toMatch(/^CERT-CHR-/);
+    expect(cert.verificationHash).toHaveLength(32);
+
+    // Different student attempting IDOR on Asha's certificate is rejected with 403
+    const idorCert = await app.inject({
+      method: "GET",
+      url: "/api/v1/registrations/reg-seed-asha-workshop/certificate",
+      headers: {
+        authorization:
+          "Bearer test-token:STUDENT:01927500-0077-7000-8000-000000000077:Commerce",
+      },
+    });
+    expect(idorCert.statusCode).toBe(403);
+
+    // Submit attendee feedback and verify PII surname masking
+    const fbRes = await app.inject({
+      method: "POST",
+      url: "/api/v1/events/evt-hackathon-100/feedback",
+      headers: {
+        authorization:
+          "Bearer test-token:STUDENT:01927500-0077-7000-8000-000000000077:Commerce",
+      },
+      payload: {
+        rating: 5,
+        comment: "Seamless atomic registration and zero-latency hall check-in.",
+      },
+    });
+    expect(fbRes.statusCode).toBe(201);
+    const fbBody = fbRes.json();
+    expect(fbBody.totalReviews).toBeGreaterThanOrEqual(3);
+    expect(fbBody.items[0].displayName).toBe("Test S.");
+    expect(fbBody.items[0].userSub).toBeUndefined();
+  });
 });

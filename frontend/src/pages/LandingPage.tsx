@@ -43,8 +43,10 @@ import type {
 } from "../api/types";
 import { resolveDefaultWorkspacePath, useAuth } from "../auth/AuthContext";
 import { ChristCrestMark, ColonnadeMotifSvg } from "../components/BrandMarks";
+import { CampusVoicesAndFaqSection } from "../components/CampusVoicesAndFaqSection";
 import { CinemaVideoFrame } from "../components/CinemaVideoFrame";
 import { dispatchOpenCommandPalette } from "../components/CommandPalette";
+import { ConclaveItineraryPlanner } from "../components/ConclaveItineraryPlanner";
 import { EventDetailModal } from "../components/EventDetailModal";
 import { GovernanceCommandConsole } from "../components/GovernanceCommandConsole";
 import { HeroMediaAnchor } from "../components/HeroMediaAnchor";
@@ -789,6 +791,14 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* =====================================================================
+            SECTION 01B: INTERACTIVE FEST ITINERARY & TEMPORAL CLASH PLANNER
+           ===================================================================== */}
+        <ConclaveItineraryPlanner
+          events={events}
+          onInspectEvent={(evt) => setSelectedEvent(evt)}
+        />
+
+        {/* =====================================================================
             SECTION 02: INTERACTIVE 3D CHRIST CENTRAL PRECINCT DIGITAL TWIN
            ===================================================================== */}
         <section
@@ -1258,6 +1268,11 @@ export const LandingPage: React.FC = () => {
             )}
           </div>
         </section>
+
+        {/* =====================================================================
+            SECTION 06: CAMPUS SOCIETY VOICES & ZERO-TRUST PROTOCOL FAQ
+           ===================================================================== */}
+        <CampusVoicesAndFaqSection />
       </main>
 
       {/* =====================================================================

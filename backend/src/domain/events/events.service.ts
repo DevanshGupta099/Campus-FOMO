@@ -1317,6 +1317,103 @@ export class EventsService {
       }
     );
   }
+
+  private eventFeedback = new Map<
+    string,
+    Array<{
+      id: string;
+      userSub: string;
+      displayName: string;
+      department: string;
+      rating: number;
+      comment: string;
+      createdAt: string;
+    }>
+  >([
+    [
+      "evt-hackathon-100",
+      [
+        {
+          id: "fb-seed-1",
+          userSub: "01927500-0001-7000-8000-000000000001",
+          displayName: "Asha K.",
+          department: "Computer Science",
+          rating: 5,
+          comment:
+            "Zero gate queue with the 30-second rotating QR pass and rock-solid Wi-Fi across Main Auditorium.",
+          createdAt: new Date(Date.now() - 72_000_000).toISOString(),
+        },
+        {
+          id: "fb-seed-2",
+          userSub: "01927500-0041-7000-8000-000000000041",
+          displayName: "Pranav S.",
+          department: "Data Science",
+          rating: 5,
+          comment:
+            "Systems mentorship track and midnight Third Wave pour-over station made the 24-hour sprint unforgettable.",
+          createdAt: new Date(Date.now() - 36_000_000).toISOString(),
+        },
+      ],
+    ],
+  ]);
+
+  private maskDisplayName(name: string): string {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "Attendee";
+    if (parts.length === 1) return parts[0];
+    return `${parts[0]} ${parts[parts.length - 1][0]?.toUpperCase() || ""}.`;
+  }
+
+  getEventFeedback(eventId: string) {
+    const evt = this.events.get(eventId);
+    if (!evt) throw new Error("Event not found");
+    const list = this.eventFeedback.get(eventId) || [];
+    const sum = list.reduce((acc, item) => acc + item.rating, 0);
+    const averageRating =
+      list.length > 0 ? Math.round((sum / list.length) * 10) / 10 : 5.0;
+    return {
+      eventId,
+      averageRating,
+      totalReviews: list.length,
+      items: list.map(({ userSub: _sub, ...pub }) => pub),
+    };
+  }
+
+  submitEventFeedback(params: {
+    eventId: string;
+    userSub: string;
+    userName: string;
+    department: string;
+    rating: number;
+    comment: string;
+  }) {
+    const evt = this.events.get(params.eventId);
+    if (!evt) throw new Error("Event not found");
+
+    const list = this.eventFeedback.get(params.eventId) || [];
+    const masked = this.maskDisplayName(params.userName);
+    const existingIdx = list.findIndex((i) => i.userSub === params.userSub);
+    const entry = {
+      id:
+        existingIdx >= 0
+          ? list[existingIdx].id
+          : `fb-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      userSub: params.userSub,
+      displayName: masked,
+      department: params.department || "Central Campus",
+      rating: params.rating,
+      comment: params.comment.trim(),
+      createdAt: new Date().toISOString(),
+    };
+
+    if (existingIdx >= 0) {
+      list[existingIdx] = entry;
+    } else {
+      list.unshift(entry);
+    }
+    this.eventFeedback.set(params.eventId, list);
+    return this.getEventFeedback(params.eventId);
+  }
 }
 
 export const eventsService = new EventsService();

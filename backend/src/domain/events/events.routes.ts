@@ -71,6 +71,15 @@ const BroadcastBodySchema = z.object({
     .max(600),
 });
 
+const FeedbackBodySchema = z.object({
+  rating: z.number().int().min(1).max(5),
+  comment: z
+    .string()
+    .trim()
+    .min(3, "Feedback comment must be at least 3 characters")
+    .max(400),
+});
+
 export const eventRoutes: FastifyPluginAsync = async (app) => {
   // GET /api/v1/events/leaderboard (Privacy-safe deanery & student XP standings)
   app.get(
@@ -567,6 +576,73 @@ export const eventRoutes: FastifyPluginAsync = async (app) => {
           status: 400,
           detail: err.message,
           code: "BROADCAST_FAILED",
+        });
+      }
+    },
+  );
+
+  // GET /api/v1/events/:id/feedback (Public masked attendee ratings & takeaways)
+  app.get(
+    "/events/:id/feedback",
+    {
+      config: { auth: "public" },
+    },
+    async (request, reply) => {
+      try {
+        const params = request.params as { id: string };
+        return reply
+          .status(200)
+          .send(eventsService.getEventFeedback(params.id));
+      } catch (err: any) {
+        return reply.status(404).send({
+          type: "about:blank",
+          title: "Not Found",
+          status: 404,
+          detail: err.message,
+          code: "EVENT_NOT_FOUND",
+        });
+      }
+    },
+  );
+
+  // POST /api/v1/events/:id/feedback (PBAC guarded attendee rating submission)
+  app.post(
+    "/events/:id/feedback",
+    {
+      config: { auth: ["registration:create"] },
+      preHandler: [requirePermission("registration:create")],
+    },
+    async (request, reply) => {
+      const parsed = FeedbackBodySchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          type: "about:blank",
+          title: "Validation Error",
+          status: 400,
+          detail:
+            parsed.error.issues[0]?.message || "Invalid feedback submission",
+          code: "INVALID_FEEDBACK",
+        });
+      }
+      try {
+        const params = request.params as { id: string };
+        const user = request.user!;
+        const updated = eventsService.submitEventFeedback({
+          eventId: params.id,
+          userSub: user.sub,
+          userName: user.name,
+          department: user.department || user.institution || "Central Campus",
+          rating: parsed.data.rating,
+          comment: parsed.data.comment,
+        });
+        return reply.status(201).send(updated);
+      } catch (err: any) {
+        return reply.status(404).send({
+          type: "about:blank",
+          title: "Not Found",
+          status: 404,
+          detail: err.message,
+          code: "EVENT_NOT_FOUND",
         });
       }
     },

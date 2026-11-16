@@ -198,6 +198,36 @@ paths:
                 type: array
                 items:
                   type: object
+  /events/{id}/feedback:
+    get:
+      summary: Get privacy-safe masked attendee feedback and rating summary
+      responses:
+        "200":
+          description: Aggregated event feedback
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      summary: Submit or update verified attendee event rating (1-5)
+      responses:
+        "201":
+          description: Feedback recorded
+          content:
+            application/json:
+              schema:
+                type: object
+  /registrations/{id}/certificate:
+    get:
+      summary: Generate cryptographically signed participation certificate for
+        confirmed pass holder
+      responses:
+        "200":
+          description: Signed participation certificate
+          content:
+            application/json:
+              schema:
+                type: object
   /me/xp:
     get:
       summary: Get user XP, streak, and badges

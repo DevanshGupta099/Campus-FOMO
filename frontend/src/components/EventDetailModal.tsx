@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertCircle,
@@ -7,12 +7,14 @@ import {
   CalendarPlus,
   CheckCircle2,
   Clock,
+  MessageSquare,
   Shield,
+  Star,
   Ticket,
   Users,
   X,
 } from "lucide-react";
-import type { EventItem } from "../api/types";
+import type { EventFeedbackResponse, EventItem } from "../api/types";
 import { apiClient } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import {
@@ -58,11 +60,51 @@ export const EventDetailModal: React.FC<EventDetailModalProps> = ({
     isWaitlisted: boolean;
     waitlistPos?: number;
   } | null>(null);
+  const [feedback, setFeedback] = useState<EventFeedbackResponse | null>(null);
+  const [ratingInput, setRatingInput] = useState<number>(5);
+  const [commentInput, setCommentInput] = useState<string>("");
+  const [fbBusy, setFbBusy] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!event) {
+      setFeedback(null);
+      setBookedState(null);
+      return;
+    }
+    let active = true;
+    apiClient
+      .getEventFeedback(event.id)
+      .then((res) => {
+        if (active) setFeedback(res);
+      })
+      .catch(() => null);
+    return () => {
+      active = false;
+    };
+  }, [event]);
 
   if (!event) return null;
 
   const seat = computeSeatState(event);
   const canBook = hasPerm("registration:create");
+
+  const handleFeedbackSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentInput.trim() || commentInput.trim().length < 3) return;
+    setFbBusy(true);
+    try {
+      const updated = await apiClient.submitEventFeedback(event.id, {
+        rating: ratingInput,
+        comment: commentInput.trim(),
+      });
+      setFeedback(updated);
+      setCommentInput("");
+    } catch {
+      // Non-fatal
+    } finally {
+      setFbBusy(false);
+    }
+  };
 
   const handleReserve = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -437,6 +479,80 @@ export const EventDetailModal: React.FC<EventDetailModalProps> = ({
                 )}
               </div>
             </form>
+          )}
+
+          {/* Verified Attendee Ratings & Takeaways (Zero-PII Masked Surnames) */}
+          {feedback && (
+            <div className="border-t border-rule pt-5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-gold">
+                  <MessageSquare className="h-3.5 w-3.5 text-vermilion" />
+                  <span>Attendee Takeaways (PII Masked)</span>
+                </div>
+                <span className="inline-flex items-center gap-1 rounded border border-gold/40 bg-gold-soft px-2.5 py-0.5 font-mono text-xs font-bold text-gold">
+                  <Star className="h-3 w-3 fill-current" />
+                  <span>
+                    {feedback.averageRating.toFixed(1)} ({feedback.totalReviews}
+                    )
+                  </span>
+                </span>
+              </div>
+
+              <div className="mt-3 space-y-2">
+                {feedback.items.slice(0, 3).map((item) => (
+                  <div
+                    key={item.id}
+                    className="rounded-lg border border-rule bg-paper p-3 text-xs"
+                  >
+                    <div className="flex items-center justify-between font-mono text-[10px]">
+                      <span className="font-bold text-bone">
+                        {item.displayName} · {item.department}
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-gold">
+                        <Star className="h-2.5 w-2.5 fill-current" />
+                        <span>{item.rating}/5</span>
+                      </span>
+                    </div>
+                    <p className="mt-1 text-silver">{item.comment}</p>
+                  </div>
+                ))}
+              </div>
+
+              {isAuthenticated && canBook && (
+                <form
+                  onSubmit={handleFeedbackSubmit}
+                  className="mt-3 flex flex-wrap items-center gap-2"
+                >
+                  <select
+                    aria-label="Rating"
+                    value={ratingInput}
+                    onChange={(e) => setRatingInput(Number(e.target.value))}
+                    className="rounded-md border border-rule-strong bg-paper px-2.5 py-2 font-mono text-xs text-bone"
+                  >
+                    {[5, 4, 3, 2, 1].map((r) => (
+                      <option key={r} value={r}>
+                        {r} Stars
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    value={commentInput}
+                    onChange={(e) => setCommentInput(e.target.value)}
+                    placeholder="Share a verified conclave takeaway..."
+                    aria-label="Conclave feedback comment"
+                    className="min-w-[180px] flex-1 rounded-md border border-rule-strong bg-paper px-3 py-2 text-xs text-bone placeholder:text-ink-muted focus:border-vermilion focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    disabled={fbBusy || commentInput.trim().length < 3}
+                    className="rounded-md border border-vermilion bg-vermilion-soft px-3 py-2 font-mono text-xs font-bold uppercase text-bone transition hover:bg-vermilion hover:text-void disabled:opacity-45"
+                  >
+                    {fbBusy ? "Saving..." : "Post"}
+                  </button>
+                </form>
+              )}
+            </div>
           )}
         </div>
       </div>

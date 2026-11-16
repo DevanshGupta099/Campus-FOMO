@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { registrationService } from "./registration.service.js";
@@ -211,6 +212,77 @@ export const registrationRoutes: FastifyPluginAsync = async (app) => {
         exportedBy: request.user?.sub,
         recordCount: attendees.length,
         attendees,
+      });
+    },
+  );
+
+  // GET /api/v1/registrations/:id/certificate (Cryptographic Participation Credential)
+  app.get(
+    "/registrations/:id/certificate",
+    {
+      config: { auth: ["registration:read:own"] },
+      preHandler: [requirePermission("registration:read:own")],
+    },
+    async (request, reply) => {
+      const params = request.params as { id: string };
+      const reg = registrationService.getRegistration(params.id);
+      if (!reg) {
+        return reply.status(404).send({
+          type: "about:blank",
+          title: "Not Found",
+          status: 404,
+          detail: "Registration pass not found",
+          code: "TICKET_NOT_FOUND",
+        });
+      }
+
+      const caller = request.user!;
+      const isAdmin = caller.permissions.includes("rbac:manage");
+      if (reg.userSub !== caller.sub && !isAdmin) {
+        return reply.status(403).send({
+          type: "about:blank",
+          title: "Forbidden",
+          status: 403,
+          detail:
+            "Cannot access participation certificate belonging to another attendee",
+          code: "FORBIDDEN_CERTIFICATE_OWNER_MISMATCH",
+        });
+      }
+
+      if (reg.status !== "CONFIRMED") {
+        return reply.status(409).send({
+          type: "about:blank",
+          title: "Conflict",
+          status: 409,
+          detail:
+            "Certificates are issued exclusively for CONFIRMED registrations",
+          code: "CERTIFICATE_NOT_ELIGIBLE",
+        });
+      }
+
+      const evt = eventsService.getEvent(reg.eventId);
+      const verificationHash = createHash("sha256")
+        .update(
+          `christ-central-cert:${reg.id}:${reg.eventId}:${reg.userSub}:v3`,
+        )
+        .digest("hex")
+        .slice(0, 32);
+
+      return reply.status(200).send({
+        certificateId: `CERT-CHR-${reg.id.slice(-6).toUpperCase()}`,
+        registrationId: reg.id,
+        eventId: reg.eventId,
+        eventTitle: evt?.title || reg.eventId,
+        category: evt?.category || "Campus Conclave",
+        venueName: evt?.venueName || "CHRIST Central Campus, Bengaluru",
+        holderName: reg.userName,
+        affiliation:
+          reg.guestInstitution ||
+          caller.department ||
+          "CHRIST (Deemed to be University) — Central Campus",
+        issuedAt: reg.createdAt,
+        xpCredited: 60,
+        verificationHash,
       });
     },
   );

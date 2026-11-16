@@ -10,12 +10,14 @@ import type {
   CheckinStatsResponse,
   ClashReport,
   DemoPersonaSummary,
+  EventFeedbackResponse,
   EventItem,
   GalleryItem,
   GamificationLedger,
   LuckyCampaignItem,
   LuckyVerificationProof,
   OpsTelemetry,
+  ParticipationCertificate,
   RbacMatrixResponse,
   RegistrationItem,
   RotatingQrResponse,
@@ -663,4 +665,87 @@ export const apiClient = {
         ago: "2m ago",
       },
     ]),
+
+  getEventFeedback: (eventId: string) =>
+    requestJson<EventFeedbackResponse>(
+      `/events/${encodeURIComponent(eventId)}/feedback`,
+      {},
+      () => ({
+        eventId,
+        averageRating: 4.9,
+        totalReviews: 2,
+        items: [
+          {
+            id: "fb-local-1",
+            displayName: "Asha K.",
+            department: "Computer Science",
+            rating: 5,
+            comment:
+              "Zero gate queue with the 30-second rotating QR pass and crisp acoustics inside Main Auditorium.",
+            createdAt: new Date(Date.now() - 72_000_000).toISOString(),
+          },
+          {
+            id: "fb-local-2",
+            displayName: "Pranav S.",
+            department: "Data Science",
+            rating: 5,
+            comment:
+              "Well-structured mentorship sprint and seamless venue coordination.",
+            createdAt: new Date(Date.now() - 36_000_000).toISOString(),
+          },
+        ],
+      }),
+    ),
+
+  submitEventFeedback: (
+    eventId: string,
+    payload: { rating: number; comment: string },
+  ) =>
+    requestJson<EventFeedbackResponse>(
+      `/events/${encodeURIComponent(eventId)}/feedback`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+      () => ({
+        eventId,
+        averageRating: payload.rating,
+        totalReviews: 3,
+        items: [
+          {
+            id: `fb-${Date.now()}`,
+            displayName: "Verified S.",
+            department: "Central Campus",
+            rating: payload.rating,
+            comment: payload.comment,
+            createdAt: new Date().toISOString(),
+          },
+        ],
+      }),
+    ),
+
+  getRegistrationCertificate: (registrationId: string) =>
+    requestJson<ParticipationCertificate>(
+      `/registrations/${encodeURIComponent(registrationId)}/certificate`,
+      {},
+      () => {
+        const list = offlineStore.listMyRegistrations();
+        const reg = list.find((r) => r.id === registrationId) || list[0];
+        return {
+          certificateId: `CERT-CHR-${registrationId.slice(-6).toUpperCase()}`,
+          registrationId,
+          eventId: reg?.eventId || "evt-tech-workshop",
+          eventTitle:
+            reg?.eventTitle ||
+            "Real-Time Distributed Systems & WebGL Shaders Studio",
+          category: "Workshop",
+          venueName: reg?.venueName || "Block II Advanced Computing Lab",
+          holderName: reg?.userName || "Asha Kumar",
+          affiliation: "CHRIST (Deemed to be University) — Central Campus",
+          issuedAt: reg?.createdAt || new Date().toISOString(),
+          xpCredited: 60,
+          verificationHash: "8f4e2a91c07b3d6e51a8f2049c7b1e3d",
+        };
+      },
+    ),
 };

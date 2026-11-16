@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   AlertCircle,
+  Award,
   Building2,
   CalendarPlus,
   Clock,
@@ -10,11 +11,17 @@ import {
   RefreshCw,
   ShieldCheck,
   Ticket,
+  X,
   XCircle,
 } from "lucide-react";
 import { apiClient } from "../../api/client";
-import type { RegistrationItem, RotatingQrResponse } from "../../api/types";
+import type {
+  ParticipationCertificate,
+  RegistrationItem,
+  RotatingQrResponse,
+} from "../../api/types";
 import { useAuth } from "../../auth/AuthContext";
+import { ChristCrestMark } from "../../components/BrandMarks";
 import { QrMatrixCanvas } from "../../components/QrMatrixCanvas";
 import { useWorkspace } from "../../components/WorkspaceShell";
 import {
@@ -87,8 +94,50 @@ export const MyTicketsView: React.FC = () => {
   const [registrations, setRegistrations] = useState<RegistrationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [activeCert, setActiveCert] = useState<ParticipationCertificate | null>(
+    null,
+  );
 
   const canCancel = hasPerm("registration:cancel:own");
+
+  const handleOpenCertificate = async (reg: RegistrationItem) => {
+    try {
+      const cert = await apiClient.getRegistrationCertificate(reg.id);
+      setActiveCert(cert);
+    } catch (err: unknown) {
+      notify(
+        "error",
+        "Certificate Unavailable",
+        err instanceof Error
+          ? err.message
+          : "Could not retrieve cryptographic certificate.",
+      );
+    }
+  };
+
+  const downloadCertificateSvg = (cert: ParticipationCertificate) => {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="540" viewBox="0 0 840 540">
+      <rect width="840" height="540" rx="20" fill="#07090D"/>
+      <rect x="22" y="22" width="796" height="496" rx="14" fill="none" stroke="#E2B45A" stroke-width="2"/>
+      <rect x="34" y="34" width="772" height="472" rx="10" fill="none" stroke="#FF4D1C" stroke-opacity="0.45" stroke-width="1"/>
+      <text x="420" y="92" text-anchor="middle" fill="#E2B45A" font-family="monospace" font-size="13" letter-spacing="4">CHRIST (DEEMED TO BE UNIVERSITY) · CENTRAL CAMPUS BENGALURU</text>
+      <text x="420" y="138" text-anchor="middle" fill="#F4F0E6" font-family="Georgia, serif" font-size="34" font-weight="bold">CERTIFICATE OF CONCLAVE PARTICIPATION</text>
+      <text x="420" y="196" text-anchor="middle" fill="#9DA8B8" font-family="sans-serif" font-size="14">This cryptographically signed credential certifies that</text>
+      <text x="420" y="246" text-anchor="middle" fill="#FF4D1C" font-family="Georgia, serif" font-size="32" font-weight="bold">${cert.holderName.replace(/[<>&]/g, "")}</text>
+      <text x="420" y="282" text-anchor="middle" fill="#F4F0E6" font-family="sans-serif" font-size="14">${cert.affiliation.replace(/[<>&]/g, "")}</text>
+      <text x="420" y="334" text-anchor="middle" fill="#9DA8B8" font-family="sans-serif" font-size="14">held a verified confirmed seat for</text>
+      <text x="420" y="372" text-anchor="middle" fill="#F4F0E6" font-family="Georgia, serif" font-size="22" font-weight="bold">${cert.eventTitle.replace(/[<>&]/g, "")}</text>
+      <text x="420" y="404" text-anchor="middle" fill="#E2B45A" font-family="monospace" font-size="12">${cert.venueName.replace(/[<>&]/g, "")} · +${cert.xpCredited} XP Credited</text>
+      <text x="420" y="468" text-anchor="middle" fill="#2EE59D" font-family="monospace" font-size="11">ID: ${cert.certificateId} · SHA-256: ${cert.verificationHash}</text>
+    </svg>`;
+    const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${cert.certificateId}.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const loadRegistrations = useCallback(async () => {
     try {
@@ -286,11 +335,22 @@ export const MyTicketsView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => downloadPrintableSvgPass(reg)}
-                    className="inline-flex items-center gap-1.5 rounded-md border border-rule-strong bg-paper px-3 py-1.5 text-xs font-medium text-ink transition hover:border-obsidian"
+                    className="inline-flex items-center gap-1.5 rounded-md border border-rule-strong bg-paper px-3 py-1.5 text-xs font-medium text-ink transition hover:border-vermilion"
                   >
                     <Download className="h-3.5 w-3.5" />
                     <span>Save Pass SVG</span>
                   </button>
+
+                  {reg.status === "CONFIRMED" && (
+                    <button
+                      type="button"
+                      onClick={() => handleOpenCertificate(reg)}
+                      className="inline-flex items-center gap-1.5 rounded-md border border-gold/50 bg-gold-soft px-3 py-1.5 font-mono text-xs font-bold text-gold transition hover:bg-gold hover:text-void"
+                    >
+                      <Award className="h-3.5 w-3.5" />
+                      <span>Certificate</span>
+                    </button>
+                  )}
 
                   {canCancel && reg.status !== "CANCELLED" && (
                     <button
@@ -322,6 +382,77 @@ export const MyTicketsView: React.FC = () => {
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {/* Cryptographic Participation Certificate Modal */}
+      {activeCert && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Participation Certificate"
+          onClick={() => setActiveCert(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-void/85 p-4 backdrop-blur-sm"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="hud-frame glass-console w-full max-w-2xl rounded-2xl border border-gold/50 p-6 sm:p-8"
+          >
+            <div className="flex items-start justify-between gap-4 border-b border-rule pb-4">
+              <div className="flex items-center gap-3">
+                <ChristCrestMark className="h-10 w-10" tone="light" />
+                <div>
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
+                    SIGNED CAMPUS CREDENTIAL · {activeCert.certificateId}
+                  </p>
+                  <h2 className="font-display text-xl font-extrabold text-bone sm:text-2xl">
+                    Certificate of Conclave Participation
+                  </h2>
+                </div>
+              </div>
+              <button
+                type="button"
+                aria-label="Close certificate"
+                onClick={() => setActiveCert(null)}
+                className="rounded-lg border border-rule-strong p-1.5 text-silver hover:text-bone"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mt-6 rounded-xl border border-rule-strong bg-void/90 p-6 text-center">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-silver">
+                CHRIST (Deemed to be University) — Central Campus, Bengaluru
+              </p>
+              <p className="mt-4 font-display text-3xl font-extrabold text-vermilion">
+                {activeCert.holderName}
+              </p>
+              <p className="mt-1 text-xs text-silver">
+                {activeCert.affiliation}
+              </p>
+              <p className="mt-4 font-serif text-lg font-bold text-bone">
+                {activeCert.eventTitle}
+              </p>
+              <p className="mt-1 font-mono text-xs text-gold">
+                {activeCert.venueName} · +{activeCert.xpCredited} Season XP
+              </p>
+
+              <div className="mt-5 rounded-lg border border-phosphor/35 bg-phosphor-soft px-3 py-2 font-mono text-[11px] text-phosphor">
+                SHA-256 Proof: <code>{activeCert.verificationHash}</code>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-wrap justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => downloadCertificateSvg(activeCert)}
+                className="inline-flex items-center gap-2 rounded-lg bg-vermilion px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-void shadow-glow transition hover:bg-vermilion-hover"
+              >
+                <Download className="h-4 w-4" />
+                <span>Download Vector Certificate (.SVG)</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

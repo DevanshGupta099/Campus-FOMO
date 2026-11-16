@@ -36,6 +36,9 @@ export const PublicNavbar: React.FC = () => {
           <a href="#conclaves" className="transition hover:text-bone">
             Conclaves
           </a>
+          <a href="#itinerary-planner" className="transition hover:text-bone">
+            Planner
+          </a>
           <a href="#precinct-3d" className="transition hover:text-bone">
             3D Precinct
           </a>
@@ -43,10 +46,13 @@ export const PublicNavbar: React.FC = () => {
             Governance
           </a>
           <a href="#league" className="transition hover:text-bone">
-            Deanery League
+            League
           </a>
           <a href="#chronicle" className="transition hover:text-bone">
             Chronicle
+          </a>
+          <a href="#faq" className="transition hover:text-bone">
+            FAQ
           </a>
         </nav>
 

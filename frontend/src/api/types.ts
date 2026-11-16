@@ -309,3 +309,33 @@ export interface CampusPulseItem {
   venue: string;
   ago: string;
 }
+
+export interface EventFeedbackItem {
+  id: string;
+  displayName: string;
+  department: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+
+export interface EventFeedbackResponse {
+  eventId: string;
+  averageRating: number;
+  totalReviews: number;
+  items: EventFeedbackItem[];
+}
+
+export interface ParticipationCertificate {
+  certificateId: string;
+  registrationId: string;
+  eventId: string;
+  eventTitle: string;
+  category: string;
+  venueName: string;
+  holderName: string;
+  affiliation: string;
+  issuedAt: string;
+  xpCredited: number;
+  verificationHash: string;
+}

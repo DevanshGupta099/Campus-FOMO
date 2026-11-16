@@ -8,7 +8,10 @@ const EMOJI_REGEX = /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
 
 function renderAt(route: string) {
   return render(
-    <MemoryRouter initialEntries={[route]}>
+    <MemoryRouter
+      initialEntries={[route]}
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
       <App />
     </MemoryRouter>,
   );
@@ -221,6 +224,18 @@ describe("CHRIST Central Concourse v3 — WebGL Kinetic Editorial & PBAC Workspa
       name: /Fire 50-Request Burst/i,
     });
     fireEvent.click(burstBtn);
+
+    // Verify Interactive Fest Itinerary Planner & FAQ Console sections render cleanly
+    expect(
+      screen.getByRole("heading", {
+        name: /Build Your Clash-Free/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", {
+        name: /Gate-1 Entry, Security & Pass Mechanics/i,
+      }),
+    ).toBeInTheDocument();
 
     unmount();
 

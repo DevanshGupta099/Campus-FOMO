@@ -8,6 +8,8 @@ interface SyncOptions {
   clientSecret?: string;
 }
 
+const VALID_PERMISSIONS: ReadonlySet<string> = new Set<string>(ALL_PERMISSIONS);
+
 export async function syncAccessControl(opts: SyncOptions = {}) {
   const keycloakUrl =
     opts.keycloakUrl || process.env.KEYCLOAK_URL || "http://localhost:8080";
@@ -24,7 +26,6 @@ export async function syncAccessControl(opts: SyncOptions = {}) {
     `[access-sync] Verifying ${ALL_PERMISSIONS.length} permissions in the catalog.`,
   );
 
-  let token: string | null = null;
   try {
     const tokenRes = await fetch(
       `${keycloakUrl}/realms/${realm}/protocol/openid-connect/token`,
@@ -39,8 +40,7 @@ export async function syncAccessControl(opts: SyncOptions = {}) {
       },
     );
     if (tokenRes.ok) {
-      const data = (await tokenRes.json()) as { access_token: string };
-      token = data.access_token;
+      await tokenRes.json();
       console.log(
         "[access-sync] Successfully authenticated as service account: access-studio",
       );
@@ -49,16 +49,16 @@ export async function syncAccessControl(opts: SyncOptions = {}) {
         `[access-sync] Keycloak offline or uninitialized (HTTP ${tokenRes.status}). Operating in declarative verification mode.`,
       );
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "unreachable";
     console.log(
-      `[access-sync] Keycloak connection skipped (${err.message}). Declarative realm JSON remains source of truth.`,
+      `[access-sync] Keycloak connection skipped (${msg}). Declarative realm JSON remains source of truth.`,
     );
   }
 
-  // Verify that all role bundles reference valid permissions
   for (const [role, permissions] of Object.entries(PERSONA_ROLE_BUNDLES)) {
     for (const perm of permissions) {
-      if (!ALL_PERMISSIONS.includes(perm)) {
+      if (!VALID_PERMISSIONS.has(perm)) {
         throw new Error(
           `Invalid permission "${perm}" in role bundle "${role}"`,
         );
