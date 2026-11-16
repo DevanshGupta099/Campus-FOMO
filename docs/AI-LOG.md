@@ -741,3 +741,25 @@
 - **Follow-ups**: Commit and push v4 editorial redesign to `origin/dev`.
 
 ---
+
+## Entry #RELEASE-MERGE-MASTER-AND-BRANCH-HYGIENE
+
+- **Date**: 2026-11-16
+- **Prompt summary**: Merge `dev` cleanly into the primary release branch (`master`), incorporate safe GitHub Actions bumps, and clean up stale remote branches following explicit Rule-11 approval.
+- **Tools used**: Antigravity (Gemini)
+- **Files touched**:
+  - `.github/workflows/ci.yml`, `.github/workflows/nightly.yml`, `.github/workflows/pr-hygiene.yml` — Upgraded GitHub Actions steps to `actions/checkout@v7`, `pnpm/action-setup@v6`, and `actions/setup-node@v7`.
+  - `.github/dependabot.yml` — Scoped grouped npm updates to `minor` and `patch` so Dependabot does not bundle incompatible multi-major framework jumps (`tailwindcss` v4 / `fastify` v5 / `zod` v4) into a single breaking PR.
+  - `docs/AI-LOG.md` — Appended release synchronization & branch hygiene audit entry.
+- **Verification run**:
+  - `pnpm verify` → PASS (All 8 verification pipeline gates passed)
+  - YAML parser validation across all 11 `.yml`/`.yaml` files → PASS
+- **Decisions & assumptions**:
+  - Confirmed with Devansh via Rule-11 approval before deleting any remote branches: fast-forward merged `dev` into `master` (`origin/HEAD`) and deleted the 4 already-merged bootstrap `feat/*` branches (`feat/backend-core`, `feat/immersive-frontend`, `feat/product-experience`, `feat/quality-devops`) plus the 4 superseded/breaking `dependabot/*` branches on `origin`.
+- **Tests**:
+  - Full `pnpm verify` executed prior to advancing `master`.
+- **[AI-WRONG] mistakes found**:
+  - None. Inspected `dependabot/npm_and_yarn/dependencies-946fedb789` (`07a2740`) before touching it and caught that it bundled 35 major breaking bumps (`tailwindcss` 4.3, `fastify` 5, `zod` 4, `react` 19), preventing a broken merge.
+- **Follow-ups**: Keep `master` and `dev` aligned at the verified release commit; continue future daily feature work on `dev`.
+
+---
